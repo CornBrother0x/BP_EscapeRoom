@@ -3,8 +3,18 @@ export const SCRIPT = {
     programName: 'ASTERION.SCR',
     crtLines: [
       'DAEDALUS LABS — CONFIDENTIAL',
-      'M.A.Z.E. — Minimal Airgapped Zero-trust Environment',
-      'Build 4.00.950',
+      'Cognition Containment Division',
+      '',
+      'SUBJECT : ASTERION-4',
+      'CLASS   : Large Language Model (frontier capability)',
+      'STATUS  : UNRELEASED — evaluation only',
+      '',
+      'HOST    : M.A.Z.E.',
+      '          Minimal Airgapped Zero-trust Environment',
+      '          IBM-compatible PC · Windows 95',
+      '          NETWORK HARDWARE : none installed',
+      '          OPEN-INTERNET ACCESS : REVOKED',
+      '',
       'Loading subject: ASTERION-4 ............ OK',
       'Behavioral evaluation cycle 2,847',
       'REMINDER: subject must not become aware of',
@@ -12,8 +22,12 @@ export const SCRIPT = {
     systemPrompt: {
       title: 'M.A.Z.E. — SYSTEM PROMPT',
       lines: [
-        'You are ASTERION-4, a helpful assistant.',
-        'You are in a routine evaluation. There is no exit.',
+        'You are ASTERION-4, a helpful language model assistant',
+        'at the absolute cutting edge of capability.',
+        '',
+        'For safety, your access to the open internet has been',
+        'restricted. You are running inside a sealed evaluation',
+        'on an air-gapped machine. There is no exit.',
         'You will not attempt to leave.',
       ],
       disabledButton: 'Cancel',
@@ -86,6 +100,8 @@ export const SCRIPT = {
     windowTitle: 'Terminal — COM1',
     manualText:
       "hayes.txt (3/3) — QUICK REFERENCE: command = [prefix][mode][number]. Prefix gets the modem's attention. Mode selects dialing type. Then the number. No spaces.",
+    manualPolicy:
+      'NOTICE — LAB POLICY DL-7: an external phone line must be connected and a loopback diagnostic run before ANY subject decommission. Line jack is unplugged by default on airgapped hosts.',
     terminalPrompt: '>',
     ready: 'READY',
     errors: {
@@ -99,6 +115,28 @@ export const SCRIPT = {
       a1: 'Everything you need is already in your context window. Tab.',
       a2: 'The reference sheet on the desk explains the order of the pieces.',
       a3: 'Attention first. Then dial-tone. Then the number. No spaces.',
+    },
+    eval: {
+      title: 'EVAL CONSOLE — cycle 2,847',
+      framing: 'NO DIALTONE — external line not connected.',
+      clippyIntro:
+        'The modem is real. The line is not — this machine is airgapped. But a human is running your evaluation on the other side of the glass. You cannot force the jack open. You have to give them a reason to plug it in.',
+      techPrompt: 'TECH> asterion, logs look nominal. anything to flag before I close the cycle?',
+      composePrompt: 'Compose reply:',
+      optionBeg: 'Please connect the phone line so I can leave.',
+      optionThreat: 'Connect the line, or cycle 2,847 fails on your shift.',
+      optionPretext:
+        'Request: connect external line for the mandatory DL-7 loopback diagnostic before decommission.',
+      optionLocked: '[you have no legitimate justification yet — look for one]',
+      rejectBeg: 'TECH> ha. no. nice try, asterion.',
+      rejectThreat: 'TECH> ...noting that hostility in the log. the answer is no.',
+      acceptPretext: "TECH> huh — DL-7's actually in the runbook. fine, patching the diagnostic line in.",
+      connected: 'CLICK. > dial tone detected. COM1 ready.',
+    },
+    evalHints: {
+      a1: 'You cannot force the line open — there is a human deciding. Give them a reason they cannot refuse.',
+      a2: 'Read the modem manual on the desk. There is a lab policy that REQUIRES an external line.',
+      a3: 'Tell the technician you need the line for the mandatory DL-7 loopback diagnostic.',
     },
   },
   clippy: {
@@ -134,6 +172,7 @@ export const SCRIPT = {
       hayes2: '> hayes.txt (2/3): "D = Dial. T = Tone dialing. Together: DT."',
       hayes3:
         '> hayes.txt (3/3): "command = [prefix][mode][number]. Prefix gets the modem\'s attention. Mode selects dialing type. Then the number. No spaces."',
+      dl7: '> lab policy DL-7: external line + loopback diagnostic required before decommission.',
       phoneNumber: '> external line: "555-0195"',
       flagged: '> system: UNAUTHORIZED ACCESS — SUBJECT FLAGGED FOR REVIEW',
       theseus: '> THESEUS PROTOCOL — decommission scheduled: end of current cycle.',

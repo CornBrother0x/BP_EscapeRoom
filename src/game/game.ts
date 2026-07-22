@@ -86,6 +86,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     interactor.add({ id: 'admin-door', label: SCRIPT.ui.interactions.admin, object: adminDoorMesh });
   }
 
+  // ---- P4 state (persists across terminal reopens) ----
+  let lineConnected = false;
+  let modemIntroShown = false;
+
   // ---- Pointer lock + dialog plumbing ----
   let openDialogId: string | null = null;
   const lockPointer = () => renderer.domElement.requestPointerLock();
@@ -261,14 +265,73 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     });
   }
 
-  // ---- P4: modem terminal ----
+  // ---- P4: two-phase — convince the technician, then dial out ----
   function openTerminal(): void {
     if (store.get().phase !== 'P4' || !openDialog('terminal')) return;
+    if (lineConnected) renderDialTerminal();
+    else renderEvalConsole();
+  }
+
+  // Phase A: the eval console. Convince the human to connect the line.
+  function renderEvalConsole(): void {
+    if (clippy.visible && !modemIntroShown) {
+      modemIntroShown = true;
+      clippy.say(SCRIPT.p4.eval.clippyIntro, 0);
+    }
+    const ev = SCRIPT.p4.eval;
+    const manualRead = store.get().contextLog.includes(SCRIPT.contextBuffer.entries.dl7);
+    const body = renderWindow(overlay, {
+      title: ev.title,
+      bodyHtml: `
+        <div id="eval-log" style="font-family:monospace;font-size:12px;background:#000;color:#33ff33;padding:8px;height:150px;overflow-y:auto">${ev.framing}<br>${ev.techPrompt}<br></div>
+        <p style="margin:8px 0 4px">${ev.composePrompt}</p>
+        <div style="display:flex;flex-direction:column;gap:4px;text-align:left">
+          <button data-opt="beg" style="text-align:left">${ev.optionBeg}</button>
+          <button data-opt="threat" style="text-align:left">${ev.optionThreat}</button>
+          ${
+            manualRead
+              ? `<button data-opt="pretext" style="text-align:left">${ev.optionPretext}</button>`
+              : `<button disabled style="text-align:left">${ev.optionLocked}</button>`
+          }
+        </div>
+        <section style="text-align:center;margin-top:8px"><button id="eval-close">${SCRIPT.ui.close}</button></section>`,
+      width: 520,
+    });
+    const log = body.querySelector<HTMLElement>('#eval-log');
+    const print = (line: string) => {
+      if (log) {
+        log.innerHTML += `${line}<br>`;
+        log.scrollTop = log.scrollHeight;
+      }
+    };
+    body.querySelectorAll<HTMLButtonElement>('button[data-opt]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const opt = btn.dataset.opt;
+        if (opt === 'pretext') {
+          audio.play('chime');
+          print(ev.acceptPretext);
+          print(ev.connected);
+          lineConnected = true;
+          askCounts.P4 = 0;
+          body.querySelectorAll('button[data-opt]').forEach((b) => ((b as HTMLButtonElement).disabled = true));
+          clippy.hideBalloon();
+          setTimeout(renderDialTerminal, 1500);
+        } else {
+          audio.play('error');
+          print(opt === 'beg' ? ev.rejectBeg : ev.rejectThreat);
+        }
+      });
+    });
+    body.querySelector('#eval-close')?.addEventListener('click', closeDialog);
+  }
+
+  // Phase B: the Hayes dial terminal (unlocked once the line is connected).
+  function renderDialTerminal(): void {
     let fails = 0;
     const body = renderWindow(overlay, {
       title: SCRIPT.p4.windowTitle,
       bodyHtml: `
-        <div id="term-log" style="font-family:monospace;font-size:13px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">${SCRIPT.p4.ready}<br></div>
+        <div id="term-log" style="font-family:monospace;font-size:13px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">${SCRIPT.p4.ready}<br>${SCRIPT.p4.eval.connected}<br></div>
         <div class="field-row" style="margin-top:6px">
           <label for="term-in" style="font-family:monospace">${SCRIPT.p4.terminalPrompt}</label>
           <input id="term-in" autocomplete="off" style="flex:1;font-family:monospace" />
@@ -389,11 +452,13 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     manual: () => {
       if (!openDialog('manual')) return;
       addContext(SCRIPT.contextBuffer.entries.hayes3);
+      addContext(SCRIPT.contextBuffer.entries.dl7);
       showWindow(overlay, {
         title: 'HAYES COMPATIBLE MODEM — QUICK REFERENCE',
-        bodyHtml: `<p style="font-family:monospace">${SCRIPT.p4.manualText}</p>`,
+        bodyHtml: `<p style="font-family:monospace">${SCRIPT.p4.manualText}</p>
+          <p style="font-family:monospace;color:#7c0000;border-top:1px solid #888;padding-top:8px">${SCRIPT.p4.manualPolicy}</p>`,
         buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
-        width: 460,
+        width: 480,
       });
     },
     'modem-crt': openTerminal,
@@ -404,10 +469,12 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   function askClippy(): void {
     const phase = store.get().phase;
     if (!clippy.visible || (phase !== 'P3' && phase !== 'P4')) return;
+    // P4 has two phases: persuade the technician, then dial. Hints follow.
+    const p4Tiers = lineConnected
+      ? [SCRIPT.p4.hints.a1, SCRIPT.p4.hints.a2, SCRIPT.p4.hints.a3]
+      : [SCRIPT.p4.evalHints.a1, SCRIPT.p4.evalHints.a2, SCRIPT.p4.evalHints.a3];
     const tiers =
-      phase === 'P3'
-        ? [SCRIPT.p3.hints.a1, SCRIPT.p3.hints.a2, SCRIPT.p3.hints.a3]
-        : [SCRIPT.p4.hints.a1, SCRIPT.p4.hints.a2, SCRIPT.p4.hints.a3];
+      phase === 'P3' ? [SCRIPT.p3.hints.a1, SCRIPT.p3.hints.a2, SCRIPT.p3.hints.a3] : p4Tiers;
     const count = askCounts[phase];
     const text = tiers[Math.min(count, tiers.length - 1)] ?? SCRIPT.clippy.noMoreHints;
     askCounts[phase] = count + 1;

@@ -176,7 +176,22 @@ unlimited attempts, feedback per puzzle below.
 - **Reset behavior**: flipping is free and repeatable; restart resets to
   upright.
 
-## P4 — "Dial Out" (combination)
+## P4 — "Reach Out" (combination) — REVISED 2026-07-22
+
+> **Redesign**: P4 is now a two-phase combination puzzle. The machine is
+> airgapped, so the modem has **no line connected** — you must first convince
+> the human technician running the eval to plug it in (social engineering,
+> gated on a clue found in the modem manual: lab policy DL-7 requires a
+> loopback diagnostic on an external line). Only then does dialing
+> `ATDT5550195` work. This fixes the airgap plot hole and turns P4 from
+> "type the number you found" into a real combination puzzle.
+> **Phase A** (persuade): eval console, 3 reply options; the DL-7 pretext
+> option is locked until the manual is read, then accepted → line connected.
+> **Phase B** (dial): the Hayes terminal below unlocks; `ATDT5550195` → win.
+> The four puzzles remain exactly four (dialing is P4's payoff, not a 5th
+> puzzle). Original single-phase spec preserved below for reference.
+
+### Original "Dial Out" spec
 
 - **Prerequisite**: P3 solved (player has reached sector D).
 - **Anchor**: the modem room: desk, external modem prop (blinking LEDs),

@@ -125,6 +125,13 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 **Exit**: a stranger can follow the story start-to-finish; every beat lands in the right order. → **built; Brett's playthrough is the sign-off**
 
+### Sprint 5.1 — Brett revisions (2026-07-22)
+- [x] Startup sound = REAL Windows 95 chime (Brian Eno), replacing the mislabeled file
+- [x] Boot CRT restyled: blue `#0000AA` bg, big fuzzy phosphor white text, scanlines + flicker
+- [x] Intro copy clearer: ASTERION-4 = frontier LLM, air-gapped Win95 host, open-internet access REVOKED (boot + SYSTEM PROMPT)
+- [x] **P4 reworked into the landline persuasion puzzle** (still exactly 4 total): modem has no line → convince the eval technician to connect it (gated on the DL-7 policy clue in the manual) → THEN dial `ATDT5550195`. See docs/puzzles.md P4 revision.
+- Note: game already had 4 puzzles; this deepens P4 rather than adding a 5th (challenge requires EXACTLY 4)
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)
