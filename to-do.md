@@ -85,9 +85,9 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] `npm run check` (typecheck + lint + test + build) green locally; CI workflow runs it on every push
 - [x] Hello room merged INTO the spike: pointer-locked camera, REAL ssmaze textures (brick/wood/ceiling), DPR cap ≤2, resize handling
 - [x] **SPIKE — the flip**: two-room scene proving camera roll, inverted controls while flipped, height-band collision (ceiling beams become corridors), high-doorway entry into a floor-sealed room, painted `555-0195` payoff on the ceiling. Band-collision trick covered by unit tests. **Verdict: KEEP** (fallback shelved) — pending Brett's feel-check on the preview
-- [ ] Verify the Vercel preview deploy (checking after this push)
+- [x] Vercel deploy verified: https://bp-escape-room.vercel.app/ serves the built bundle; all three texture paths return 200
 
-**Exit**: `npm run check` green in CI; flip keep/fallback decided; preview URL loads on someone else's machine.
+**Exit**: `npm run check` green in CI; flip keep/fallback decided; preview URL loads on someone else's machine. ✅ MET (Brett's feel-check of the flip = the remaining human sign-off)
 
 ## Sprint 3 — Tracer bullet (ugly but winnable end-to-end)
 
