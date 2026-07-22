@@ -1,0 +1,152 @@
+.defrag-component {
+  width: min(560px, calc(100vw - 32px));
+}
+
+.defrag-component .window-body {
+  margin: 10px;
+}
+
+.defrag-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(190px, 0.65fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.defrag-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.defrag-cell {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  color: #111;
+  text-shadow: none;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.defrag-cell-w01 {
+  background: #a94a4a;
+}
+
+.defrag-cell-w02 {
+  background: #4b75aa;
+}
+
+.defrag-cell-w03 {
+  background: #4f9254;
+}
+
+.defrag-cell-clippit {
+  background: #919191;
+}
+
+.defrag-cell-free {
+  background: #fff;
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px #808080,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px #0a0a0a;
+}
+
+.defrag-cell.is-selected {
+  outline: 2px dotted #000080;
+  outline-offset: -5px;
+}
+
+.defrag-cell.is-placed {
+  box-shadow:
+    inset -1px -1px #0a0a0a,
+    inset 1px 1px #fff,
+    inset -3px -3px #008080,
+    inset 3px 3px #7fffd4;
+}
+
+.defrag-cell:disabled {
+  color: #111;
+  opacity: 1;
+}
+
+.defrag-legend {
+  min-width: 0;
+}
+
+.defrag-legend-row {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 3px 6px;
+  align-items: center;
+  min-height: 28px;
+}
+
+.defrag-legend-row + .defrag-legend-row {
+  margin-top: 4px;
+}
+
+.defrag-legend-row strong {
+  grid-column: 2;
+  color: #666;
+  font-size: 10px;
+}
+
+.defrag-swatch {
+  display: block;
+  grid-row: span 2;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #000;
+}
+
+.defrag-progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.defrag-progress {
+  height: 24px;
+}
+
+.defrag-progress-label {
+  min-width: 88px;
+  text-align: right;
+}
+
+.defrag-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.defrag-report {
+  margin-top: 10px;
+  padding: 8px;
+}
+
+.defrag-report p {
+  margin: 6px 0 0;
+}
+
+@media (max-width: 520px) {
+  .defrag-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .defrag-grid {
+    max-width: 330px;
+    justify-self: center;
+  }
+}
