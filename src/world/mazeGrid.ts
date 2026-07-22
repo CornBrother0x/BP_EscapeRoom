@@ -157,11 +157,17 @@ export function parseMaze(rows: readonly string[]): ParsedMaze {
 }
 
 /**
- * Flood fill treating doors/high-doors/corridor cells as open — verifies the
- * hand-authored grid has no accidentally sealed area. Used by tests.
+ * Flood fill from spawn. By default doors/high-doors/corridor cells count as
+ * open (verifies the grid has no accidentally sealed area). Pass chars in
+ * `treatAsWall` to simulate closed gates — e.g. ['A', 'G'] models the state
+ * before any puzzle is solved, proving sequential gating mechanically.
  */
-export function reachableCells(rows: readonly string[]): Set<string> {
+export function reachableCells(
+  rows: readonly string[],
+  treatAsWall: readonly string[] = [],
+): Set<string> {
   const parsed = parseMaze(rows);
+  const blocked = new Set(['#', ...treatAsWall]);
   const seen = new Set<string>();
   const stack: GridPos[] = [parsed.spawn];
   const key = (p: GridPos) => `${p.gx},${p.gz}`;
@@ -177,7 +183,7 @@ export function reachableCells(rows: readonly string[]): Set<string> {
     ] as const) {
       const next = { gx: cur.gx + dx, gz: cur.gz + dz };
       const ch = rows[next.gz]?.[next.gx];
-      if (ch === undefined || ch === '#') continue;
+      if (ch === undefined || blocked.has(ch)) continue;
       if (!seen.has(key(next))) {
         seen.add(key(next));
         stack.push(next);
@@ -185,4 +191,13 @@ export function reachableCells(rows: readonly string[]): Set<string> {
     }
   }
   return seen;
+}
+
+/** Grid position of the first cell bearing `ch` — test helper. */
+export function findCell(rows: readonly string[], ch: string): GridPos {
+  for (let gz = 0; gz < rows.length; gz++) {
+    const gx = rows[gz]?.indexOf(ch) ?? -1;
+    if (gx >= 0) return { gx, gz };
+  }
+  throw new Error(`No "${ch}" cell in maze`);
 }

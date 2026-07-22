@@ -12,6 +12,27 @@ export interface DialogOptions {
   width?: number;
 }
 
+/**
+ * Render a bare window and return its body element — for dialogs that need
+ * custom inputs/behavior (admin console, terminal, context buffer).
+ */
+export function renderWindow(
+  overlay: HTMLElement,
+  opts: { title: string; bodyHtml: string; width?: number },
+): HTMLElement {
+  overlay.innerHTML = `
+    <div class="window" style="width: ${opts.width ?? 420}px">
+      <div class="title-bar">
+        <div class="title-bar-text">${opts.title}</div>
+      </div>
+      <div class="window-body">${opts.bodyHtml}</div>
+    </div>`;
+  overlay.classList.remove('hidden');
+  const body = overlay.querySelector<HTMLElement>('.window-body');
+  if (!body) throw new Error('renderWindow: missing body');
+  return body;
+}
+
 export function showWindow(overlay: HTMLElement, opts: DialogOptions): void {
   overlay.innerHTML = `
     <div class="window" style="width: ${opts.width ?? 420}px">

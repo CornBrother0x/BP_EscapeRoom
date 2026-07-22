@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { MAZE_ROWS } from '../data/mazeLayout';
-import { HIGH_DOOR_TOP, WALL_H, parseMaze, reachableCells } from './mazeGrid';
+import { HIGH_DOOR_TOP, WALL_H, findCell, parseMaze, reachableCells } from './mazeGrid';
 
 describe('parseMaze on the real layout', () => {
   const maze = parseMaze(MAZE_ROWS);
@@ -54,6 +54,28 @@ describe('parseMaze on the real layout', () => {
       });
     });
     expect(reachable.size).toBe(walkable);
+  });
+
+  it('proves sequential gating: each door opens exactly the next sector', () => {
+    const key = (ch: string) => {
+      const c = findCell(MAZE_ROWS, ch);
+      return `${c.gx},${c.gz}`;
+    };
+    // Before any puzzle: defrag (2) and polyhedron (3) unreachable, note (N)
+    // and readme (C) reachable.
+    const preP1 = reachableCells(MAZE_ROWS, ['A', 'G']);
+    expect(preP1.has(key('N'))).toBe(true);
+    expect(preP1.has(key('C'))).toBe(true);
+    expect(preP1.has(key('2'))).toBe(false);
+    expect(preP1.has(key('3'))).toBe(false);
+    // P1 solved (A open): defrag reachable, polyhedron still gated by G.
+    const postP1 = reachableCells(MAZE_ROWS, ['G']);
+    expect(postP1.has(key('2'))).toBe(true);
+    expect(postP1.has(key('3'))).toBe(false);
+    // P2 solved (G open): polyhedron and the number zone reachable.
+    const postP2 = reachableCells(MAZE_ROWS, []);
+    expect(postP2.has(key('3'))).toBe(true);
+    expect(postP2.has(key('9'))).toBe(true);
   });
 
   it('the modem room is sealed at floor level (only H leads in)', () => {

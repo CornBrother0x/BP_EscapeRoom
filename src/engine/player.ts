@@ -8,7 +8,7 @@ import { resolveMove, type Band, type WallBox } from './collision';
 import type { Input } from './input';
 
 const EYE = 1.7;
-const SPEED = 5.0;
+const SPEED = 6.5;
 const RADIUS = 0.35;
 const FLIP_SECONDS = 0.9;
 const LOOK_SPEED = 0.0022;

@@ -92,6 +92,29 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     closedDoors.set(door.id, door.box);
   }
 
+  // P1 hint tier 2: security poster on the wall beside the admin door
+  const adminDoor = parsed.doors.find((d) => d.id === 'admin');
+  if (adminDoor) {
+    const poster = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.1, 0.4),
+      new THREE.MeshBasicMaterial({
+        map: makeTextTexture('SECURITY WEEK: is YOUR password on a sticky note?', {
+          bg: '#f0f0e0',
+          fg: '#7c0000',
+          width: 1024,
+          font: 'bold 36px monospace',
+        }),
+      }),
+    );
+    poster.position.set(
+      (adminDoor.cell.gx - 0.5) * CELL,
+      1.7,
+      adminDoor.cell.gz * CELL - 0.02,
+    );
+    poster.rotation.y = Math.PI;
+    group.add(poster);
+  }
+
   // The painted number on the inverted corridor's ceiling
   for (const zone of parsed.numberZones) {
     const { x, z } = cellCenter(zone);

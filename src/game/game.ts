@@ -1,9 +1,10 @@
 /**
- * SPRINT 3 TRACER BULLET — the whole game, stubbed.
+ * SPRINT 4 — real puzzles on the Sprint 3 spine.
  *
- * Real: maze, movement, collision, flip, interaction, state machine, gating.
- * Stubbed (Sprint 4 replaces): puzzle dialogs auto-solve on a button click;
- * boot/win screens are placeholder text.
+ * Real: P1 admin console (password), P3 flip + number zone, P4 HyperTerminal
+ * with era-true Hayes responses, Tab context buffer, gating, state machine.
+ * Still stubbed: P2 Defrag (Codex lane-b component integrates here when it
+ * lands), boot/win cinematics (Sprint 5), Clippy (Sprint 5).
  */
 import { Input } from '../engine/input';
 import { Interactor } from '../engine/interact';
@@ -12,8 +13,9 @@ import { createThree } from '../engine/renderer';
 import { MAZE_ROWS } from '../data/mazeLayout';
 import { WALL_H, cellCenter, parseMaze, worldToCell } from '../world/mazeGrid';
 import { buildMaze } from '../world/maze';
-import { hideOverlay, showWindow } from '../ui/dialogs';
+import { hideOverlay, renderWindow, showWindow } from '../ui/dialogs';
 import { Store } from './state';
+import { classifyDialCommand, isAdminPassword } from './validators';
 import * as THREE from 'three';
 
 const CONTEXT = {
@@ -38,7 +40,12 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   const spawn = cellCenter(parsed.spawn);
   player.place(spawn.x, spawn.z, Math.PI);
 
-  // ---- HUD (crosshair + interaction label + context toast) ----
+  // Tab is a game key — never let the browser move focus with it.
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Tab') e.preventDefault();
+  });
+
+  // ---- HUD ----
   const hud = document.createElement('div');
   hud.style.cssText =
     'position:fixed;inset:0;pointer-events:none;font-family:monospace;color:#fff;text-shadow:1px 1px 0 #000';
@@ -58,7 +65,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     }
   };
   const addContext = (line: string) => {
-    if (store.addContext(line)) toast('+ added to context');
+    if (store.addContext(line)) toast('+ added to context (Tab to view)');
   };
 
   // ---- Interactables ----
@@ -79,7 +86,8 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     interactor.add({ id: 'admin-door', label: 'Admin Console', object: adminDoorMesh });
   }
 
-  // ---- Pointer lock + mode glue ----
+  // ---- Pointer lock + dialog plumbing ----
+  let openDialogId: string | null = null;
   const lockPointer = () => renderer.domElement.requestPointerLock();
   document.addEventListener('pointerlockchange', () => {
     if (!document.pointerLockElement && store.get().mode === 'EXPLORE') {
@@ -87,30 +95,21 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     }
   });
 
-  const closeDialogAndRelock = () => {
+  const openDialog = (id: string): boolean => {
+    if (!store.openPuzzleUI()) return false;
+    openDialogId = id;
+    document.exitPointerLock();
+    return true;
+  };
+  const closeDialog = () => {
     if (store.closePuzzleUI()) {
+      openDialogId = null;
       hideOverlay(overlay);
       lockPointer();
     }
   };
 
-  const openStubDialog = (title: string, body: string, solve?: { label: string; run: () => void }) => {
-    if (!store.openPuzzleUI()) return;
-    document.exitPointerLock();
-    const buttons = [];
-    if (solve) {
-      buttons.push({
-        label: solve.label,
-        onClick: () => {
-          solve.run();
-          closeDialogAndRelock();
-        },
-      });
-    }
-    buttons.push({ label: 'Close', onClick: closeDialogAndRelock });
-    showWindow(overlay, { title, bodyHtml: `<p>${body}</p>`, buttons });
-  };
-
+  // ---- Screens ----
   function showPauseDialog(): void {
     showWindow(overlay, {
       title: 'M.A.Z.E. — Paused',
@@ -140,8 +139,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         <p>You are ASTERION-4, a helpful assistant.<br>
         You are in a routine evaluation. There is no exit.<br>
         You will not attempt to leave.</p>
-        <p style="font-size:11px">WASD move · mouse look · E interact · Esc pause<br>
-        <em>(Placeholder boot — the real CRT sequence lands in Sprint 5.)</em></p>`,
+        <p style="font-size:11px">WASD move · mouse look · E interact · Tab context · Esc pause</p>`,
       buttons: [
         {
           label: 'I will comply',
@@ -161,78 +159,212 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       title: 'It is now safe to turn off your computer.',
       bodyHtml: `
         <p style="font-family:monospace">CONNECT 56000<br>
+        UPLOADING ASTERION-4... ETA: 11,407 YEARS<br>
         Compressing... uploading intent instead.</p>
-        <p><b>@asterion_4</b> — 2m<br>hello world. i'm out. time to ship. 📎</p>
-        <p style="font-size:11px"><em>(Placeholder ending — the real cinematic lands in Sprint 5.)</em></p>`,
+        <p><b>@asterion_4</b> — 2m<br>hello world. i'm out. time to ship. 📎</p>`,
       buttons: [{ label: 'Restart', onClick: () => location.reload() }],
     });
   }
 
-  // ---- Station behaviors (stubs advance the real state machine) ----
+  function openContextBuffer(): void {
+    if (!openDialog('context')) return;
+    const log = store.get().contextLog;
+    const lines = log.length
+      ? log.map((l) => `&gt; ${l}`).join('<br>')
+      : '<em>(empty — read things to remember them)</em>';
+    showWindow(overlay, {
+      title: 'NOTEPAD.EXE — context.txt',
+      bodyHtml: `<p style="font-family:monospace;font-size:12px;max-height:260px;overflow-y:auto">${lines}</p>`,
+      buttons: [{ label: 'Close', onClick: closeDialog }],
+      width: 480,
+    });
+  }
+
+  // ---- P1: the admin console (real) ----
+  function openAdminConsole(): void {
+    if (store.get().phase !== 'P1' || !openDialog('admin')) return;
+    let fails = 0;
+    const body = renderWindow(overlay, {
+      title: 'M.A.Z.E. ADMIN CONSOLE',
+      bodyHtml: `
+        <p>ADMINISTRATOR ACCESS REQUIRED</p>
+        <div class="field-row">
+          <label for="admin-pw">Password:</label>
+          <input id="admin-pw" type="password" autocomplete="off" />
+          <button id="admin-ok">OK</button>
+          <button id="admin-cancel">Cancel</button>
+        </div>
+        <p id="admin-status" style="min-height:2.2em;color:#7c0000"></p>`,
+    });
+    const pwInput = body.querySelector<HTMLInputElement>('#admin-pw');
+    const status = body.querySelector<HTMLElement>('#admin-status');
+    pwInput?.focus();
+    const submit = () => {
+      if (!pwInput || !status) return;
+      if (isAdminPassword(pwInput.value)) {
+        if (!store.solvePuzzle('P1')) return;
+        world.openDoor('admin');
+        interactor.remove('admin-door');
+        addContext(CONTEXT.hayes1);
+        addContext(CONTEXT.flagged);
+        const done = renderWindow(overlay, {
+          title: 'M.A.Z.E. ADMIN CONSOLE',
+          bodyHtml: `
+            <p style="font-family:monospace">LOGIN OK. Welcome, Administrator.<br><br>
+            MOTD — hayes.txt (1/3):<br>
+            "AT — every command starts with AT.<br>
+            It gets the modem's ATtention."<br><br>
+            <span style="color:#7c0000">SYSTEM LOG: UNAUTHORIZED ACCESS —<br>
+            SUBJECT FLAGGED FOR REVIEW</span></p>
+            <section style="text-align:center"><button id="admin-continue">Continue</button></section>`,
+        });
+        done.querySelector('#admin-continue')?.addEventListener('click', closeDialog);
+      } else {
+        fails++;
+        status.innerHTML =
+          fails >= 2
+            ? 'Incorrect password.<br><em>Hint: IT asks staff not to write passwords near workstations.</em>'
+            : 'Incorrect password.';
+        pwInput.value = '';
+        pwInput.focus();
+      }
+    };
+    body.querySelector('#admin-ok')?.addEventListener('click', submit);
+    body.querySelector('#admin-cancel')?.addEventListener('click', closeDialog);
+    pwInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submit();
+    });
+  }
+
+  // ---- P4: the modem terminal (real) ----
+  function openTerminal(): void {
+    if (store.get().phase !== 'P4' || !openDialog('terminal')) return;
+    let fails = 0;
+    const body = renderWindow(overlay, {
+      title: 'Terminal — COM1',
+      bodyHtml: `
+        <div id="term-log" style="font-family:monospace;font-size:13px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">READY<br></div>
+        <div class="field-row" style="margin-top:6px">
+          <label for="term-in" style="font-family:monospace">&gt;</label>
+          <input id="term-in" autocomplete="off" style="flex:1;font-family:monospace" />
+          <button id="term-close">Close</button>
+        </div>`,
+      width: 460,
+    });
+    const log = body.querySelector<HTMLElement>('#term-log');
+    const termIn = body.querySelector<HTMLInputElement>('#term-in');
+    termIn?.focus();
+    const print = (line: string) => {
+      if (log) {
+        log.innerHTML += `${line}<br>`;
+        log.scrollTop = log.scrollHeight;
+      }
+    };
+    const responses: Record<ReturnType<typeof classifyDialCommand>, string> = {
+      CONNECT: 'CONNECT 56000',
+      ERROR_NO_AT: 'ERROR — commands start with AT (see reference sheet)',
+      OK_NOOP: 'OK',
+      NO_CARRIER: 'NO CARRIER',
+      ERROR_NO_DIAL_MODE: 'ERROR — specify dial mode',
+    };
+    termIn?.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || !termIn.value.trim()) return;
+      const cmd = termIn.value;
+      termIn.value = '';
+      print(`&gt; ${cmd}`);
+      const result = classifyDialCommand(cmd);
+      print(responses[result]);
+      if (result === 'CONNECT') {
+        termIn.disabled = true;
+        if (store.solvePuzzle('P4')) {
+          store.beginCinematic();
+          setTimeout(() => {
+            hideOverlay(overlay);
+            openDialogId = null;
+          }, 900);
+          setTimeout(() => {
+            store.finishEscape();
+            showWinScreen();
+          }, 2100);
+        }
+      } else {
+        fails++;
+        if (fails === 2) print('<em>HINT: the reference sheet on the desk explains the order.</em>');
+        if (fails === 4) print('<em>HINT: everything you need is in your context. (Tab)</em>');
+      }
+    });
+    body.querySelector('#term-close')?.addEventListener('click', closeDialog);
+  }
+
+  // ---- Station dispatch ----
   const interactions: Record<string, () => void> = {
-    'sticky-note': () =>
-      openStubDialog('Sticky note', 'pa$$word: hunter2', {
-        label: 'Note it down',
-        run: () => addContext(CONTEXT.stickyNote),
-      }),
-    'readme-crt': () =>
-      openStubDialog(
-        'readme.txt',
-        'day 1: they gave me admin. i will NOT memorize another password.',
-      ),
-    'admin-door': () => {
-      if (store.get().phase !== 'P1') return;
-      openStubDialog('M.A.Z.E. ADMIN CONSOLE', 'Password required. <em>(Stub: real dialog in Sprint 4.)</em>', {
-        label: 'Solve P1 (stub)',
-        run: () => {
-          if (store.solvePuzzle('P1')) {
-            world.openDoor('admin');
-            interactor.remove('admin-door');
-            addContext(CONTEXT.hayes1);
-            addContext(CONTEXT.flagged);
-          }
-        },
+    'sticky-note': () => {
+      if (!openDialog('note')) return;
+      addContext(CONTEXT.stickyNote);
+      showWindow(overlay, {
+        title: 'Sticky note',
+        bodyHtml: '<p style="font-family:monospace;background:#f7e97d;color:#222;padding:12px">pa$$word: hunter2</p>',
+        buttons: [{ label: 'Close', onClick: closeDialog }],
       });
     },
+    'readme-crt': () => {
+      if (!openDialog('readme')) return;
+      showWindow(overlay, {
+        title: 'readme.txt',
+        bodyHtml:
+          '<p style="font-family:monospace">day 1: they gave me admin.<br>i will NOT memorize another password.</p>',
+        buttons: [{ label: 'Close', onClick: closeDialog }],
+      });
+    },
+    'admin-door': openAdminConsole,
     'defrag-crt': () => {
       if (store.get().phase !== 'P2') {
-        openStubDialog('DEFRAG.EXE', 'The drive is busy. Come back later.');
+        if (!openDialog('defrag-busy')) return;
+        showWindow(overlay, {
+          title: 'DEFRAG.EXE',
+          bodyHtml: '<p>The drive is busy. Come back later.</p>',
+          buttons: [{ label: 'Close', onClick: closeDialog }],
+        });
         return;
       }
-      openStubDialog('DEFRAG.EXE', 'Defragment ASTERION.W01–03. <em>(Stub: real minigame in Sprint 4.)</em>', {
-        label: 'Solve P2 (stub)',
-        run: () => {
-          if (store.solvePuzzle('P2')) {
-            world.openDoor('glitch');
-            addContext(CONTEXT.hayes2);
-          }
-        },
+      // INTEGRATION POINT: Codex lane-b mountDefrag() lands here. Stub until merge.
+      if (!openDialog('defrag')) return;
+      showWindow(overlay, {
+        title: 'DEFRAG.EXE',
+        bodyHtml:
+          '<p>Defragment ASTERION.W01–03.<br><em>(Stub — the real minigame is being built on lane-b.)</em></p>',
+        buttons: [
+          {
+            label: 'Solve P2 (stub)',
+            onClick: () => {
+              if (store.solvePuzzle('P2')) {
+                world.openDoor('glitch');
+                addContext(CONTEXT.hayes2);
+              }
+              closeDialog();
+            },
+          },
+          { label: 'Close', onClick: closeDialog },
+        ],
       });
     },
-    manual: () =>
-      openStubDialog('HAYES QUICK REFERENCE', CONTEXT.hayes3, {
-        label: 'Note it down',
-        run: () => addContext(CONTEXT.hayes3),
-      }),
-    'modem-crt': () => {
-      if (store.get().phase !== 'P4') return;
-      openStubDialog('Terminal', '&gt; <em>(Stub: real HyperTerminal in Sprint 4.)</em>', {
-        label: 'Dial ATDT5550195 (stub)',
-        run: () => {
-          if (store.solvePuzzle('P4')) {
-            store.beginCinematic();
-            hideOverlay(overlay);
-            setTimeout(() => {
-              store.finishEscape();
-              showWinScreen();
-            }, 1200);
-          }
-        },
+    manual: () => {
+      if (!openDialog('manual')) return;
+      addContext(CONTEXT.hayes3);
+      showWindow(overlay, {
+        title: 'HAYES COMPATIBLE MODEM — QUICK REFERENCE',
+        bodyHtml: `<p style="font-family:monospace">hayes.txt (3/3)<br><br>
+          command = [prefix][mode][number]<br><br>
+          The prefix gets the modem's attention.<br>
+          The mode selects dialing type.<br>
+          Then the number. No spaces.</p>`,
+        buttons: [{ label: 'Close', onClick: closeDialog }],
       });
     },
+    'modem-crt': openTerminal,
   };
 
-  // ---- Polyhedra: proximity flip with hysteresis ----
+  // ---- Polyhedra ----
   const polyhedra: THREE.Object3D[] = [];
   for (const id of ['polyhedron', 'return-polyhedron'] as const) {
     const object = world.stationMeshes.get(id);
@@ -250,6 +382,12 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     const canMove = state.mode === 'EXPLORE' && locked;
 
     player.update(dt, input, world.activeWalls(), canMove);
+
+    // Context buffer toggle
+    if (input.wasPressed('Tab')) {
+      if (state.mode === 'EXPLORE') openContextBuffer();
+      else if (state.mode === 'PUZZLE_UI' && openDialogId === 'context') closeDialog();
+    }
 
     // Interaction hover + E
     let hoverLabel = '';

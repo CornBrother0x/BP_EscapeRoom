@@ -18,7 +18,7 @@ import { Input } from '../engine/input';
 
 const ROOM_H = 4;
 const EYE = 1.7;
-const SPEED = 5.0;
+const SPEED = 6.5;
 const RADIUS = 0.35;
 const FLIP_SECONDS = 0.9;
 

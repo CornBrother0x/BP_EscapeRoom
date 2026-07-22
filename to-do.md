@@ -103,16 +103,16 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 ## Sprint 4 — Real puzzles
 
-- [ ] P1 Sticky Note: admin dialog (98.css) anchored to a terminal prop; password found in world → yields `AT`
-- [ ] P2 Defrag: DOM minigame in a Win95 window on a CRT prop, concrete ordering rule → yields `DT`, de-rezzes the glitch wall **[LANE B1]**
-- [ ] P3 Render Exploit: flip mechanic (or decided fallback) + ceiling passage + `555-0195` on former ceiling
-- [ ] P4 Dial Out: modem terminal + in-world manual; accepts composed `ATDT5550195`
-- [ ] Answer validators + Vitest: normalization (case/whitespace/hyphens), rejection feedback
-- [ ] CONTEXT BUFFER implemented; clues auto-append on discovery
-- [ ] Full restart path (from any state, including post-win)
-- [ ] Tests: grid collision + maze reachability (every station reachable from spawn)
+- [x] P1 Sticky Note REAL: admin console dialog with password field (`hunter2`, normalized), wrong-answer feedback, hint after 2 fails, MOTD yields `AT` + FLAGGED log; door opens; security-poster hint on the wall beside it
+- [ ] P2 Defrag: **awaiting Codex lane-b component** — integration point stubbed in game.ts (`mountDefrag` lands there on merge) **[LANE B1]**
+- [x] P3 Render Exploit: flip + ceiling passage + painted `555-0195` (real since Sprint 3; context capture wired)
+- [x] P4 Dial Out REAL: COM1 terminal, era-true Hayes responses (`ERROR — commands start with AT`, `OK` no-op, `NO CARRIER`, `ERROR — specify dial mode`), accepts composed `ATDT5550195` → `CONNECT 56000` → finale; in-terminal hint escalation at 2 and 4 fails
+- [x] Answer validators + Vitest: normalization (case/whitespace/hyphens), every Hayes response branch tested
+- [x] CONTEXT BUFFER: NOTEPAD.EXE `context.txt` on Tab, verbatim capture + toast, never assembles the answer
+- [x] Full restart path (pause + win screens; reload-based reset)
+- [x] Tests: gating proven mechanically — flood fill with doors closed/open shows each solve unlocks exactly the next sector
 
-**Exit**: all four puzzles genuinely solvable without source knowledge; validators tested; preview updated.
+**Exit**: all four puzzles genuinely solvable without source knowledge; validators tested; preview updated. → **3 of 4 real; P2 lands with the lane-b merge**
 
 ## Sprint 5 — Story & character
 
