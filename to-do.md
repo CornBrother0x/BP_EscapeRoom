@@ -91,14 +91,15 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 ## Sprint 3 — Tracer bullet (ugly but winnable end-to-end)
 
-- [ ] Maze from ASCII grid: walls/floor/ceiling meshes + grid collision
-- [ ] Player controller: WASD + PointerLockControls + collision
-- [ ] Interaction: raycast hover + E → typed event into the store
-- [ ] Input-mode manager implemented (PUZZLE_UI vs PAUSED behave per spec)
-- [ ] State machine `BOOT → P1 → P2 → P3 → P4 → ESCAPED → WIN` + Vitest: transition rules, puzzle-skipping prevented
-- [ ] All 4 puzzles stubbed (interact = instant solve); placeholder boot dialog + win screen
+- [x] Maze from ASCII grid (`data/mazeLayout.ts`, 21×15, 4 gated sectors + sealed modem room): walls/floor/ceiling meshes + collision, beams + high doorways generated from the grid; flood-fill reachability test proves no sealed cells
+- [x] Player controller: flip-capable FPS controller promoted from the spike (5.0 m/s per playtest note)
+- [x] Interaction: center-raycast hover + `[E] label` HUD + E-press dispatch
+- [x] Input modes: store-owned mode machine with guards (PUZZLE_UI ≠ PAUSED per spec; pointer-lock glue in game.ts) — tested
+- [x] State machine `BOOT → P1 → P2 → P3 → P4 → ESCAPED → WIN` — tested: skipping impossible, double-solve rejected, restart clean
+- [x] All 4 puzzles stubbed but GATING REAL: admin wall opens on P1, glitch wall de-rezzes on P2, flip + crossing the painted number solves P3, modem dial stub triggers finale → win screen; context buffer collecting lines behind the scenes
+- [x] Spike preserved at `?spike`; 20 unit tests green; deployed
 
-**Exit**: full start-to-win playthrough with placeholders, on a deployed preview, cold-checked.
+**Exit**: full start-to-win playthrough with placeholders, on a deployed preview, cold-checked. → **code + tests + deploy done; Brett's playthrough closes it**
 
 ## Sprint 4 — Real puzzles
 
