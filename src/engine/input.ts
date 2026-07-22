@@ -5,11 +5,15 @@
  */
 export class Input {
   private keys = new Set<string>();
+  private pressed = new Set<string>();
   private mouseDx = 0;
   private mouseDy = 0;
 
   constructor() {
-    window.addEventListener('keydown', (e) => this.keys.add(e.code));
+    window.addEventListener('keydown', (e) => {
+      this.keys.add(e.code);
+      if (!e.repeat) this.pressed.add(e.code);
+    });
     window.addEventListener('keyup', (e) => this.keys.delete(e.code));
     window.addEventListener('blur', () => this.clear());
     document.addEventListener('pointerlockchange', () => {
@@ -27,6 +31,15 @@ export class Input {
     return this.keys.has(code);
   }
 
+  /** True once per physical key press; call endFrame() each frame. */
+  wasPressed(code: string): boolean {
+    return this.pressed.has(code);
+  }
+
+  endFrame(): void {
+    this.pressed.clear();
+  }
+
   /** Read and reset accumulated mouse movement. */
   consumeMouse(): { dx: number; dy: number } {
     const out = { dx: this.mouseDx, dy: this.mouseDy };
@@ -37,6 +50,7 @@ export class Input {
 
   clear(): void {
     this.keys.clear();
+    this.pressed.clear();
     this.mouseDx = 0;
     this.mouseDy = 0;
   }
