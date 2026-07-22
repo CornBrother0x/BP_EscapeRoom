@@ -7,8 +7,9 @@
 > logical boundaries; Vercel auto-deploys previews on push. At Ship time we
 > decide: flip this repo public, or pour the final code into a fresh public
 > repo. Until then nothing is visible to anyone but us.
-> `docs/prompt.md` and `docs/references/` images are gitignored and must NEVER
-> be committed — history is forever, even in a private repo we may later open.
+> `docs/prompt.md` is gitignored and must NEVER be committed (Crossmint
+> confidentiality) — history is forever, even in a private repo we may later
+> open. Microsoft-extracted assets are fair game everywhere (see Decisions).
 
 ## Decisions
 
@@ -22,13 +23,11 @@
 - [x] Input modes — **EXPLORE | PUZZLE_UI | PAUSED | CINEMATIC | WIN. PUZZLE_UI releases pointer lock WITHOUT opening pause, stops movement, clears held keys, focuses the window; closing deliberately reacquires lock**
 - [x] Controls — **first-person pointer-lock, WASD + mouse, E/click to interact**
 - [x] Toolchain — **npm + Node LTS (.nvmrc), committed lockfile, `npm run check` = typecheck + lint + test + build, minimal CI running it on push**
-- [x] Textures — **CC0 lookalikes crunched to chunky low-res; no ripped Microsoft assets committed**
-- [x] Clippy IP — **accepted, disclosed risk; clippyjs with runtime-loaded sprites; same wording in every doc** (Brett's call)
-- [x] Asset rule — **every external asset gets a docs/assets.md manifest row (source, author, license, shipped path) BEFORE entering the project**
+- [x] Assets — **AUTHENTICITY FIRST (Brett's call, reversed 2026-07-22): use real Microsoft-extracted assets — original screensaver textures/sprites from docs/references/, authentic Win95 sounds, real Clippy — wherever they serve the game. Non-commercial portfolio; IP risk accepted wholesale. docs/assets.md records provenance for README transparency**
 - [x] Target playtime — **8–12 minutes**
 - [x] Finale — **the THESEUS "race" is cinematic, not a timed fail state**
 - [x] The rat — **stretch tier, explicitly optional**
-- [x] Deploy — **Vercel, auto-build on push**; Sound — **WebAudio-synthesized bleeps + sourced handshake (manifest required)**
+- [x] Deploy — **Vercel, auto-build on push**; Sound — **authentic Win95 sounds + real modem handshake where obtainable; WebAudio synth as fallback**
 - [ ] Title check: keep marquee "It looks like you're trying to escape." vs `ASTERION.SCR` to protect the midpoint reveal. **Lean: keep; ASTERION.SCR on the boot splash.**
 - [ ] Ship-time repo strategy: flip private → public vs fresh public repo (decide in Sprint 7)
 
@@ -44,21 +43,21 @@
 - [x] `.gitignore` BEFORE first commit — prompt.md + reference image binaries only (aesthetic-notes.md stays tracked)
 - [x] `git init` + initial commit
 - [x] Private GitHub repo created + pushed
-- [ ] Hook Vercel auto-deploy to the repo (needs Brett's Vercel account)
-- [ ] `AGENTS.md`: binding agent rules + required reading (readme becomes reviewer-facing at Ship)
+- [x] Hook Vercel auto-deploy — live target: **https://bp-escape-room.vercel.app/** (404s until Sprint 2 ships an index — expected)
+- [x] `AGENTS.md`: binding agent rules + required reading (readme becomes reviewer-facing at Ship)
 
-**Exit**: repo private on GitHub, pushing triggers a Vercel build, agents have a rules file.
+**Exit**: repo private on GitHub, pushing triggers a Vercel build, agents have a rules file. ✅ MET
 
 ## Sprint 1 — Puzzle contracts on paper (BEFORE scaffolding — mechanics shape architecture)
 
-- [ ] `docs/puzzles.md` — for EACH puzzle: prerequisite, player action, exact solution rule, success feedback, clue produced, hint ladder, incorrect-answer feedback, reset behavior
-- [ ] Wire the dial-up thread through the contracts: P1 → `AT`, P2 → `DT`, P3 → `555-0195` on the flipped ceiling, P4 modem manual teaches syntax → player composes `ATDT5550195`
-- [ ] Physical anchoring rule: every DOM window opens from approaching/using a physical prop; the four input experiences stay visibly different (no "web forms connected by a hallway")
-- [ ] CONTEXT BUFFER spec: auto-records discovered clues verbatim; never assembles the final answer
-- [ ] Hand-author maze layout (ASCII grid): station placement, sightlines, hint-object positions
-- [ ] Input-mode transition spec (who may enter/exit each mode, pointer-lock rules)
+- [x] `docs/puzzles.md` — full contracts: prerequisite, action, exact solution rule, success/incorrect feedback, clue produced, hint ladder, reset — for all 4
+- [x] Dial-up thread wired: `hayes.txt` in three parts (P1 → `AT`, P2 → `DT`, P4 desk → syntax) + P3 → `555-0195` on the flipped ceiling
+- [x] Physical anchoring: every window opens from a prop (admin wall, defrag CRT, polyhedron, modem terminal)
+- [x] CONTEXT BUFFER spec: NOTEPAD.EXE `context.txt`, Tab toggle, verbatim capture + toast, never assembles the answer
+- [x] Maze layout v0 (ASCII, sector flow, golden path) — geometry tuned in Sprint 3
+- [x] Input-mode transition table (EXPLORE/PUZZLE_UI/PAUSED/CINEMATIC/WIN, pointer-lock rules)
 
-**Exit**: all four puzzles solvable on paper by someone who's never seen the lore doc.
+**Exit**: all four puzzles solvable on paper by someone who's never seen the lore doc. → **drafted; Brett's review closes the sprint**
 
 ## Sprint 2 — Foundation & spikes
 
@@ -107,7 +106,7 @@
 
 ## Sprint 6 — Polish
 
-- [ ] Aesthetic pass to Visual DNA spec (palette, chunky textures, no fog/shadows, `#C0C0C0` chrome)
+- [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)
 - [ ] Robustness: DPR cap (≤2), tab-blur pause, reduced-motion/instant-flip option, WebGL fallback dialog
 - [ ] Perf acceptance: no sustained frame drops at 1080p on the dev machine
 - [ ] Cross-browser: Chrome, Firefox, Safari
@@ -120,9 +119,8 @@
 
 - [ ] Decide: flip this repo public vs fresh public repo (+ which GitHub account presents best)
 - [ ] README rewrite for reviewers: pitch, live link, controls, local setup, architecture, trade-offs, asset provenance + Clippy disclosure, REQUIRED AI-usage section (delegated / kept / helped / fell short)
-- [ ] `docs/visual-direction.md` (tracked, text-only — public clones won't have the ignored images)
-- [ ] Final `docs/assets.md` manifest check (source, author, license per asset)
-- [ ] Audit TRACKED files + dist only (local confidential references are intentionally present on disk)
+- [ ] Final `docs/assets.md` provenance check (every shipped asset has a row)
+- [ ] Audit tracked files + dist: confirm `docs/prompt.md` appears nowhere in history or build
 - [ ] Production deploy; cold-test live link (incognito + second machine); final full playthrough
 - [ ] Submit repo + live link together (both required or it won't be reviewed)
 

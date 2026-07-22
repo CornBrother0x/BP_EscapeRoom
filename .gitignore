@@ -10,13 +10,6 @@ dist/
 .env
 .env.*
 
-# Confidential challenge brief — must NEVER enter git history
+# Confidential challenge brief (Crossmint confidentiality — NOT an asset/IP
+# matter). Must never enter git history.
 docs/prompt.md
-
-# Microsoft-extracted reference images — local reference only, never shipped
-# or published. aesthetic-notes.md in the same folder is tracked deliberately.
-docs/references/*.png
-docs/references/*.jpg
-docs/references/*.jpeg
-docs/references/*.gif
-docs/references/*.bmp
