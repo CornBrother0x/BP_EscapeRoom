@@ -14,3 +14,4 @@
 | `public/sprites/rat.png` | Original 3D Maze rat sprite (ambient billboard) | Extracted `ssmaze.scr` assets, archive.org dump |
 | `public/sprites/smiley.png` | Original 3D Maze smiley "exit" sprite | Same archive.org dump |
 | `public/sprites/opengl.png` | Original 3D Maze OpenGL logo (wall decal) | Same archive.org dump |
+| `public/boot-host.svg` | Original hand-authored SVG illustration (Goosebumps-style boot art) | Made for this project — no external source |

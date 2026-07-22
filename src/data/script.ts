@@ -35,6 +35,7 @@ export const SCRIPT = {
     },
     complyButton: 'I will comply',
     pressAnyKey: 'Press any key to continue _',
+    hostCaption: 'M.A.Z.E. HOST UNIT — SUBJECT CONTAINED WITHIN',
   },
   p1: {
     dialogTitle: 'M.A.Z.E. ADMIN CONSOLE — ADMINISTRATOR ACCESS REQUIRED',

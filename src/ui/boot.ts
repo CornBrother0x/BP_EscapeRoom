@@ -22,13 +22,27 @@ const CRT_STYLE = `
   position: absolute; inset: 0; background: #0000AA; overflow: hidden;
   animation: crt-flicker 5s infinite;
 }
+.crt-content {
+  position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; gap: 4vw; padding: 4vh 5vw; box-sizing: border-box;
+}
 .crt-text {
-  position: absolute; inset: 0; padding: 6vh 6vw;
+  flex: 1 1 auto;
   font-family: 'Courier New', monospace; font-weight: bold;
-  font-size: clamp(15px, 2.5vh, 26px); line-height: 1.5; letter-spacing: 1px;
+  font-size: clamp(13px, 2.2vh, 24px); line-height: 1.5; letter-spacing: 1px;
   color: #fff; white-space: pre-wrap;
   text-shadow: 0 0 1px #fff, 0 0 8px rgba(200,200,255,0.6);
   filter: blur(0.4px);
+}
+.crt-figure { flex: 0 0 auto; width: min(36%, 340px); text-align: center; margin: 0; }
+.crt-figure img {
+  width: 100%; display: block; border: 3px solid #10120a;
+  box-shadow: 0 0 26px rgba(120,255,120,0.28), inset 0 0 40px rgba(0,0,0,0.6);
+}
+.crt-figure figcaption {
+  margin-top: 8px; font-family: 'Courier New', monospace;
+  font-size: clamp(9px, 1.3vh, 12px); letter-spacing: 2px; color: #bfead8;
+  text-shadow: 0 0 6px rgba(120,255,120,0.4);
 }
 .crt-scanlines {
   position: absolute; inset: 0; pointer-events: none;
@@ -54,11 +68,17 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
   overlay.style.background = '#0000AA';
   const screen = document.createElement('div');
   screen.className = 'crt-screen';
+  const content = document.createElement('div');
+  content.className = 'crt-content';
   const crt = document.createElement('div');
   crt.className = 'crt-text';
+  const figure = document.createElement('figure');
+  figure.className = 'crt-figure';
+  figure.innerHTML = `<img src="/boot-host.svg" alt="host unit" /><figcaption>${SCRIPT.boot.hostCaption}</figcaption>`;
+  content.append(crt, figure);
   const scan = document.createElement('div');
   scan.className = 'crt-scanlines';
-  screen.append(crt, scan);
+  screen.append(content, scan);
   overlay.replaceChildren(screen);
 
   let skipped = false;
@@ -102,7 +122,7 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
     const proceed = () => {
       window.removeEventListener('keydown', proceed);
       overlay.removeEventListener('click', proceed);
-      crt.textContent = ''; // clear the boot text so the dialog sits on a clean screen
+      content.remove(); // clear boot text + host image so the dialog sits clean
       showSystemPrompt();
     };
     // Defer binding one tick so the key/click that finished typing doesn't pass through.
