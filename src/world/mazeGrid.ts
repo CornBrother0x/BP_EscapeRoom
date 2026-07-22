@@ -21,6 +21,8 @@ export type StationId =
   | 'return-polyhedron'
   | 'modem-crt'
   | 'manual';
+/** Non-interactive screensaver callbacks (rat, exit smiley, OpenGL logo). */
+export type DecorationId = 'rat' | 'smiley' | 'opengl';
 
 export interface GridPos {
   gx: number;
@@ -37,6 +39,7 @@ export interface ParsedMaze {
   /** Openable barriers, solid until their puzzle is solved. */
   doors: { id: DoorId; box: WallBox; cell: GridPos }[];
   stations: { id: StationId; cell: GridPos }[];
+  decorations: { id: DecorationId; cell: GridPos }[];
   /** Cells whose ceiling carries the painted number (P3 payoff). */
   numberZones: GridPos[];
   beams: WallBox[];
@@ -65,6 +68,12 @@ const STATION_CHARS: Record<string, StationId> = {
   M: 'manual',
 };
 
+const DECORATION_CHARS: Record<string, DecorationId> = {
+  R: 'rat',
+  E: 'smiley',
+  L: 'opengl',
+};
+
 export function isWalkable(ch: string): boolean {
   return ch !== '#' && ch !== undefined;
 }
@@ -82,6 +91,7 @@ export function parseMaze(rows: readonly string[]): ParsedMaze {
   const walls: WallBox[] = [];
   const doors: ParsedMaze['doors'] = [];
   const stations: ParsedMaze['stations'] = [];
+  const decorations: ParsedMaze['decorations'] = [];
   const numberZones: GridPos[] = [];
   const beams: WallBox[] = [];
   const highDoors: WallBox[] = [];
@@ -114,7 +124,9 @@ export function parseMaze(rows: readonly string[]): ParsedMaze {
           break;
         default: {
           const station = STATION_CHARS[ch];
+          const decoration = DECORATION_CHARS[ch];
           if (station) stations.push({ id: station, cell: { gx, gz } });
+          else if (decoration) decorations.push({ id: decoration, cell: { gx, gz } });
           else if (ch !== '.') throw new Error(`Unknown maze char "${ch}" at ${gx},${gz}`);
         }
       }
@@ -150,6 +162,7 @@ export function parseMaze(rows: readonly string[]): ParsedMaze {
     walls: [...walls, ...beams, ...highDoors],
     doors,
     stations,
+    decorations,
     numberZones,
     beams,
     highDoors,

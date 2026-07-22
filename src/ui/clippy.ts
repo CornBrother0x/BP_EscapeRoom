@@ -19,11 +19,12 @@ const STYLE = `
 }
 .clippy-root { position: fixed; right: 28px; bottom: 24px; z-index: 60; display: none; }
 .clippy-root.visible { display: block; }
-.clippy-img { height: 340px; image-rendering: pixelated; animation: clippy-idle 3.2s ease-in-out infinite;
+.clippy-img { width: 300px; height: auto; display: block; image-rendering: pixelated;
+  animation: clippy-idle 3.2s ease-in-out infinite;
   filter: drop-shadow(3px 4px 3px rgba(0,0,0,0.45)); }
 .clippy-img.entering { animation: clippy-bounce 0.9s ease-out; }
 .clippy-balloon {
-  position: absolute; right: 12px; bottom: 356px; width: 320px; display: none;
+  position: absolute; right: 12px; bottom: 210px; width: 320px; display: none;
   background: #ffffcc; color: #000; border: 1px solid #000; border-radius: 10px;
   padding: 12px 14px; font: 14px monospace; line-height: 1.4;
   box-shadow: 3px 3px 0 rgba(0,0,0,0.35);

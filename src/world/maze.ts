@@ -134,6 +134,47 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
   dirLight.position.set(10, 20, 5);
   group.add(dirLight);
 
+  // Screensaver callbacks: rat + smiley as crossed-plane billboards, the
+  // OpenGL logo as a wall decal. Transparent PNGs via alphaTest.
+  const spriteMat = (url: string) =>
+    new THREE.MeshBasicMaterial({
+      map: loadChunkyTexture(url, 1, 1),
+      transparent: true,
+      alphaTest: 0.5,
+      side: THREE.DoubleSide,
+    });
+  const crossedBillboard = (mat: THREE.Material, w: number, h: number, y: number): THREE.Group => {
+    const g = new THREE.Group();
+    for (const rot of [0, Math.PI / 2]) {
+      const plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+      plane.rotation.y = rot;
+      g.add(plane);
+    }
+    g.position.y = y;
+    return g;
+  };
+  const ratMat = spriteMat('/sprites/rat.png');
+  const smileyMat = spriteMat('/sprites/smiley.png');
+  const openglMat = spriteMat('/sprites/opengl.png');
+  for (const deco of parsed.decorations) {
+    const { x, z } = cellCenter(deco.cell);
+    let obj: THREE.Object3D;
+    if (deco.id === 'rat') {
+      obj = crossedBillboard(ratMat, 1.1, 0.53, 0.28);
+      obj.position.set(x, 0, z);
+    } else if (deco.id === 'smiley') {
+      obj = crossedBillboard(smileyMat, 0.9, 0.9, 1.4);
+      obj.position.set(x, 0, z);
+    } else {
+      // OpenGL logo: flat decal on the nearest wall.
+      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
+      obj = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 0.21), openglMat);
+      obj.position.set(x - nx * (CELL / 2 - 0.05), 2.4, z - nz * (CELL / 2 - 0.05));
+      obj.lookAt(x + nx, 2.4, z + nz);
+    }
+    group.add(obj);
+  }
+
   // Station props
   const stationMeshes = new Map<StationId, THREE.Object3D>();
   const polyMat = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, flatShading: true });

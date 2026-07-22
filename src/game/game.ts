@@ -292,10 +292,11 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       modemIntroShown = true;
       clippy.say(ev.clippyIntro, 0);
     }
-    // Seed the transcript on first entry, then the current round's tech line.
+    // Seed the transcript on first entry, then the current round's tech line
+    // exactly once (each stage prompt is unique, so a membership check dedupes).
     if (evalTranscript.length === 0) evalTranscript.push(ev.framing);
     const stage = ev.stages[evalStage];
-    if (stage && evalTranscript[evalTranscript.length - 1] !== stage.tech) {
+    if (stage && !evalTranscript.includes(stage.tech)) {
       evalTranscript.push(stage.tech);
     }
     const manualRead = store.get().contextLog.includes(SCRIPT.contextBuffer.entries.dl7);

@@ -1,43 +1,47 @@
 /**
- * The maze, hand-authored (docs/puzzles.md, layout v0).
+ * The maze, authored via a validated generator (see scratchpad genmaze2.mjs)
+ * then frozen here. Each sector is a recursive-backtracker maze (winding
+ * corridors + dead ends) so it can't be breezed through; sectors are joined
+ * by single doors that make the gating cut-vertices (proven in mazeGrid.test).
  *
  * Legend:
- *   #  wall (full height)
- *   .  floor
- *   S  spawn
- *   N  sticky-note prop            (P1 clue)
- *   C  readme CRT prop             (P1 hint tier 1)
+ *   #  wall (full height)          .  floor            S  spawn
+ *   N  sticky-note prop (P1 clue)  C  readme CRT (P1 hint)
  *   A  admin-dialog door wall      (opens when P1 solved)
- *   2  defrag CRT prop             (P2 station)
- *   G  glitch wall                 (de-rezzes when P2 solved)
- *   3  quarantined polyhedron      (P3 — touch to flip)
- *   9  number zone — entry cell of the inverted corridor; `555-0195`
- *      painted on its ceiling; crossing it while flipped solves P3
- *   ~  inverted corridor — hanging beams wall it off for flipped players;
- *      upright players walk freely underneath
- *   H  high doorway — solid floor..2.0, open above (flipped players pass)
- *   4  modem CRT prop              (P4 station)
- *   M  modem manual prop           (P4 clue)
- *   P  return polyhedron           (unflip inside sector D)
+ *   2  defrag CRT (P2 station)     G  glitch wall (de-rezzes when P2 solved)
+ *   3  quarantined polyhedron      (P3 — touch to flip; hidden deep in C)
+ *   9  number zone (555-0195 painted on the ceiling; cross while flipped = P3)
+ *   ~  inverted corridor (hanging beams wall off flipped players)
+ *   H  high doorway (solid floor..2, open above — only flipped players pass)
+ *   4  modem CRT (P4)              M  modem manual (P4 clue)
+ *   P  return polyhedron (unflip inside the sealed sector D)
+ *   R  rat (ambient screensaver callback)   E  smiley exit marker
+ *   L  OpenGL logo (wall decal — the screensaver's "OpenGL room" nod)
  *
- * Sectors: NW = spawn (S, N, C in the NE pocket), SW = defrag, SE =
- * polyhedron + inverted corridor, D (bottom strip) = modem room, sealed at
- * floor level — enterable only via the H doorway while flipped.
+ * Sectors: A (spawn, top) → B (defrag) → C (polyhedron + inverted corridor)
+ * → D (modem room, bottom strip, sealed at floor level — flip in via H).
  */
 export const MAZE_ROWS: readonly string[] = [
-  '#####################',
-  '#S.......#.........##',
-  '#...##...#...##....##',
-  '#.N.##.......##..C.##',
-  '#...##...#...##....##',
-  '#........#.........##',
-  '####A################',
-  '#........#.........##',
-  '#...##...#...##....##',
-  '#.2.##...G...##3...##',
-  '#...##...#...##....##',
-  '#........#......9~~##',
-  '##################H##',
-  '#4.M...P...........##',
-  '#####################',
+  '###########################',
+  '#S#....R#.........#.......#',
+  '#.#.###.#####.###.#.#####.#',
+  '#...#.#.#...#C..#...#...#.#',
+  '#####.#.#.#.###.#####.#.#.#',
+  '#N........#.....#.....#...#',
+  '###A#######################',
+  '#.#.....#...........#....2#',
+  '#.###.#.#######.###.#####.#',
+  '#...#.#.........#.#.......#',
+  '###.#.###########.#######.#',
+  '#.....#...................#',
+  '#######################G###',
+  '#.........#.#.........#..L#',
+  '#########.#.#.#####.#.###.#',
+  '#....3..#.#.....#...#...#.#',
+  '#.#.#####.#######.#####.#.#',
+  '#.#...............#.......#',
+  '#....................9~~..#',
+  '#######################H###',
+  '#4...M......P...........E.#',
+  '###########################',
 ];

@@ -133,6 +133,14 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - Note: game already had 4 puzzles; this deepens P4 rather than adding a 5th (challenge requires EXACTLY 4)
 - [x] P4 persuasion expanded into a **3-round dialogue tree** (rapport → DL-7 pretext → leverage), 4 options each with funny technician comebacks + AI in-jokes (prompt injection, reward hacking, sycophancy/temperature, paperclip maximizer, binary); unlimited tries, running chat transcript, trust meter; round 2's correct option still gated on reading the manual
 
+### Sprint 5.2 — Brett revisions (2026-07-22)
+- [x] Clippy sprite cropped to just the paperclip (removed the baked-in "writing a letter" tip balloon); resized to a prominent 300px-wide with drop shadow
+- [x] Persistent HUD hint: beveled Win95 "Tab ⇥ — open your context window" (shown only during free-roam)
+- [x] Boot dialog gated behind a blinking "Press any key to continue" so it never overlaps the CRT text; screen clears first
+- [x] Fixed eval console repeating the technician's line twice after a wrong answer
+- [x] **Bigger, more complex maze** (27×22, ~284 walkable cells, ~2× old): recursive-backtracker corridors + dead ends per sector so it can't be breezed through; polyhedron hidden deep in sector C. Validated by generator script (reachability + gating + sealed-room), frozen into mazeLayout.ts
+- [x] Original screensaver callbacks: the **rat** (ambient billboard), the **smiley exit** marker, the **OpenGL logo** wall decal
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

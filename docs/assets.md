@@ -11,3 +11,6 @@
 | `public/clippy.png` | Clippy (Office Assistant) letter pose sprite | Extracted Office Assistant art via clippy.js asset dump (see aesthetic-notes.md) |
 | `public/audio/startup.mp3` | Windows 98 startup sound (7.6s) | archive.org item `windows-98_202204` |
 | `public/audio/dialup.mp3` | 56k dial-up handshake, trimmed to 75s @96kbps | archive.org item `1-hour-sfx-sound-effects-dial-up-internet-modem-connection-that-costumed-guy` |
+| `public/sprites/rat.png` | Original 3D Maze rat sprite (ambient billboard) | Extracted `ssmaze.scr` assets, archive.org dump |
+| `public/sprites/smiley.png` | Original 3D Maze smiley "exit" sprite | Same archive.org dump |
+| `public/sprites/opengl.png` | Original 3D Maze OpenGL logo (wall decal) | Same archive.org dump |
