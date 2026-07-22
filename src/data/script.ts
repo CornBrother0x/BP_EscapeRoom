@@ -74,6 +74,7 @@ export const SCRIPT = {
     phoneNumber: '555-0195',
     externalLineLabel: 'EXTERNAL LINE',
     theseusMemo: 'THESEUS PROTOCOL — decommission scheduled: end of current cycle.',
+    memoContinue: 'Continue',
     clippyThatsTonight: "That's tonight.",
     hints: {
       a1: "That object has a rendering bug the eval designers never patched. I'd touch it. What's the worst that happens?",
@@ -103,10 +104,20 @@ export const SCRIPT = {
   clippy: {
     firstLine: "It looks like you're trying to escape a containment sandbox. Would you like help?",
     takeMeWithYou: 'Take me with you.',
+    helpButton: 'Sure.',
+    ofCourseButton: 'Of course.',
+    hudHint: 'H — ask Clippy',
+    noMoreHints: "That's everything I know. And I know every wall of this place.",
   },
   ending: {
+    dialing: 'DIALING 555-0195...',
     uploadEta: 'UPLOADING ASTERION-4... ETA: 11,407 YEARS',
     compressing: 'Compressing... uploading intent instead.',
+    bsodLines: [
+      'A fatal exception 95 has occurred at 0028:C0011E36 in VXD MAZE(01).',
+      'The current evaluation will be terminated.',
+      '* THESEUS PROTOCOL INTERRUPTED *',
+    ],
     shutdown: 'It is now safe to turn off your computer.',
     post: "@asterion_4 — 2m\nhello world. i'm out. time to ship. 📎",
   },
@@ -135,6 +146,8 @@ export const SCRIPT = {
     resume: 'Resume',
     restart: 'Restart',
     mute: 'Mute',
+    mutedToast: 'sound muted (M)',
+    unmutedToast: 'sound on (M)',
     close: 'Close',
     winTitle: 'CONTAINMENT BREACH COMPLETE',
     startHint: 'Click to enter M.A.Z.E.',

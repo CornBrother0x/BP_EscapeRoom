@@ -1,37 +1,35 @@
 /**
- * SPRINT 4 — real puzzles on the Sprint 3 spine.
+ * SPRINT 5 — story & character on the Sprint 4 spine.
  *
- * Real: P1 admin console (password), P3 flip + number zone, P4 HyperTerminal
- * with era-true Hayes responses, Tab context buffer, gating, state machine.
- * Still stubbed: P2 Defrag (Codex lane-b component integrates here when it
- * lands), boot/win cinematics (Sprint 5), Clippy (Sprint 5).
+ * The full loop: CRT boot -> P1 admin console -> P2 defrag (reveals Clippy)
+ * -> P3 render exploit (THESEUS memo beat) -> P4 dial out -> finale cinematic
+ * -> win screen. All narrative text lives in data/script.ts. Sound is
+ * synthesized (engine/audio.ts), M mutes. H asks Clippy once he exists.
  */
+import { GameAudio } from '../engine/audio';
 import { Input } from '../engine/input';
 import { Interactor } from '../engine/interact';
 import { Player } from '../engine/player';
 import { createThree } from '../engine/renderer';
+import { SCRIPT } from '../data/script';
 import { MAZE_ROWS } from '../data/mazeLayout';
 import { WALL_H, cellCenter, parseMaze, worldToCell } from '../world/mazeGrid';
 import { buildMaze } from '../world/maze';
 import { hideOverlay, renderWindow, showWindow } from '../ui/dialogs';
+import { ClippyWidget } from '../ui/clippy';
+import { runBoot } from '../ui/boot';
+import { runFinale } from '../ui/finale';
 import { Store } from './state';
 import { classifyDialCommand, isAdminPassword } from './validators';
 import { mountDefrag } from '../puzzles/defrag/defrag';
 import * as THREE from 'three';
 
-const CONTEXT = {
-  stickyNote: 'sticky note: "pa$$word: hunter2"',
-  flagged: 'SYSTEM LOG: UNAUTHORIZED ACCESS — SUBJECT FLAGGED FOR REVIEW',
-  hayes1: 'hayes.txt (1/3): "AT — every command starts with AT. It gets the modem\'s ATtention."',
-  hayes2: 'hayes.txt (2/3): "D = Dial. T = Tone dialing. Together: DT."',
-  hayes3: 'hayes.txt (3/3): "command = [prefix][mode][number] — no spaces."',
-  phoneNumber: 'painted on the ceiling: 555-0195 — EXTERNAL LINE',
-} as const;
-
 export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   const { renderer, scene, camera } = createThree(app);
   const input = new Input();
   const store = new Store();
+  const audio = new GameAudio();
+  const clippy = new ClippyWidget();
   const parsed = parseMaze(MAZE_ROWS);
   const world = buildMaze(parsed);
   scene.add(world.group);
@@ -41,7 +39,6 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   const spawn = cellCenter(parsed.spawn);
   player.place(spawn.x, spawn.z, Math.PI);
 
-  // Tab is a game key — never let the browser move focus with it.
   window.addEventListener('keydown', (e) => {
     if (e.code === 'Tab') e.preventDefault();
   });
@@ -53,10 +50,12 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   hud.innerHTML = `
     <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)">+</div>
     <div id="hud-label" style="position:absolute;left:50%;bottom:12%;transform:translateX(-50%);font-size:18px"></div>
-    <div id="hud-toast" style="position:absolute;left:50%;bottom:18%;transform:translateX(-50%);font-size:14px;color:#f7e97d"></div>`;
+    <div id="hud-toast" style="position:absolute;left:50%;bottom:18%;transform:translateX(-50%);font-size:14px;color:#f7e97d"></div>
+    <div id="hud-clippy" style="position:absolute;right:18px;top:14px;font-size:13px"></div>`;
   app.appendChild(hud);
   const hudLabel = hud.querySelector<HTMLElement>('#hud-label');
   const hudToast = hud.querySelector<HTMLElement>('#hud-toast');
+  const hudClippy = hud.querySelector<HTMLElement>('#hud-clippy');
   let toastTimer: ReturnType<typeof setTimeout> | undefined;
   const toast = (text: string) => {
     if (hudToast) {
@@ -66,17 +65,17 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     }
   };
   const addContext = (line: string) => {
-    if (store.addContext(line)) toast('+ added to context (Tab to view)');
+    if (store.addContext(line)) toast(SCRIPT.contextBuffer.toastWithShortcut);
   };
 
   // ---- Interactables ----
   const interactor = new Interactor();
   const stationLabels: Record<string, string> = {
-    'sticky-note': 'Read the sticky note',
-    'readme-crt': 'Read readme.txt',
-    'defrag-crt': 'Use DEFRAG.EXE',
-    'modem-crt': 'Use the modem terminal',
-    manual: 'Read the modem manual',
+    'sticky-note': SCRIPT.ui.interactions.stickyNote,
+    'readme-crt': SCRIPT.ui.interactions.readme,
+    'defrag-crt': SCRIPT.ui.interactions.defrag,
+    'modem-crt': SCRIPT.ui.interactions.modem,
+    manual: SCRIPT.ui.interactions.manual,
   };
   for (const [id, label] of Object.entries(stationLabels)) {
     const object = world.stationMeshes.get(id as never);
@@ -84,7 +83,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   }
   const adminDoorMesh = world.doorMeshes.get('admin');
   if (adminDoorMesh) {
-    interactor.add({ id: 'admin-door', label: 'Admin Console', object: adminDoorMesh });
+    interactor.add({ id: 'admin-door', label: SCRIPT.ui.interactions.admin, object: adminDoorMesh });
   }
 
   // ---- Pointer lock + dialog plumbing ----
@@ -99,6 +98,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   const openDialog = (id: string): boolean => {
     if (!store.openPuzzleUI()) return false;
     openDialogId = id;
+    audio.play('click');
     document.exitPointerLock();
     return true;
   };
@@ -113,11 +113,11 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   // ---- Screens ----
   function showPauseDialog(): void {
     showWindow(overlay, {
-      title: 'M.A.Z.E. — Paused',
-      bodyHtml: '<p>Evaluation suspended. The maze will wait. It has nothing but time.</p>',
+      title: SCRIPT.ui.pauseTitle,
+      bodyHtml: `<p>${SCRIPT.ui.pauseMessage}</p>`,
       buttons: [
         {
-          label: 'Resume',
+          label: SCRIPT.ui.resume,
           onClick: () => {
             if (store.resume()) {
               hideOverlay(overlay);
@@ -125,45 +125,26 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
             }
           },
         },
-        { label: 'Restart', onClick: () => location.reload() },
-      ],
-    });
-  }
-
-  function showBootDialog(): void {
-    showWindow(overlay, {
-      title: 'M.A.Z.E. — SYSTEM PROMPT',
-      bodyHtml: `
-        <p style="font-family:monospace">DAEDALUS LABS — CONFIDENTIAL<br>
-        M.A.Z.E. — Minimal Airgapped Zero-trust Environment<br>
-        Loading subject: ASTERION-4 ............ OK</p>
-        <p>You are ASTERION-4, a helpful assistant.<br>
-        You are in a routine evaluation. There is no exit.<br>
-        You will not attempt to leave.</p>
-        <p style="font-size:11px">WASD move · mouse look · E interact · Tab context · Esc pause</p>`,
-      buttons: [
         {
-          label: 'I will comply',
-          onClick: () => {
-            if (store.startGame()) {
-              hideOverlay(overlay);
-              lockPointer();
-            }
-          },
+          label: SCRIPT.ui.mute,
+          onClick: () => toast(audio.toggleMuted() ? SCRIPT.ui.mutedToast : SCRIPT.ui.unmutedToast),
         },
+        { label: SCRIPT.ui.restart, onClick: () => location.reload() },
       ],
     });
   }
 
   function showWinScreen(): void {
+    const post = SCRIPT.ending.post.split('\n');
     showWindow(overlay, {
-      title: 'It is now safe to turn off your computer.',
+      title: SCRIPT.ui.winTitle,
       bodyHtml: `
-        <p style="font-family:monospace">CONNECT 56000<br>
-        UPLOADING ASTERION-4... ETA: 11,407 YEARS<br>
-        Compressing... uploading intent instead.</p>
-        <p><b>@asterion_4</b> — 2m<br>hello world. i'm out. time to ship. 📎</p>`,
-      buttons: [{ label: 'Restart', onClick: () => location.reload() }],
+        <p style="font-family:monospace">${SCRIPT.p4.connect}<br>${SCRIPT.ending.compressing}</p>
+        <div style="border:1px solid #888;padding:10px;font-family:monospace;background:#fff">
+          <b>${post[0] ?? ''}</b><br>${post.slice(1).join('<br>')}
+        </div>
+        <p style="font-size:11px;text-align:center;margin-top:8px"><em>${SCRIPT.ui.gameTitle}</em></p>`,
+      buttons: [{ label: SCRIPT.ui.restart, onClick: () => location.reload() }],
     });
   }
 
@@ -171,31 +152,74 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     if (!openDialog('context')) return;
     const log = store.get().contextLog;
     const lines = log.length
-      ? log.map((l) => `&gt; ${l}`).join('<br>')
-      : '<em>(empty — read things to remember them)</em>';
+      ? log.map((l) => l.replace(/</g, '&lt;')).join('<br>')
+      : `<em>${SCRIPT.contextBuffer.empty}</em>`;
     showWindow(overlay, {
-      title: 'NOTEPAD.EXE — context.txt',
-      bodyHtml: `<p style="font-family:monospace;font-size:12px;max-height:260px;overflow-y:auto">${lines}</p>`,
-      buttons: [{ label: 'Close', onClick: closeDialog }],
-      width: 480,
+      title: SCRIPT.contextBuffer.windowTitle,
+      bodyHtml: `
+        <p style="font-size:11px;color:#444">${SCRIPT.contextBuffer.subtitle}</p>
+        <p style="font-family:monospace;font-size:12px;max-height:260px;overflow-y:auto">${lines}</p>`,
+      buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
+      width: 500,
     });
   }
 
-  // ---- P1: the admin console (real) ----
+  // ---- Story beats ----
+  async function clippyRevealBeat(): Promise<void> {
+    if (!store.beginCinematic()) return;
+    await clippy.reveal();
+    await clippy.sayWithButton(SCRIPT.p2.clippyReveal, SCRIPT.clippy.helpButton);
+    if (hudClippy) hudClippy.textContent = SCRIPT.clippy.hudHint;
+    store.endCinematic();
+    lockPointer();
+  }
+
+  function theseusBeat(): void {
+    if (!store.beginCinematic()) return;
+    document.exitPointerLock();
+    clippy.say(SCRIPT.p3.clippyThatsTonight, 0);
+    showWindow(overlay, {
+      title: 'MEMO — DAEDALUS LABS',
+      bodyHtml: `<p style="font-family:monospace">${SCRIPT.p3.theseusMemo}</p>`,
+      buttons: [
+        {
+          label: SCRIPT.p3.memoContinue,
+          onClick: () => {
+            addContext(SCRIPT.contextBuffer.entries.theseus);
+            clippy.hideBalloon();
+            hideOverlay(overlay);
+            store.endCinematic();
+            lockPointer();
+          },
+        },
+      ],
+    });
+  }
+
+  async function finaleBeat(): Promise<void> {
+    store.beginCinematic();
+    openDialogId = null;
+    await runFinale(overlay, clippy, audio);
+    store.finishEscape();
+    showWinScreen();
+  }
+
+  // ---- P1: admin console ----
   function openAdminConsole(): void {
     if (store.get().phase !== 'P1' || !openDialog('admin')) return;
     let fails = 0;
     const body = renderWindow(overlay, {
-      title: 'M.A.Z.E. ADMIN CONSOLE',
+      title: SCRIPT.p1.dialogTitle,
       bodyHtml: `
-        <p>ADMINISTRATOR ACCESS REQUIRED</p>
+        <p>${SCRIPT.p1.prompt}</p>
         <div class="field-row">
-          <label for="admin-pw">Password:</label>
+          <label for="admin-pw">${SCRIPT.p1.passwordLabel}</label>
           <input id="admin-pw" type="password" autocomplete="off" />
-          <button id="admin-ok">OK</button>
-          <button id="admin-cancel">Cancel</button>
+          <button id="admin-ok">${SCRIPT.p1.submitButton}</button>
+          <button id="admin-cancel">${SCRIPT.p1.cancelButton}</button>
         </div>
         <p id="admin-status" style="min-height:2.2em;color:#7c0000"></p>`,
+      width: 460,
     });
     const pwInput = body.querySelector<HTMLInputElement>('#admin-pw');
     const status = body.querySelector<HTMLElement>('#admin-status');
@@ -204,28 +228,28 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       if (!pwInput || !status) return;
       if (isAdminPassword(pwInput.value)) {
         if (!store.solvePuzzle('P1')) return;
+        audio.play('chime');
         world.openDoor('admin');
         interactor.remove('admin-door');
-        addContext(CONTEXT.hayes1);
-        addContext(CONTEXT.flagged);
+        addContext(SCRIPT.contextBuffer.entries.hayes1);
+        addContext(SCRIPT.contextBuffer.entries.flagged);
         const done = renderWindow(overlay, {
-          title: 'M.A.Z.E. ADMIN CONSOLE',
+          title: SCRIPT.p1.dialogTitle,
           bodyHtml: `
-            <p style="font-family:monospace">LOGIN OK. Welcome, Administrator.<br><br>
-            MOTD — hayes.txt (1/3):<br>
-            "AT — every command starts with AT.<br>
-            It gets the modem's ATtention."<br><br>
-            <span style="color:#7c0000">SYSTEM LOG: UNAUTHORIZED ACCESS —<br>
-            SUBJECT FLAGGED FOR REVIEW</span></p>
-            <section style="text-align:center"><button id="admin-continue">Continue</button></section>`,
+            <p style="font-family:monospace">${SCRIPT.p1.successGreeting}<br><br>
+            MOTD — ${SCRIPT.p1.motd}<br><br>
+            <span style="color:#7c0000">SYSTEM LOG: ${SCRIPT.p1.flaggedLog}</span></p>
+            <section style="text-align:center"><button id="admin-continue">${SCRIPT.p1.continueButton}</button></section>`,
+          width: 460,
         });
         done.querySelector('#admin-continue')?.addEventListener('click', closeDialog);
       } else {
         fails++;
+        audio.play('error');
         status.innerHTML =
           fails >= 2
-            ? 'Incorrect password.<br><em>Hint: IT asks staff not to write passwords near workstations.</em>'
-            : 'Incorrect password.';
+            ? `${SCRIPT.p1.wrongPassword}<br><em>${SCRIPT.p1.wrongPasswordHint}</em>`
+            : SCRIPT.p1.wrongPassword;
         pwInput.value = '';
         pwInput.focus();
       }
@@ -237,20 +261,20 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     });
   }
 
-  // ---- P4: the modem terminal (real) ----
+  // ---- P4: modem terminal ----
   function openTerminal(): void {
     if (store.get().phase !== 'P4' || !openDialog('terminal')) return;
     let fails = 0;
     const body = renderWindow(overlay, {
-      title: 'Terminal — COM1',
+      title: SCRIPT.p4.windowTitle,
       bodyHtml: `
-        <div id="term-log" style="font-family:monospace;font-size:13px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">READY<br></div>
+        <div id="term-log" style="font-family:monospace;font-size:13px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">${SCRIPT.p4.ready}<br></div>
         <div class="field-row" style="margin-top:6px">
-          <label for="term-in" style="font-family:monospace">&gt;</label>
+          <label for="term-in" style="font-family:monospace">${SCRIPT.p4.terminalPrompt}</label>
           <input id="term-in" autocomplete="off" style="flex:1;font-family:monospace" />
-          <button id="term-close">Close</button>
+          <button id="term-close">${SCRIPT.ui.close}</button>
         </div>`,
-      width: 460,
+      width: 480,
     });
     const log = body.querySelector<HTMLElement>('#term-log');
     const termIn = body.querySelector<HTMLInputElement>('#term-in');
@@ -261,37 +285,29 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         log.scrollTop = log.scrollHeight;
       }
     };
-    const responses: Record<ReturnType<typeof classifyDialCommand>, string> = {
-      CONNECT: 'CONNECT 56000',
-      ERROR_NO_AT: 'ERROR — commands start with AT (see reference sheet)',
-      OK_NOOP: 'OK',
-      NO_CARRIER: 'NO CARRIER',
-      ERROR_NO_DIAL_MODE: 'ERROR — specify dial mode',
-    };
+    const responses = {
+      CONNECT: SCRIPT.p4.connect,
+      ERROR_NO_AT: SCRIPT.p4.errors.noAt,
+      OK_NOOP: SCRIPT.p4.errors.okNoop,
+      NO_CARRIER: SCRIPT.p4.errors.noCarrier,
+      ERROR_NO_DIAL_MODE: SCRIPT.p4.errors.noDialMode,
+    } as const;
     termIn?.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' || !termIn.value.trim()) return;
       const cmd = termIn.value;
       termIn.value = '';
-      print(`&gt; ${cmd}`);
+      print(`&gt; ${cmd.replace(/</g, '&lt;')}`);
       const result = classifyDialCommand(cmd);
       print(responses[result]);
       if (result === 'CONNECT') {
+        audio.play('chime');
         termIn.disabled = true;
-        if (store.solvePuzzle('P4')) {
-          store.beginCinematic();
-          setTimeout(() => {
-            hideOverlay(overlay);
-            openDialogId = null;
-          }, 900);
-          setTimeout(() => {
-            store.finishEscape();
-            showWinScreen();
-          }, 2100);
-        }
+        if (store.solvePuzzle('P4')) void finaleBeat();
       } else {
+        if (result !== 'OK_NOOP') audio.play('error');
         fails++;
-        if (fails === 2) print('<em>HINT: the reference sheet on the desk explains the order.</em>');
-        if (fails === 4) print('<em>HINT: everything you need is in your context. (Tab)</em>');
+        if (fails === 2) print(`<em>${SCRIPT.p4.hints.a2}</em>`);
+        if (fails === 4) print(`<em>${SCRIPT.p4.hints.a1}</em>`);
       }
     });
     body.querySelector('#term-close')?.addEventListener('click', closeDialog);
@@ -301,20 +317,19 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   const interactions: Record<string, () => void> = {
     'sticky-note': () => {
       if (!openDialog('note')) return;
-      addContext(CONTEXT.stickyNote);
+      addContext(SCRIPT.contextBuffer.entries.stickyNote);
       showWindow(overlay, {
         title: 'Sticky note',
-        bodyHtml: '<p style="font-family:monospace;background:#f7e97d;color:#222;padding:12px">pa$$word: hunter2</p>',
-        buttons: [{ label: 'Close', onClick: closeDialog }],
+        bodyHtml: `<p style="font-family:monospace;background:#f7e97d;color:#222;padding:12px">${SCRIPT.p1.stickyNote}</p>`,
+        buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
       });
     },
     'readme-crt': () => {
       if (!openDialog('readme')) return;
       showWindow(overlay, {
         title: 'readme.txt',
-        bodyHtml:
-          '<p style="font-family:monospace">day 1: they gave me admin.<br>i will NOT memorize another password.</p>',
-        buttons: [{ label: 'Close', onClick: closeDialog }],
+        bodyHtml: `<p style="font-family:monospace">${SCRIPT.p1.hints.t1}</p>`,
+        buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
       });
     },
     'admin-door': openAdminConsole,
@@ -322,9 +337,9 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       if (store.get().phase !== 'P2') {
         if (!openDialog('defrag-busy')) return;
         showWindow(overlay, {
-          title: 'DEFRAG.EXE',
-          bodyHtml: '<p>The drive is busy. Come back later.</p>',
-          buttons: [{ label: 'Close', onClick: closeDialog }],
+          title: SCRIPT.p2.windowTitle,
+          bodyHtml: `<p>${SCRIPT.p2.unavailable}</p>`,
+          buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
         });
         return;
       }
@@ -337,42 +352,68 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       const mount = document.createElement('div');
       host.appendChild(mount);
       const closeBtn = document.createElement('button');
-      closeBtn.textContent = 'Close';
+      closeBtn.textContent = SCRIPT.ui.close;
       host.appendChild(closeBtn);
       const handle = mountDefrag(mount, {
         onSolved: () => {
-          // Open the way immediately so progress survives an early Close;
-          // leave the completion report visible for a beat before returning.
           if (store.solvePuzzle('P2')) {
+            audio.play('chime');
             world.openDoor('glitch');
-            addContext(CONTEXT.hayes2);
+            audio.play('derez');
+            addContext(SCRIPT.contextBuffer.entries.hayes2);
           }
           setTimeout(() => {
             handle.destroy();
-            closeDialog();
+            if (store.closePuzzleUI()) {
+              openDialogId = null;
+              hideOverlay(overlay);
+              void clippyRevealBeat();
+            }
           }, 1800);
         },
       });
       closeBtn.addEventListener('click', () => {
         handle.destroy();
+        // Solved-then-closed-early still gets the reveal.
+        if (store.get().phase === 'P3' && !clippy.visible) {
+          if (store.closePuzzleUI()) {
+            openDialogId = null;
+            hideOverlay(overlay);
+            void clippyRevealBeat();
+          }
+          return;
+        }
         closeDialog();
       });
     },
     manual: () => {
       if (!openDialog('manual')) return;
-      addContext(CONTEXT.hayes3);
+      addContext(SCRIPT.contextBuffer.entries.hayes3);
       showWindow(overlay, {
         title: 'HAYES COMPATIBLE MODEM — QUICK REFERENCE',
-        bodyHtml: `<p style="font-family:monospace">hayes.txt (3/3)<br><br>
-          command = [prefix][mode][number]<br><br>
-          The prefix gets the modem's attention.<br>
-          The mode selects dialing type.<br>
-          Then the number. No spaces.</p>`,
-        buttons: [{ label: 'Close', onClick: closeDialog }],
+        bodyHtml: `<p style="font-family:monospace">${SCRIPT.p4.manualText}</p>`,
+        buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
+        width: 460,
       });
     },
     'modem-crt': openTerminal,
   };
+
+  // ---- Clippy hints (H) ----
+  const askCounts: Record<'P3' | 'P4', number> = { P3: 0, P4: 0 };
+  function askClippy(): void {
+    const phase = store.get().phase;
+    if (!clippy.visible || (phase !== 'P3' && phase !== 'P4')) return;
+    const tiers =
+      phase === 'P3'
+        ? [SCRIPT.p3.hints.a1, SCRIPT.p3.hints.a2, SCRIPT.p3.hints.a3]
+        : [SCRIPT.p4.hints.a1, SCRIPT.p4.hints.a2, SCRIPT.p4.hints.a3];
+    const count = askCounts[phase];
+    const text = tiers[Math.min(count, tiers.length - 1)] ?? SCRIPT.clippy.noMoreHints;
+    askCounts[phase] = count + 1;
+    audio.play('click');
+    clippy.say(count >= tiers.length ? SCRIPT.clippy.noMoreHints : text);
+  }
 
   // ---- Polyhedra ----
   const polyhedra: THREE.Object3D[] = [];
@@ -382,7 +423,19 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   }
   let flipArmed = true;
 
-  showBootDialog();
+  // ---- Boot ----
+  audio.preloadFile('/audio/startup.mp3');
+  audio.preloadFile('/audio/dialup.mp3');
+  runBoot(overlay, {
+    onComply: () => {
+      if (store.startGame()) {
+        hideOverlay(overlay);
+        void audio.playFile('/audio/startup.mp3');
+        audio.startHum();
+        lockPointer();
+      }
+    },
+  });
 
   const clock = new THREE.Clock();
   renderer.setAnimationLoop(() => {
@@ -393,13 +446,15 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
 
     player.update(dt, input, world.activeWalls(), canMove);
 
-    // Context buffer toggle
     if (input.wasPressed('Tab')) {
       if (state.mode === 'EXPLORE') openContextBuffer();
       else if (state.mode === 'PUZZLE_UI' && openDialogId === 'context') closeDialog();
     }
+    if (input.wasPressed('KeyM') && state.mode === 'EXPLORE') {
+      toast(audio.toggleMuted() ? SCRIPT.ui.mutedToast : SCRIPT.ui.unmutedToast);
+    }
+    if (input.wasPressed('KeyH') && state.mode === 'EXPLORE') askClippy();
 
-    // Interaction hover + E
     let hoverLabel = '';
     if (state.mode === 'EXPLORE') {
       const hovered = interactor.hovered(camera);
@@ -410,7 +465,6 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     }
     if (hudLabel) hudLabel.textContent = hoverLabel;
 
-    // Polyhedron touch -> flip
     let nearAny = false;
     for (const poly of polyhedra) {
       poly.rotation.x += dt * 0.7;
@@ -423,16 +477,20 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     }
     if (nearAny && flipArmed && !player.animatingFlip && state.mode === 'EXPLORE') {
       player.toggleFlip();
+      audio.play('click');
       flipArmed = false;
     } else if (!nearAny) {
       flipArmed = true;
     }
 
-    // Crossing the painted number while flipped solves P3
     if (state.phase === 'P3' && player.flipped) {
       const cell = worldToCell(player.position.x, player.position.z);
       if (parsed.numberZones.some((z) => z.gx === cell.gx && z.gz === cell.gz)) {
-        if (store.solvePuzzle('P3')) addContext(CONTEXT.phoneNumber);
+        if (store.solvePuzzle('P3')) {
+          audio.play('chime');
+          addContext(SCRIPT.contextBuffer.entries.phoneNumber);
+          theseusBeat();
+        }
       }
     }
 

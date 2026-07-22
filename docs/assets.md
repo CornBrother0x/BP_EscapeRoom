@@ -8,3 +8,6 @@
 | `public/textures/brick.png` | Original 3D Maze brick wall texture | Extracted `ssmaze.scr` assets, archive.org sprite dump (see `docs/references/aesthetic-notes.md`) |
 | `public/textures/floor-wood.png` | Original 3D Maze wood floor texture | Same archive.org dump |
 | `public/textures/ceiling.png` | Original 3D Maze ceiling tile texture | Same archive.org dump |
+| `public/clippy.png` | Clippy (Office Assistant) letter pose sprite | Extracted Office Assistant art via clippy.js asset dump (see aesthetic-notes.md) |
+| `public/audio/startup.mp3` | Windows 98 startup sound (7.6s) | archive.org item `windows-98_202204` |
+| `public/audio/dialup.mp3` | 56k dial-up handshake, trimmed to 75s @96kbps | archive.org item `1-hour-sfx-sound-effects-dial-up-internet-modem-connection-that-costumed-guy` |
