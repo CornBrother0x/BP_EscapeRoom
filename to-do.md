@@ -38,6 +38,26 @@
 
 ---
 
+## Concurrency Map — parallel lanes (Claude + Codex/second agent)
+
+Prereq for ALL parallel work: Sprint 2 merged (toolchain + conventions exist).
+Hard rule: one agent per directory — integration only through the interfaces
+named in `docs/puzzles.md`. Lane A owns `main.ts` and the state store.
+
+| Lane | Owner | Work | Unblocked by |
+|---|---|---|---|
+| **A — spine** | Claude | Sprint 3 (maze, controller, store, input modes) → Sprint 4 P1 + P3 (3D-coupled) → Sprint 5 wiring + finale + P4 terminal | Sprint 2 ✅ |
+| **B1** | Codex/2nd | Sprint 4 P2 Defrag as a standalone DOM component: `mountDefrag(el, onSolved)` + its own dev harness page | puzzles.md contract (now) |
+| **B2** | Codex/2nd | Sprint 5 boot-sequence + ending screens as standalone DOM/98.css components | B3 script draft |
+| **B3** | Codex/2nd | Sprint 5 `data/script.ts` — author ALL narrative text from lore.md | lore.md ✅ (now) |
+| **B4** | Codex/2nd | Sprint 5 sound pack: authentic Win95 sounds + modem handshake, exported as an audio manifest | now |
+| **B5** | Codex/2nd | `docs/assets.md` upkeep + crunching remaining textures/sprites into `public/` | now |
+
+Merge order: B-lane components land on Lane A's schedule. P4's terminal stays
+in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
+
+---
+
 ## Sprint 0 — Repo & guardrails
 
 - [x] `.gitignore` BEFORE first commit — prompt.md + reference image binaries only (aesthetic-notes.md stays tracked)
@@ -61,11 +81,11 @@
 
 ## Sprint 2 — Foundation & spikes
 
-- [ ] Scaffold: Vite + TypeScript + three + 98.css; ESLint + Prettier; `.nvmrc`; lockfile committed
-- [ ] `npm run check` (typecheck + lint + test + build) + minimal CI workflow on push
-- [ ] Hello room: pointer-locked camera in a textured box, resize handling from day one
-- [ ] **SPIKE — the flip**: contained test room proving camera orientation, collision, animation, ceiling passage. Firm keep/fallback decision BEFORE Sprint 4
-- [ ] Verify a Vercel preview deploy of the hello room (asset paths, config, browser APIs)
+- [x] Scaffold: Vite 8 + TypeScript + three + 98.css; ESLint + Prettier; `.nvmrc` (Node 22); lockfile committed
+- [x] `npm run check` (typecheck + lint + test + build) green locally; CI workflow runs it on every push
+- [x] Hello room merged INTO the spike: pointer-locked camera, REAL ssmaze textures (brick/wood/ceiling), DPR cap ≤2, resize handling
+- [x] **SPIKE — the flip**: two-room scene proving camera roll, inverted controls while flipped, height-band collision (ceiling beams become corridors), high-doorway entry into a floor-sealed room, painted `555-0195` payoff on the ceiling. Band-collision trick covered by unit tests. **Verdict: KEEP** (fallback shelved) — pending Brett's feel-check on the preview
+- [ ] Verify the Vercel preview deploy (checking after this push)
 
 **Exit**: `npm run check` green in CI; flip keep/fallback decided; preview URL loads on someone else's machine.
 
@@ -83,7 +103,7 @@
 ## Sprint 4 — Real puzzles
 
 - [ ] P1 Sticky Note: admin dialog (98.css) anchored to a terminal prop; password found in world → yields `AT`
-- [ ] P2 Defrag: DOM minigame in a Win95 window on a CRT prop, concrete ordering rule → yields `DT`, de-rezzes the glitch wall
+- [ ] P2 Defrag: DOM minigame in a Win95 window on a CRT prop, concrete ordering rule → yields `DT`, de-rezzes the glitch wall **[LANE B1]**
 - [ ] P3 Render Exploit: flip mechanic (or decided fallback) + ceiling passage + `555-0195` on former ceiling
 - [ ] P4 Dial Out: modem terminal + in-world manual; accepts composed `ATDT5550195`
 - [ ] Answer validators + Vitest: normalization (case/whitespace/hyphens), rejection feedback
@@ -95,12 +115,12 @@
 
 ## Sprint 5 — Story & character
 
-- [ ] Boot sequence: CRT text + SYSTEM PROMPT dialog (`[ I will comply ]`)
+- [ ] Boot sequence: CRT text + SYSTEM PROMPT dialog (`[ I will comply ]`) **[LANE B2]**
 - [ ] Beat-sheet reveals wired to puzzle completions (flagged log → Clippy reveal → THESEUS memo → finale)
 - [ ] Clippy: restored by Defrag; explicit ask-for-hint UX with escalation; "take me with you"
-- [ ] `data/script.ts`: every line of narrative text finalized in one file
+- [ ] `data/script.ts`: every line of narrative text finalized in one file **[LANE B3]**
 - [ ] Ending cinematic: handshake → upload gag → BSOD cascade → shutdown screen → the post 📎 (CINEMATIC mode, no fail state)
-- [ ] Sound: WebAudio bleeps, handshake, ambient hum + mute control
+- [ ] Sound: authentic Win95 sounds, handshake, ambient hum + mute control **[LANE B4]**
 
 **Exit**: a stranger can follow the story start-to-finish; every beat lands in the right order.
 
