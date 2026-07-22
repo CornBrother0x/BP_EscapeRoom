@@ -16,6 +16,7 @@ import { buildMaze } from '../world/maze';
 import { hideOverlay, renderWindow, showWindow } from '../ui/dialogs';
 import { Store } from './state';
 import { classifyDialCommand, isAdminPassword } from './validators';
+import { mountDefrag } from '../puzzles/defrag/defrag';
 import * as THREE from 'three';
 
 const CONTEXT = {
@@ -327,25 +328,34 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         });
         return;
       }
-      // INTEGRATION POINT: Codex lane-b mountDefrag() lands here. Stub until merge.
       if (!openDialog('defrag')) return;
-      showWindow(overlay, {
-        title: 'DEFRAG.EXE',
-        bodyHtml:
-          '<p>Defragment ASTERION.W01–03.<br><em>(Stub — the real minigame is being built on lane-b.)</em></p>',
-        buttons: [
-          {
-            label: 'Solve P2 (stub)',
-            onClick: () => {
-              if (store.solvePuzzle('P2')) {
-                world.openDoor('glitch');
-                addContext(CONTEXT.hayes2);
-              }
-              closeDialog();
-            },
-          },
-          { label: 'Close', onClick: closeDialog },
-        ],
+      overlay.innerHTML = '';
+      overlay.classList.remove('hidden');
+      const host = document.createElement('div');
+      host.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:8px';
+      overlay.appendChild(host);
+      const mount = document.createElement('div');
+      host.appendChild(mount);
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = 'Close';
+      host.appendChild(closeBtn);
+      const handle = mountDefrag(mount, {
+        onSolved: () => {
+          // Open the way immediately so progress survives an early Close;
+          // leave the completion report visible for a beat before returning.
+          if (store.solvePuzzle('P2')) {
+            world.openDoor('glitch');
+            addContext(CONTEXT.hayes2);
+          }
+          setTimeout(() => {
+            handle.destroy();
+            closeDialog();
+          }, 1800);
+        },
+      });
+      closeBtn.addEventListener('click', () => {
+        handle.destroy();
+        closeDialog();
       });
     },
     manual: () => {

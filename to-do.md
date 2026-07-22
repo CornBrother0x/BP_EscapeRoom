@@ -47,9 +47,9 @@ named in `docs/puzzles.md`. Lane A owns `main.ts` and the state store.
 | Lane | Owner | Work | Unblocked by |
 |---|---|---|---|
 | **A — spine** | Claude | Sprint 3 (maze, controller, store, input modes) → Sprint 4 P1 + P3 (3D-coupled) → Sprint 5 wiring + finale + P4 terminal | Sprint 2 ✅ |
-| **B1** | Codex/2nd | Sprint 4 P2 Defrag as a standalone DOM component: `mountDefrag(el, onSolved)` + its own dev harness page | puzzles.md contract (now) |
-| **B2** | Codex/2nd | Sprint 5 boot-sequence + ending screens as standalone DOM/98.css components | B3 script draft |
-| **B3** | Codex/2nd | Sprint 5 `data/script.ts` — author ALL narrative text from lore.md | lore.md ✅ (now) |
+| **B1** | Codex/2nd | ✅ DELIVERED + merged: Defrag component (`mountDefrag`), logic tests, dev harness | — |
+| **B2** | Codex/2nd | Sprint 5 boot-sequence + ending screens as standalone DOM/98.css components | B3 ✅ (ready now) |
+| **B3** | Codex/2nd | ✅ DELIVERED + merged: `src/data/script.ts` (full narrative, typed) — Lane A wires it through dialogs in Sprint 5 | — |
 | **B4** | Codex/2nd | Sprint 5 sound pack: authentic Win95 sounds + modem handshake, exported as an audio manifest | now |
 | **B5** | Codex/2nd | `docs/assets.md` upkeep + crunching remaining textures/sprites into `public/` | now |
 
@@ -104,7 +104,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 ## Sprint 4 — Real puzzles
 
 - [x] P1 Sticky Note REAL: admin console dialog with password field (`hunter2`, normalized), wrong-answer feedback, hint after 2 fails, MOTD yields `AT` + FLAGGED log; door opens; security-poster hint on the wall beside it
-- [ ] P2 Defrag: **awaiting Codex lane-b component** — integration point stubbed in game.ts (`mountDefrag` lands there on merge) **[LANE B1]**
+- [x] P2 Defrag REAL: Codex lane-b component reviewed, merged, and wired — 4×4 swap grid, live progress bar teaching the rule, CLIPPIT pair, deterministic restart, completion report; solve opens the glitch wall + yields `DT` **[LANE B1 ✅ delivered]**
 - [x] P3 Render Exploit: flip + ceiling passage + painted `555-0195` (real since Sprint 3; context capture wired)
 - [x] P4 Dial Out REAL: COM1 terminal, era-true Hayes responses (`ERROR — commands start with AT`, `OK` no-op, `NO CARRIER`, `ERROR — specify dial mode`), accepts composed `ATDT5550195` → `CONNECT 56000` → finale; in-terminal hint escalation at 2 and 4 fails
 - [x] Answer validators + Vitest: normalization (case/whitespace/hyphens), every Hayes response branch tested
@@ -112,14 +112,14 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Full restart path (pause + win screens; reload-based reset)
 - [x] Tests: gating proven mechanically — flood fill with doors closed/open shows each solve unlocks exactly the next sector
 
-**Exit**: all four puzzles genuinely solvable without source knowledge; validators tested; preview updated. → **3 of 4 real; P2 lands with the lane-b merge**
+**Exit**: all four puzzles genuinely solvable without source knowledge; validators tested; preview updated. ✅ **ALL FOUR REAL** — Brett's full playthrough is the human sign-off
 
 ## Sprint 5 — Story & character
 
 - [ ] Boot sequence: CRT text + SYSTEM PROMPT dialog (`[ I will comply ]`) **[LANE B2]**
 - [ ] Beat-sheet reveals wired to puzzle completions (flagged log → Clippy reveal → THESEUS memo → finale)
 - [ ] Clippy: restored by Defrag; explicit ask-for-hint UX with escalation; "take me with you"
-- [ ] `data/script.ts`: every line of narrative text finalized in one file **[LANE B3]**
+- [ ] `data/script.ts` wiring: file DELIVERED by Codex (lane-b) — replace game.ts inline strings with SCRIPT refs, review tone line-by-line **[LANE B3 ✅ delivered; wiring = Lane A]**
 - [ ] Ending cinematic: handshake → upload gag → BSOD cascade → shutdown screen → the post 📎 (CINEMATIC mode, no fail state)
 - [ ] Sound: authentic Win95 sounds, handshake, ambient hum + mute control **[LANE B4]**
 
