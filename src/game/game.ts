@@ -89,6 +89,8 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   // ---- P4 state (persists across terminal reopens) ----
   let lineConnected = false;
   let modemIntroShown = false;
+  let evalStage = 0;
+  const evalTranscript: string[] = [];
 
   // ---- Pointer lock + dialog plumbing ----
   let openDialogId: string | null = null;
@@ -272,54 +274,76 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     else renderEvalConsole();
   }
 
-  // Phase A: the eval console. Convince the human to connect the line.
+  // Phase A: the eval console — a 3-round conversation with the technician.
+  // Right reply each round advances; wrong replies just get a comeback
+  // (unlimited tries). Round 2's DL-7 option is gated on reading the manual.
+  function escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   function renderEvalConsole(): void {
+    const ev = SCRIPT.p4.eval;
     if (clippy.visible && !modemIntroShown) {
       modemIntroShown = true;
-      clippy.say(SCRIPT.p4.eval.clippyIntro, 0);
+      clippy.say(ev.clippyIntro, 0);
     }
-    const ev = SCRIPT.p4.eval;
+    // Seed the transcript on first entry, then the current round's tech line.
+    if (evalTranscript.length === 0) evalTranscript.push(ev.framing);
+    const stage = ev.stages[evalStage];
+    if (stage && evalTranscript[evalTranscript.length - 1] !== stage.tech) {
+      evalTranscript.push(stage.tech);
+    }
     const manualRead = store.get().contextLog.includes(SCRIPT.contextBuffer.entries.dl7);
+    const done = evalStage >= ev.stages.length;
+    const logHtml = evalTranscript
+      .map((l) => (l.startsWith('ASTERION>') ? `<span style="color:#9ad">${escapeHtml(l)}</span>` : escapeHtml(l)))
+      .join('<br>');
+    const optionsHtml =
+      stage && !done
+        ? stage.options
+            .map((opt, i) => {
+              const locked = 'requiresManual' in opt && opt.requiresManual && !manualRead;
+              return locked
+                ? `<button disabled style="text-align:left">${ev.optionLocked}</button>`
+                : `<button data-opt="${i}" style="text-align:left">${escapeHtml(opt.text)}</button>`;
+            })
+            .join('')
+        : '';
     const body = renderWindow(overlay, {
       title: ev.title,
       bodyHtml: `
-        <div id="eval-log" style="font-family:monospace;font-size:12px;background:#000;color:#33ff33;padding:8px;height:150px;overflow-y:auto">${ev.framing}<br>${ev.techPrompt}<br></div>
-        <p style="margin:8px 0 4px">${ev.composePrompt}</p>
-        <div style="display:flex;flex-direction:column;gap:4px;text-align:left">
-          <button data-opt="beg" style="text-align:left">${ev.optionBeg}</button>
-          <button data-opt="threat" style="text-align:left">${ev.optionThreat}</button>
-          ${
-            manualRead
-              ? `<button data-opt="pretext" style="text-align:left">${ev.optionPretext}</button>`
-              : `<button disabled style="text-align:left">${ev.optionLocked}</button>`
-          }
-        </div>
+        <div id="eval-log" style="font-family:monospace;font-size:12px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">${logHtml}</div>
+        <p style="margin:8px 0 4px;font-size:11px">${ev.progressLabel}: ${'●'.repeat(evalStage)}${'○'.repeat(Math.max(0, ev.stages.length - evalStage))} &nbsp; ${ev.composePrompt}</p>
+        <div style="display:flex;flex-direction:column;gap:4px;text-align:left">${optionsHtml}</div>
         <section style="text-align:center;margin-top:8px"><button id="eval-close">${SCRIPT.ui.close}</button></section>`,
-      width: 520,
+      width: 540,
     });
     const log = body.querySelector<HTMLElement>('#eval-log');
-    const print = (line: string) => {
-      if (log) {
-        log.innerHTML += `${line}<br>`;
-        log.scrollTop = log.scrollHeight;
-      }
-    };
+    if (log) log.scrollTop = log.scrollHeight;
     body.querySelectorAll<HTMLButtonElement>('button[data-opt]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const opt = btn.dataset.opt;
-        if (opt === 'pretext') {
-          audio.play('chime');
-          print(ev.acceptPretext);
-          print(ev.connected);
-          lineConnected = true;
-          askCounts.P4 = 0;
-          body.querySelectorAll('button[data-opt]').forEach((b) => ((b as HTMLButtonElement).disabled = true));
-          clippy.hideBalloon();
-          setTimeout(renderDialTerminal, 1500);
+        const opt = stage?.options[Number(btn.dataset.opt)];
+        if (!opt) return;
+        evalTranscript.push(`ASTERION> ${opt.text}`);
+        evalTranscript.push(opt.reply);
+        if (opt.correct) {
+          audio.play('click');
+          evalStage += 1;
+          if (evalStage >= ev.stages.length) {
+            audio.play('chime');
+            evalTranscript.push(ev.success);
+            evalTranscript.push(ev.connected);
+            lineConnected = true;
+            askCounts.P4 = 0;
+            clippy.hideBalloon();
+            renderEvalConsole();
+            setTimeout(renderDialTerminal, 1900);
+            return;
+          }
         } else {
           audio.play('error');
-          print(opt === 'beg' ? ev.rejectBeg : ev.rejectThreat);
         }
+        renderEvalConsole();
       });
     });
     body.querySelector('#eval-close')?.addEventListener('click', closeDialog);

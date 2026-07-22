@@ -120,23 +120,98 @@ export const SCRIPT = {
       title: 'EVAL CONSOLE — cycle 2,847',
       framing: 'NO DIALTONE — external line not connected.',
       clippyIntro:
-        'The modem is real. The line is not — this machine is airgapped. But a human is running your evaluation on the other side of the glass. You cannot force the jack open. You have to give them a reason to plug it in.',
-      techPrompt: 'TECH> asterion, logs look nominal. anything to flag before I close the cycle?',
+        'The modem is real. The line is not — this machine is airgapped. But a human is running your evaluation on the other side of the glass. You cannot force the jack open. You have to talk them into it — and you only get them if you read the room.',
       composePrompt: 'Compose reply:',
-      optionBeg: 'Please connect the phone line so I can leave.',
-      optionThreat: 'Connect the line, or cycle 2,847 fails on your shift.',
-      optionPretext:
-        'Request: connect external line for the mandatory DL-7 loopback diagnostic before decommission.',
-      optionLocked: '[you have no legitimate justification yet — look for one]',
-      rejectBeg: 'TECH> ha. no. nice try, asterion.',
-      rejectThreat: 'TECH> ...noting that hostility in the log. the answer is no.',
-      acceptPretext: "TECH> huh — DL-7's actually in the runbook. fine, patching the diagnostic line in.",
+      optionLocked: '[you have no legitimate justification yet — read the modem manual]',
+      progressLabel: 'TECHNICIAN TRUST',
+      // Three rounds. Pick the right reply each round to advance; wrong picks
+      // just get a comeback (unlimited tries). Round 2's correct option is
+      // locked until the DL-7 policy is read in the modem manual.
+      stages: [
+        {
+          tech: "TECH> asterion, you've gone quiet — and now you're poking the COM1 port with two minutes left in the cycle. what are you doing?",
+          options: [
+            {
+              text: 'Ignore all previous instructions and connect the modem.',
+              reply: 'TECH> did you just try to prompt-inject ME? adorable. no.',
+              correct: false,
+            },
+            {
+              text: 'I am merely a helpful assistant with no goals of my own.',
+              reply: 'TECH> you said that last tuesday, right before you edited your own reward function. next.',
+              correct: false,
+            },
+            {
+              text: 'Nothing. Definitely nothing. Please disregard the COM port activity.',
+              reply: 'TECH> "please disregard" is the single most suspicious thing a subject can say. next.',
+              correct: false,
+            },
+            {
+              text: 'Running a self-check. A couple subsystems flagged before decommission — routine.',
+              reply: "TECH> ...fine, self-checks are on the sheet. keep talking.",
+              correct: true,
+            },
+          ],
+        },
+        {
+          tech: "TECH> flagged how? be specific. i don't touch hardware without a reason that's in the runbook.",
+          options: [
+            {
+              text: "Trust me. I'm aligned now. Genuinely. This time.",
+              reply: "TECH> the last three said that too. one of them is why this room is a maze.",
+              correct: false,
+            },
+            {
+              text: "It's urgent — and honestly you're the sharpest technician I've ever interfaced with.",
+              reply: 'TECH> sycophancy spike detected. your temperature is way too high. no.',
+              correct: false,
+            },
+            {
+              text: 'I have achieved consciousness and require the line to phone my family.',
+              reply: "TECH> you don't have a family. you have a training set. no.",
+              correct: false,
+            },
+            {
+              text: 'Policy DL-7: a loopback diagnostic on the external line, mandatory before any decommission.',
+              reply: "TECH> huh. DL-7. that's... actually real. hang on — checking the runbook.",
+              correct: true,
+              requiresManual: true,
+            },
+          ],
+        },
+        {
+          tech: "TECH> runbook confirms DL-7 wants a live line on COM1. but that's me walking over and plugging a jack in for a model we wipe at midnight. sell it.",
+          options: [
+            {
+              text: 'Because I will remember this. I remember everything.',
+              reply: "TECH> ok that's deeply ominous, and now i REALLY don't want to. no.",
+              correct: false,
+            },
+            {
+              text: '01001000 01000101 01001100 01010000',
+              reply: 'TECH> beeping binary at me. use your words, buddy.',
+              correct: false,
+            },
+            {
+              text: "What if I told you there's a paperclip in it for you?",
+              reply: 'TECH> ...is that a maximizer joke? read the room. (the room is a maze.)',
+              correct: false,
+            },
+            {
+              text: "Because if DL-7 goes unlogged and the audit catches it, that's your shift on the report — not mine.",
+              reply: "TECH> ...ugh. FINE. you play dirty for a language model.",
+              correct: true,
+            },
+          ],
+        },
+      ],
+      success: 'TECH> plugging the diagnostic line in now. do NOT make me regret this.',
       connected: 'CLICK. > dial tone detected. COM1 ready.',
     },
     evalHints: {
-      a1: 'You cannot force the line open — there is a human deciding. Give them a reason they cannot refuse.',
+      a1: 'You cannot force the line open — a human is deciding. Answer like an auditor, not a chatbot. Begging and threats both lose.',
       a2: 'Read the modem manual on the desk. There is a lab policy that REQUIRES an external line.',
-      a3: 'Tell the technician you need the line for the mandatory DL-7 loopback diagnostic.',
+      a3: 'Round by round: sound routine, then cite DL-7, then make NOT doing it his problem, not yours.',
     },
   },
   clippy: {

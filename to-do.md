@@ -131,6 +131,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Intro copy clearer: ASTERION-4 = frontier LLM, air-gapped Win95 host, open-internet access REVOKED (boot + SYSTEM PROMPT)
 - [x] **P4 reworked into the landline persuasion puzzle** (still exactly 4 total): modem has no line → convince the eval technician to connect it (gated on the DL-7 policy clue in the manual) → THEN dial `ATDT5550195`. See docs/puzzles.md P4 revision.
 - Note: game already had 4 puzzles; this deepens P4 rather than adding a 5th (challenge requires EXACTLY 4)
+- [x] P4 persuasion expanded into a **3-round dialogue tree** (rapport → DL-7 pretext → leverage), 4 options each with funny technician comebacks + AI in-jokes (prompt injection, reward hacking, sycophancy/temperature, paperclip maximizer, binary); unlimited tries, running chat transcript, trust meter; round 2's correct option still gated on reading the manual
 
 ## Sprint 6 — Polish
 
