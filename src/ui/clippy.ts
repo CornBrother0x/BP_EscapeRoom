@@ -8,26 +8,28 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 
 const STYLE = `
 @keyframes clippy-bounce {
-  0% { transform: translateY(160px) scale(0.6); opacity: 0; }
-  60% { transform: translateY(-14px) scale(1.05); opacity: 1; }
-  80% { transform: translateY(6px) scale(0.98); }
+  0% { transform: translateY(420px) scale(0.6); opacity: 0; }
+  60% { transform: translateY(-16px) scale(1.05); opacity: 1; }
+  80% { transform: translateY(8px) scale(0.98); }
   100% { transform: translateY(0) scale(1); }
 }
 @keyframes clippy-idle {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-7px); }
 }
-.clippy-root { position: fixed; right: 26px; bottom: 22px; z-index: 60; display: none; }
+.clippy-root { position: fixed; right: 28px; bottom: 24px; z-index: 60; display: none; }
 .clippy-root.visible { display: block; }
-.clippy-img { height: 110px; image-rendering: pixelated; animation: clippy-idle 3.2s ease-in-out infinite; }
+.clippy-img { height: 340px; image-rendering: pixelated; animation: clippy-idle 3.2s ease-in-out infinite;
+  filter: drop-shadow(3px 4px 3px rgba(0,0,0,0.45)); }
 .clippy-img.entering { animation: clippy-bounce 0.9s ease-out; }
 .clippy-balloon {
-  position: absolute; right: 8px; bottom: 122px; width: 250px; display: none;
-  background: #ffffcc; color: #000; border: 1px solid #000; border-radius: 8px;
-  padding: 10px 12px; font: 12px monospace; box-shadow: 2px 2px 0 rgba(0,0,0,0.35);
+  position: absolute; right: 12px; bottom: 356px; width: 320px; display: none;
+  background: #ffffcc; color: #000; border: 1px solid #000; border-radius: 10px;
+  padding: 12px 14px; font: 14px monospace; line-height: 1.4;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
 }
 .clippy-balloon.visible { display: block; }
-.clippy-balloon button { margin-top: 8px; font: 11px monospace; }
+.clippy-balloon button { margin-top: 10px; font: 12px monospace; }
 `;
 
 export class ClippyWidget {
