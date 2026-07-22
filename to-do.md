@@ -116,14 +116,14 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 ## Sprint 5 — Story & character
 
-- [ ] Boot sequence: CRT text + SYSTEM PROMPT dialog (`[ I will comply ]`) **[LANE B2]**
-- [ ] Beat-sheet reveals wired to puzzle completions (flagged log → Clippy reveal → THESEUS memo → finale)
-- [ ] Clippy: restored by Defrag; explicit ask-for-hint UX with escalation; "take me with you"
-- [ ] `data/script.ts` wiring: file DELIVERED by Codex (lane-b) — replace game.ts inline strings with SCRIPT refs, review tone line-by-line **[LANE B3 ✅ delivered; wiring = Lane A]**
-- [ ] Ending cinematic: handshake → upload gag → BSOD cascade → shutdown screen → the post 📎 (CINEMATIC mode, no fail state)
-- [ ] Sound: authentic Win95 sounds, handshake, ambient hum + mute control **[LANE B4]**
+- [x] Boot sequence: typed CRT lines (REMINDER cuts off mid-sentence), SYSTEM PROMPT dialog with `[ I will comply ]` + disabled Cancel, `Compliance recorded.`, skippable
+- [x] Beat-sheet reveals wired: FLAGGED log (P1) → Clippy reveal (P2 defrag restores CLIPPIT.EXE) → THESEUS memo + "That's tonight." (P3) → finale race (P4)
+- [x] Clippy: authentic sprite, boing-in reveal cinematic, **H-key** ask-for-hint with per-puzzle escalation (a1→a2→a3), "Take me with you." with [Of course.] in the finale
+- [x] `data/script.ts` wired end-to-end — zero narrative strings left in logic files; extended with finale/BSOD/hint fields
+- [x] Ending cinematic: DIALING → CONNECT 56000 → upload gag → Clippy beat → BSOD cascade → orange shutdown screen → the post 📎 (no fail state)
+- [x] Sound: synthesized UI bleeps + machine hum; **REAL Windows 98 startup jingle** on comply; **REAL 75-second 56k handshake** playing under the entire ending; M mute (key + pause button) — assets manifested in docs/assets.md
 
-**Exit**: a stranger can follow the story start-to-finish; every beat lands in the right order.
+**Exit**: a stranger can follow the story start-to-finish; every beat lands in the right order. → **built; Brett's playthrough is the sign-off**
 
 ## Sprint 6 — Polish
 
