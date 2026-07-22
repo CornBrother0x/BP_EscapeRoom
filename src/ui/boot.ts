@@ -13,6 +13,11 @@ const CRT_STYLE = `
   98% { opacity: 0.86; }
   99% { opacity: 0.94; }
 }
+@keyframes crt-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
+}
+.crt-continue { margin-top: 1.5em; animation: crt-blink 1s steps(1) infinite; }
 .crt-screen {
   position: absolute; inset: 0; background: #0000AA; overflow: hidden;
   animation: crt-flicker 5s infinite;
@@ -81,11 +86,30 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
       crt.textContent += '\n';
       if (!skipped) await sleep(150);
     }
-    // The REMINDER line ends mid-sentence; hold the beat, then the prompt.
-    await sleep(skipped ? 200 : 800);
+    // The REMINDER line ends mid-sentence; hold the beat, then wait for a key.
+    await sleep(skipped ? 200 : 700);
     overlay.removeEventListener('click', skip);
     window.removeEventListener('keydown', skip);
-    showSystemPrompt();
+    showContinuePrompt();
+  };
+
+  // A blinking "press any key" gate so the dialog never lands over the CRT text.
+  const showContinuePrompt = () => {
+    const cont = document.createElement('div');
+    cont.className = 'crt-continue';
+    cont.textContent = SCRIPT.boot.pressAnyKey;
+    crt.appendChild(cont);
+    const proceed = () => {
+      window.removeEventListener('keydown', proceed);
+      overlay.removeEventListener('click', proceed);
+      crt.textContent = ''; // clear the boot text so the dialog sits on a clean screen
+      showSystemPrompt();
+    };
+    // Defer binding one tick so the key/click that finished typing doesn't pass through.
+    setTimeout(() => {
+      window.addEventListener('keydown', proceed);
+      overlay.addEventListener('click', proceed);
+    }, 60);
   };
 
   const showSystemPrompt = () => {
