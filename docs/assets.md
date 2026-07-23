@@ -19,3 +19,4 @@
 | `public/sprites/opengl-room.png` | 3D Maze "OpenGL room" scene (wall window) | Same archive.org dump |
 | `public/audio/music.mp3` | Soft background music loop (3 min, trimmed) | YouTube (ang1txhF87A), non-commercial portfolio use |
 | `public/audio/rickroll.mp3` | Rick Astley "Never Gonna Give You Up" (first 15s, dead-end gag) | YouTube (dQw4w9WgXcQ), non-commercial portfolio use |
+| `public/favicon.png` | Clippy (Office Assistant) as the browser-tab icon | Cropped from the same Office Assistant art as clippy.png |

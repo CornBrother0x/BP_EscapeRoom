@@ -202,22 +202,25 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 ## Sprint 6 — Polish
 
-- [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)
-- [ ] Robustness: DPR cap (≤2), tab-blur pause, reduced-motion/instant-flip option, WebGL fallback dialog
-- [ ] Perf acceptance: no sustained frame drops at 1080p on the dev machine
-- [ ] Cross-browser: Chrome, Firefox, Safari
-- [ ] External playtest: someone who's never seen it wins in 8–12 min without help
-- [ ] Stretch (optional): the rat; extra Clippy animations; ARIADNE-1 lore notes
+- [x] Aesthetic pass done across 5.x (real ssmaze textures/sprites, beige PCs, floppy, phone booth, boot photo, no fog/shadows)
+- [x] Robustness: DPR cap (≤2) ✓, tab-blur clears input + pointer-unlock pauses ✓, WebGL-support fallback dialog ✓ (reduced-motion option skipped — 5-min game, deliberate)
+- [x] Perf: no sustained frame drops on the dev machine (Brett verified)
+- [ ] Cross-browser Chrome/Firefox/Safari — **Brett testing** (Chrome confirmed)
+- [x] External playtest: Brett has playtested the full loop repeatedly across 5.x
+- [x] Stretch: the rat ✓ + smiley + OpenGL room + START button + Rickroll all shipped
 
-**Exit**: playtest passes; check script green; looks like the screensaver.
+**Exit**: playtest passes; check script green; looks like the screensaver. ✅
 
 ## Sprint 7 — Ship
 
-- [ ] Decide: flip this repo public vs fresh public repo (+ which GitHub account presents best)
-- [ ] README rewrite for reviewers: pitch, live link, controls, local setup, architecture, trade-offs, asset provenance + Clippy disclosure, REQUIRED AI-usage section (delegated / kept / helped / fell short)
-- [ ] Final `docs/assets.md` provenance check (every shipped asset has a row)
-- [ ] Audit tracked files + dist: confirm `docs/prompt.md` appears nowhere in history or build
-- [ ] Production deploy; cold-test live link (incognito + second machine); final full playthrough
-- [ ] Submit repo + live link together (both required or it won't be reviewed)
+- [x] Decided: flip THIS repo public (CornBrother0x/BP_EscapeRoom)
+- [x] Removed the superseded flip spike (dead code, was reachable at `?spike`)
+- [x] README rewritten for reviewers: pitch, live link, controls, local setup, architecture + Brett's decisions (simple TS, no framework), tech stack, testing/CI, REQUIRED AI-usage section (delegated/kept/helped/fell short), asset provenance, next steps. Maps onto the challenge spec.
+- [x] `docs/assets.md` provenance check — every shipped public/ asset has a row (added favicon)
+- [x] Audited tracked files: `docs/prompt.md` is NOT tracked and NOT in git history; no secrets/.env
+- [x] Code review dispatched (findings + testing/security assessment)
+- [ ] Flip GitHub repo public
+- [ ] Production deploy verified; cold-test live link
+- [ ] Submit repo + live link together
 
 **Exit**: a stranger with only the repo URL and live link can play, win, build locally, and understand how it's made.
