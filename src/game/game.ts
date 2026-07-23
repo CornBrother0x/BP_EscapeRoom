@@ -114,7 +114,11 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
 
   // ---- Pointer lock + dialog plumbing ----
   let openDialogId: string | null = null;
-  const lockPointer = () => renderer.domElement.requestPointerLock();
+  const lockPointer = () => {
+    // requestPointerLock returns a Promise in modern browsers; a rejected lock
+    // (rapid re-lock, no user gesture) must not surface as an unhandled rejection.
+    void Promise.resolve(renderer.domElement.requestPointerLock()).catch(() => {});
+  };
   document.addEventListener('pointerlockchange', () => {
     if (!document.pointerLockElement && store.get().mode === 'EXPLORE') {
       if (store.pause()) showPauseDialog();
@@ -399,7 +403,14 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
             askCounts.P4 = 0;
             clippy.hideBalloon();
             renderEvalConsole();
-            setTimeout(renderDialTerminal, 1900);
+            // Only swap in the dial terminal if the eval window is still open
+            // (the player may Close during this beat; re-opening the booth then
+            // goes straight to the dial terminal since lineConnected is true).
+            setTimeout(() => {
+              if (openDialogId === 'terminal' && store.get().mode === 'PUZZLE_UI') {
+                renderDialTerminal();
+              }
+            }, 1900);
             return;
           }
         } else {

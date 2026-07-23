@@ -77,10 +77,6 @@ const DECORATION_CHARS: Record<string, DecorationId> = {
   X: 'sign',
 };
 
-export function isWalkable(ch: string): boolean {
-  return ch !== '#' && ch !== undefined;
-}
-
 export function parseMaze(rows: readonly string[]): ParsedMaze {
   const height = rows.length;
   const width = rows[0]?.length ?? 0;
