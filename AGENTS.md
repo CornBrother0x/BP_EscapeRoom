@@ -1,6 +1,7 @@
 # AGENTS.md — Binding Rules for All Coding Agents
 
 ## Required reading, in order
+
 1. `to-do.md` — THE product spec and sprint plan. All work flows from it.
 2. `docs/puzzles.md` — exact puzzle contracts, input modes, progression.
 3. `docs/lore.md` — story bible: characters, beat sheet, scripts, tone.
@@ -15,15 +16,13 @@
    confidentiality — never force-add it, and never quote the challenge
    brief's text into any tracked file. History is forever.
 3. **Asset manifest**: when an external asset (texture, sound, font) enters
-   the project, add a row to `docs/assets.md` — source, what it is, shipped
-   path. This is for provenance transparency in the final README, not
-   license-policing.
-4. **Asset policy — AUTHENTICITY FIRST** (Brett's call): USE the real
-   Microsoft-extracted assets — screensaver textures, sprites, Win95 sounds,
-   Clippy — wherever they serve the aesthetic. `docs/references/` is a
-   usable asset source, not just visual reference. This is a non-commercial
-   portfolio project; IP risk is accepted wholesale. Disclose provenance in
-   the final README.
+   the project, add a row to `docs/assets.md` with its source, rights holder,
+   license or permission status, and shipped path. Unresolved redistribution
+   rights block submission.
+4. **Asset policy**: aesthetic references guide original or clearly licensed
+   replacements. Do not ship extracted, ripped, or downloaded media solely
+   because it is publicly accessible. Authenticity does not override
+   redistribution rights.
 5. **Code conventions**: TypeScript strict, no `any` without a comment
    justifying it. ALL narrative/UI text lives in `src/data/script.ts` — none
    hardcoded in logic. Puzzle modules stay independent (no generic

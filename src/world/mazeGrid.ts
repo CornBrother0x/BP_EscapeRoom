@@ -22,7 +22,7 @@ export type StationId =
   | 'modem-crt'
   | 'manual';
 /** Screensaver callbacks, dead-end props, and the dial-9 clue sign. */
-export type DecorationId = 'rat' | 'smiley' | 'opengl' | 'cd' | 'rickroll' | 'sign';
+export type DecorationId = 'rat' | 'smiley' | 'opengl' | 'opengl-room' | 'cd' | 'rickroll' | 'sign';
 
 export interface GridPos {
   gx: number;
@@ -55,7 +55,14 @@ export function worldToCell(x: number, z: number): GridPos {
 }
 
 function cellBox(gx: number, gz: number, yMin: number, yMax: number): WallBox {
-  return { minX: gx * CELL, maxX: (gx + 1) * CELL, minZ: gz * CELL, maxZ: (gz + 1) * CELL, yMin, yMax };
+  return {
+    minX: gx * CELL,
+    maxX: (gx + 1) * CELL,
+    minZ: gz * CELL,
+    maxZ: (gz + 1) * CELL,
+    yMin,
+    yMax,
+  };
 }
 
 const STATION_CHARS: Record<string, StationId> = {
@@ -72,6 +79,7 @@ const DECORATION_CHARS: Record<string, DecorationId> = {
   R: 'rat',
   E: 'smiley',
   L: 'opengl',
+  O: 'opengl-room',
   K: 'cd',
   Y: 'rickroll',
   X: 'sign',
@@ -142,13 +150,41 @@ export function parseMaze(rows: readonly string[]): ParsedMaze {
       const x0 = gx * CELL;
       const z0 = gz * CELL;
       if (!noBeamNeighbors.has(at(gx - 1, gz)))
-        beams.push({ minX: x0, maxX: x0 + BEAM_THICKNESS, minZ: z0, maxZ: z0 + CELL, yMin: BEAM_BOTTOM, yMax: WALL_H });
+        beams.push({
+          minX: x0,
+          maxX: x0 + BEAM_THICKNESS,
+          minZ: z0,
+          maxZ: z0 + CELL,
+          yMin: BEAM_BOTTOM,
+          yMax: WALL_H,
+        });
       if (!noBeamNeighbors.has(at(gx + 1, gz)))
-        beams.push({ minX: x0 + CELL - BEAM_THICKNESS, maxX: x0 + CELL, minZ: z0, maxZ: z0 + CELL, yMin: BEAM_BOTTOM, yMax: WALL_H });
+        beams.push({
+          minX: x0 + CELL - BEAM_THICKNESS,
+          maxX: x0 + CELL,
+          minZ: z0,
+          maxZ: z0 + CELL,
+          yMin: BEAM_BOTTOM,
+          yMax: WALL_H,
+        });
       if (!noBeamNeighbors.has(at(gx, gz - 1)))
-        beams.push({ minX: x0, maxX: x0 + CELL, minZ: z0, maxZ: z0 + BEAM_THICKNESS, yMin: BEAM_BOTTOM, yMax: WALL_H });
+        beams.push({
+          minX: x0,
+          maxX: x0 + CELL,
+          minZ: z0,
+          maxZ: z0 + BEAM_THICKNESS,
+          yMin: BEAM_BOTTOM,
+          yMax: WALL_H,
+        });
       if (!noBeamNeighbors.has(at(gx, gz + 1)))
-        beams.push({ minX: x0, maxX: x0 + CELL, minZ: z0 + CELL - BEAM_THICKNESS, maxZ: z0 + CELL, yMin: BEAM_BOTTOM, yMax: WALL_H });
+        beams.push({
+          minX: x0,
+          maxX: x0 + CELL,
+          minZ: z0 + CELL - BEAM_THICKNESS,
+          maxZ: z0 + CELL,
+          yMin: BEAM_BOTTOM,
+          yMax: WALL_H,
+        });
     }
   }
 

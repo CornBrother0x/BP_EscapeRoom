@@ -44,14 +44,14 @@ Prereq for ALL parallel work: Sprint 2 merged (toolchain + conventions exist).
 Hard rule: one agent per directory — integration only through the interfaces
 named in `docs/puzzles.md`. Lane A owns `main.ts` and the state store.
 
-| Lane | Owner | Work | Unblocked by |
-|---|---|---|---|
-| **A — spine** | Claude | Sprint 3 (maze, controller, store, input modes) → Sprint 4 P1 + P3 (3D-coupled) → Sprint 5 wiring + finale + P4 terminal | Sprint 2 ✅ |
-| **B1** | Codex/2nd | ✅ DELIVERED + merged: Defrag component (`mountDefrag`), logic tests, dev harness | — |
-| **B2** | Codex/2nd | Sprint 5 boot-sequence + ending screens as standalone DOM/98.css components | B3 ✅ (ready now) |
-| **B3** | Codex/2nd | ✅ DELIVERED + merged: `src/data/script.ts` (full narrative, typed) — Lane A wires it through dialogs in Sprint 5 | — |
-| **B4** | Codex/2nd | Sprint 5 sound pack: authentic Win95 sounds + modem handshake, exported as an audio manifest | now |
-| **B5** | Codex/2nd | `docs/assets.md` upkeep + crunching remaining textures/sprites into `public/` | now |
+| Lane          | Owner     | Work                                                                                                                     | Unblocked by      |
+| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| **A — spine** | Claude    | Sprint 3 (maze, controller, store, input modes) → Sprint 4 P1 + P3 (3D-coupled) → Sprint 5 wiring + finale + P4 terminal | Sprint 2 ✅       |
+| **B1**        | Codex/2nd | ✅ DELIVERED + merged: Defrag component (`mountDefrag`), logic tests, dev harness                                        | —                 |
+| **B2**        | Codex/2nd | Sprint 5 boot-sequence + ending screens as standalone DOM/98.css components                                              | B3 ✅ (ready now) |
+| **B3**        | Codex/2nd | ✅ DELIVERED + merged: `src/data/script.ts` (full narrative, typed) — Lane A wires it through dialogs in Sprint 5        | —                 |
+| **B4**        | Codex/2nd | Sprint 5 sound pack: authentic Win95 sounds + modem handshake, exported as an audio manifest                             | now               |
+| **B5**        | Codex/2nd | `docs/assets.md` upkeep + crunching remaining textures/sprites into `public/`                                            | now               |
 
 Merge order: B-lane components land on Lane A's schedule. P4's terminal stays
 in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
@@ -126,6 +126,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 **Exit**: a stranger can follow the story start-to-finish; every beat lands in the right order. → **built; Brett's playthrough is the sign-off**
 
 ### Sprint 5.1 — Brett revisions (2026-07-22)
+
 - [x] Startup sound = REAL Windows 95 chime (Brian Eno), replacing the mislabeled file
 - [x] Boot CRT restyled: blue `#0000AA` bg, big fuzzy phosphor white text, scanlines + flicker
 - [x] Intro copy clearer: ASTERION-4 = frontier LLM, air-gapped Win95 host, open-internet access REVOKED (boot + SYSTEM PROMPT)
@@ -134,6 +135,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] P4 persuasion expanded into a **3-round dialogue tree** (rapport → DL-7 pretext → leverage), 4 options each with funny technician comebacks + AI in-jokes (prompt injection, reward hacking, sycophancy/temperature, paperclip maximizer, binary); unlimited tries, running chat transcript, trust meter; round 2's correct option still gated on reading the manual
 
 ### Sprint 5.2 — Brett revisions (2026-07-22)
+
 - [x] Clippy sprite cropped to just the paperclip (removed the baked-in "writing a letter" tip balloon); resized to a prominent 300px-wide with drop shadow
 - [x] Persistent HUD hint: beveled Win95 "Tab ⇥ — open your context window" (shown only during free-roam)
 - [x] Boot dialog gated behind a blinking "Press any key to continue" so it never overlaps the CRT text; screen clears first
@@ -142,23 +144,27 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Original screensaver callbacks: the **rat** (ambient billboard), the **smiley exit** marker, the **OpenGL logo** wall decal
 
 ### Sprint 5.3 — Brett revisions (2026-07-23)
+
 - [x] Maze dialed back to the original open-room style, bumped **one notch** (~33% more floor + light winding), not the 2-3× over-complication of 5.2; validated (reachability + gating + sealed room)
 - [x] Restored the loved P1 mechanic: sticky note sits 2 cells from spawn on a north-facing wall — back-face culled, so the password is invisible on the way in and only found when you circle back and look from the other side
 - [x] Boot host illustration (Goosebumps-style CRT) + clean full Clippy sprite
 - [x] Defrag **progressive chord jingle**: each completed row adds the next note of a C-major chord (root→3rd→5th→octave); full solve rings the resolved triad
 
 ### Sprint 5.4 — Brett revisions (2026-07-23)
+
 - [x] Boot CRT image swapped from the hand-drawn SVG to Brett's real IBM-PC-with-lab-tech photo (optimized to a 122KB jpg)
 - [x] Fixed the "unfinished grey cubes": the readme/defrag/modem props are now beige IBM-style PCs (monitor + desktop case + green DOS screen + floppy slot + power LED), lit like the polyhedra
 - [x] Password changed to `williamg@tes21` (Bill Gates gag) — sticky note, context buffer, validator + tests updated
 
 ### Sprint 5.5 — Brett revisions (2026-07-23)
+
 - [x] Defrag station prop is now an oversized 3.5" floppy disk (`ASTERION.DSK`) on a stand — the disk you're defragmenting
 - [x] Sticky note moved to the far corner by the rat (more hidden; still back-face-culled "look from the other side" reveal)
 - [x] AT/DT confirmed intact (P1 MOTD + P2 defrag report, both saved to the Tab context buffer) — no change needed
 - [x] Ending reworked: "Upload will take too long. Thinking... instead I will just post to Twitter." → win popup links to the real account **https://x.com/XoAsterion4oX**
 
 ### Sprint 5.6 — Brett revisions (2026-07-23)
+
 - [x] Maze rebuilt hallway-first: password (N) at the end of a winding serpentine hallway (by the rat); polyhedron (3) at a corridor end with the smiley (E); longer final hallway in D — drop in, unflip at P, note (M) near entry, terminal (4) at the far end. Validated.
 - [x] Props: modem manual → **clipboard**; modem terminal → **phone booth**; (defrag already a floppy)
 - [x] Clippy P3 hint now: "I heard there was something in the next room. Down at the end, past the smiley."
@@ -168,6 +174,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] **Clippy favicon** for the site
 
 ### Sprint 5.7 — Brett revisions (2026-07-23)
+
 - [x] Sector A reverted to open rooms (not the serpentine); password now at the end of a short L-hallway that starts by the rat + readme computer
 - [x] Sector D final hallway extended and made to wind/bend a few times (drop → unflip at P → note → phone-booth terminal at the far end). Sealed test reworked to H-blocking reachability so any D shape is allowed.
 - [x] Win95 **START** button planted at spawn ("right when you start")
@@ -175,12 +182,14 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] **Soft looping background music** during play (YouTube track, 3-min loop @ ~9% volume through master so M mutes it); **stops when the finale dial-up screech begins**
 
 ### Sprint 5.8 — Brett revisions (2026-07-23)
+
 - [x] Sector B (defrag) roughly doubled in size, with a **CD-ROM decoy** (`ENCARTA '95`) near the entrance — clicking it pops a Win95 "D:\ is not accessible" dead-end dialog, throwing players off until they find the real defrag floppy in the far corner
 - [x] Sector D: phone booth moved to the **very end** of the winding hallway
 - [x] Sector C reworked into a **smiley-filled chamber with two hallways** — the left dead-ends, the right leads to the polyhedron that flips you into the final level
 - [x] Added a **flip whoosh sound effect** (the screensaver had none) when the world flips
 
 ### Sprint 5.9 — Brett revisions (2026-07-23)
+
 - [x] Sector C: the polyhedron is no longer right by the entrance — a single hallway leads down from the smiley chamber and **splits**; the left branch dead-ends, the right runs to the flip object
 - [x] Sector D: **return polyhedron (P) pushed to the far bottom-left corner** (19 cells from the drop) — you drop in flipped, travel all the way down, unflip at P, then come back across to the booth at the far end
 - [x] Rat + smiley are now **flat camera-facing sprites** (2D-in-3D) instead of the weird crossed 4-way planes
@@ -189,12 +198,14 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Verified defrag row-completion logic is correct (1,4,3,2 does not complete) — added regression tests
 
 ### Sprint 5.10 — Brett revisions (2026-07-23)
+
 - [x] **Rickroll dead end**: a hallway off the right of the defrag room curls once to a play button (▶); pressing it plays the first 15s of "Never Gonna Give You Up," then a "You've been Rickrolled — dead end" popup
 - [x] Flip polyhedron **tucked deeper** — the right branch of the split now curls into a back nook where it hides (no longer near the pathway)
 - [x] **Phone booth can't be used while flipped** — you must unflip at P first (toast tells you to flip back)
 - [x] Rewrote Clippy's modem line in **direct language, no em-dashes** ("The modem works. The phone line is not plugged in...")
 
 ### Sprint 5.11 — Brett revisions (2026-07-23)
+
 - [x] Rickroll trimmed to the **first 10 seconds**
 - [x] Sector B: the right hallway now **forks** — one branch is the Rickroll, the other holds the real defrag floppy (moved well away from the door to the next zone)
 - [x] **New final-puzzle clue**: a wall sign in D — "OUTSIDE LINE: DIAL 9" — reads into your context; the dial command is now **`ATDT95550195`** (dialing `ATDT5550195` gets "NO CARRIER — internal line. Dial 9 for an outside line.")
@@ -215,12 +226,15 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 - [x] Decided: flip THIS repo public (CornBrother0x/BP_EscapeRoom)
 - [x] Removed the superseded flip spike (dead code, was reachable at `?spike`)
-- [x] README rewritten for reviewers: pitch, live link, controls, local setup, architecture + Brett's decisions (simple TS, no framework), tech stack, testing/CI, REQUIRED AI-usage section (delegated/kept/helped/fell short), asset provenance, next steps. Maps onto the challenge spec.
-- [x] `docs/assets.md` provenance check — every shipped public/ asset has a row (added favicon)
+- [x] README tightened for reviewers: local setup near the top, direct architecture and AI-use notes, no puzzle solutions or unsupported browser claims
+- [x] `docs/assets.md` provenance check — every shipped public/ asset has a row and an explicit rights status
 - [x] Audited tracked files: `docs/prompt.md` is NOT tracked and NOT in git history; no secrets/.env
 - [x] Code review done (verdict: production code, not slop). Fixed: eval→dial mode desync (real bug), hardened pointer lock, dropped unused export. Left for Brett/Codex judgment: game.ts God-function refactor, dead script fields, string duplication (documented).
 - [x] **Flipped GitHub repo public** — https://github.com/CornBrother0x/BP_EscapeRoom
-- [ ] Production deploy verified; cold-test live link (verifying)
+- [ ] Replace or obtain redistribution permission for every asset marked unresolved in `docs/assets.md`
+- [ ] Decide whether to create a clean submission repo without spoiler-heavy internal planning docs and copyrighted reference binaries
+- [ ] Deploy and verify the new security headers from `vercel.json`
+- [ ] Production deploy verified; cold-test live link
 - [ ] Submit repo + live link together (Brett's final step after Codex review)
 
 **Exit**: a stranger with only the repo URL and live link can play, win, build locally, and understand how it's made.

@@ -1,22 +1,22 @@
-# Asset Manifest (provenance)
+# Asset Manifest
 
-> Rule (AGENTS.md #3): every external asset that enters the project gets a row
-> here. This feeds the README's asset-provenance section.
+Every external asset needs a documented source and a redistribution basis.
+Source attribution alone is not permission.
 
-| Shipped path | What it is | Source |
-|---|---|---|
-| `public/textures/brick.png` | Original 3D Maze brick wall texture | Extracted `ssmaze.scr` assets, archive.org sprite dump (see `docs/references/aesthetic-notes.md`) |
-| `public/textures/floor-wood.png` | Original 3D Maze wood floor texture | Same archive.org dump |
-| `public/textures/ceiling.png` | Original 3D Maze ceiling tile texture | Same archive.org dump |
-| `public/clippy.png` | Clippy (Office Assistant) letter pose sprite | Extracted Office Assistant art via clippy.js asset dump (see aesthetic-notes.md) |
-| `public/audio/startup.mp3` | Windows 98 startup sound (7.6s) | archive.org item `windows-98_202204` |
-| `public/audio/dialup.mp3` | 56k dial-up handshake, trimmed to 75s @96kbps | archive.org item `1-hour-sfx-sound-effects-dial-up-internet-modem-connection-that-costumed-guy` |
-| `public/sprites/rat.png` | Original 3D Maze rat sprite (ambient billboard) | Extracted `ssmaze.scr` assets, archive.org dump |
-| `public/sprites/smiley.png` | Original 3D Maze smiley "exit" sprite | Same archive.org dump |
-| `public/sprites/opengl.png` | Original 3D Maze OpenGL logo (wall decal) | Same archive.org dump |
-| `public/boot-host.jpg` | Boot-screen photo — IBM PC with a lab technician (the host we are trapped inside) | Provided by Brett (desktop screenshot) |
-| `public/sprites/start.png` | Windows Start button (spawn marker) | Extracted `ssmaze.scr` assets, archive.org dump |
-| `public/sprites/opengl-room.png` | 3D Maze "OpenGL room" scene (wall window) | Same archive.org dump |
-| `public/audio/music.mp3` | Soft background music loop (3 min, trimmed) | YouTube (ang1txhF87A), non-commercial portfolio use |
-| `public/audio/rickroll.mp3` | Rick Astley "Never Gonna Give You Up" (first 15s, dead-end gag) | YouTube (dQw4w9WgXcQ), non-commercial portfolio use |
-| `public/favicon.png` | Clippy (Office Assistant) as the browser-tab icon | Cropped from the same Office Assistant art as clippy.png |
+| Shipped path                     | What it is                            | Source                                                                                          | Rights status                                               |
+| -------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `public/textures/brick.png`      | Original 3D Maze brick wall texture   | Extracted `ssmaze.scr` assets, archive.org sprite dump                                          | Microsoft material; no redistribution license documented    |
+| `public/textures/floor-wood.png` | Original 3D Maze wood floor texture   | Same archive.org dump                                                                           | Microsoft material; no redistribution license documented    |
+| `public/textures/ceiling.png`    | Original 3D Maze ceiling tile texture | Same archive.org dump                                                                           | Microsoft material; no redistribution license documented    |
+| `public/clippy.png`              | Office Assistant sprite               | Extracted via a clippy.js asset dump                                                            | Microsoft material; no redistribution license documented    |
+| `public/audio/startup.mp3`       | Windows startup sound                 | archive.org item `windows-98_202204`                                                            | Microsoft material; no redistribution license documented    |
+| `public/audio/dialup.mp3`        | 56k dial-up handshake                 | archive.org item `1-hour-sfx-sound-effects-dial-up-internet-modem-connection-that-costumed-guy` | Recording rights unverified                                 |
+| `public/sprites/rat.png`         | Original 3D Maze rat sprite           | Extracted `ssmaze.scr` assets, archive.org dump                                                 | Microsoft material; no redistribution license documented    |
+| `public/sprites/smiley.png`      | Original 3D Maze exit sprite          | Same archive.org dump                                                                           | Microsoft material; no redistribution license documented    |
+| `public/sprites/opengl.png`      | Original 3D Maze OpenGL logo          | Same archive.org dump                                                                           | Microsoft material; no redistribution license documented    |
+| `public/boot-host.jpg`           | IBM PC with a lab technician          | Provided by Brett                                                                               | Ownership and reuse permission need confirmation            |
+| `public/sprites/start.png`       | Windows Start button                  | Extracted `ssmaze.scr` assets, archive.org dump                                                 | Microsoft material; no redistribution license documented    |
+| `public/sprites/opengl-room.png` | Original 3D Maze OpenGL-room scene    | Same archive.org dump                                                                           | Microsoft material; no redistribution license documented    |
+| `public/audio/music.mp3`         | Background music loop                 | YouTube (`ang1txhF87A`)                                                                         | No redistribution license documented                        |
+| `public/audio/rickroll.mp3`      | Commercial song excerpt               | YouTube (`dQw4w9WgXcQ`)                                                                         | Copyrighted recording; no redistribution license documented |
+| `public/favicon.png`             | Office Assistant favicon              | Cropped from `public/clippy.png`                                                                | Microsoft material; no redistribution license documented    |

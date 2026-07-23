@@ -13,7 +13,7 @@ import { Player } from '../engine/player';
 import { createThree } from '../engine/renderer';
 import { SCRIPT } from '../data/script';
 import { MAZE_ROWS } from '../data/mazeLayout';
-import { WALL_H, cellCenter, parseMaze, worldToCell } from '../world/mazeGrid';
+import { WALL_H, cellCenter, parseMaze, worldToCell, type StationId } from '../world/mazeGrid';
 import { buildMaze } from '../world/maze';
 import { hideOverlay, renderWindow, showWindow } from '../ui/dialogs';
 import { ClippyWidget } from '../ui/clippy';
@@ -22,6 +22,7 @@ import { runFinale } from '../ui/finale';
 import { Store } from './state';
 import { classifyDialCommand, isAdminPassword } from './validators';
 import { mountDefrag } from '../puzzles/defrag/defrag';
+import type { DefragBoard } from '../puzzles/defrag/defragLogic';
 import * as THREE from 'three';
 
 export function startGame(app: HTMLElement, overlay: HTMLElement): void {
@@ -40,7 +41,9 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   player.place(spawn.x, spawn.z, Math.PI);
 
   window.addEventListener('keydown', (e) => {
-    if (e.code === 'Tab') e.preventDefault();
+    if (e.code === 'Tab' && (store.get().mode === 'EXPLORE' || openDialogId === 'context')) {
+      e.preventDefault();
+    }
   });
 
   // ---- HUD ----
@@ -75,20 +78,24 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
 
   // ---- Interactables ----
   const interactor = new Interactor();
-  const stationLabels: Record<string, string> = {
-    'sticky-note': SCRIPT.ui.interactions.stickyNote,
-    'readme-crt': SCRIPT.ui.interactions.readme,
-    'defrag-crt': SCRIPT.ui.interactions.defrag,
-    'modem-crt': SCRIPT.ui.interactions.modem,
-    manual: SCRIPT.ui.interactions.manual,
-  };
-  for (const [id, label] of Object.entries(stationLabels)) {
-    const object = world.stationMeshes.get(id as never);
+  const stationLabels: readonly (readonly [StationId, string])[] = [
+    ['sticky-note', SCRIPT.ui.interactions.stickyNote],
+    ['readme-crt', SCRIPT.ui.interactions.readme],
+    ['defrag-crt', SCRIPT.ui.interactions.defrag],
+    ['modem-crt', SCRIPT.ui.interactions.modem],
+    ['manual', SCRIPT.ui.interactions.manual],
+  ];
+  for (const [id, label] of stationLabels) {
+    const object = world.stationMeshes.get(id);
     if (object) interactor.add({ id, label, object });
   }
   const adminDoorMesh = world.doorMeshes.get('admin');
   if (adminDoorMesh) {
-    interactor.add({ id: 'admin-door', label: SCRIPT.ui.interactions.admin, object: adminDoorMesh });
+    interactor.add({
+      id: 'admin-door',
+      label: SCRIPT.ui.interactions.admin,
+      object: adminDoorMesh,
+    });
   }
   // CD-ROM decoys — clickable dead ends.
   world.decoyMeshes.forEach((mesh, i) => {
@@ -106,6 +113,8 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   // ---- P4 state (persists across terminal reopens) ----
   let lineConnected = false;
   let modemIntroShown = false;
+  let modemManualRead = false;
+  let defragBoard: DefragBoard | undefined;
   // One-shot ambient Clippy remarks, keyed by which sector row you enter.
   let chamberGreeted = false;
   let dGreeted = false;
@@ -359,16 +368,19 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     if (stage && !evalTranscript.includes(stage.tech)) {
       evalTranscript.push(stage.tech);
     }
-    const manualRead = store.get().contextLog.includes(SCRIPT.contextBuffer.entries.dl7);
     const done = evalStage >= ev.stages.length;
     const logHtml = evalTranscript
-      .map((l) => (l.startsWith('ASTERION>') ? `<span style="color:#9ad">${escapeHtml(l)}</span>` : escapeHtml(l)))
+      .map((l) =>
+        l.startsWith('ASTERION>')
+          ? `<span style="color:#9ad">${escapeHtml(l)}</span>`
+          : escapeHtml(l),
+      )
       .join('<br>');
     const optionsHtml =
       stage && !done
         ? stage.options
             .map((opt, i) => {
-              const locked = 'requiresManual' in opt && opt.requiresManual && !manualRead;
+              const locked = 'requiresManual' in opt && opt.requiresManual && !modemManualRead;
               return locked
                 ? `<button disabled style="text-align:left">${ev.optionLocked}</button>`
                 : `<button data-opt="${i}" style="text-align:left">${escapeHtml(opt.text)}</button>`;
@@ -439,9 +451,11 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     const log = body.querySelector<HTMLElement>('#term-log');
     const termIn = body.querySelector<HTMLInputElement>('#term-in');
     termIn?.focus();
-    const print = (line: string) => {
+    const print = (line: string, emphasized = false) => {
       if (log) {
-        log.innerHTML += `${line}<br>`;
+        const row = document.createElement(emphasized ? 'em' : 'span');
+        row.textContent = line;
+        log.append(row, document.createElement('br'));
         log.scrollTop = log.scrollHeight;
       }
     };
@@ -457,7 +471,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       if (e.key !== 'Enter' || !termIn.value.trim()) return;
       const cmd = termIn.value;
       termIn.value = '';
-      print(`&gt; ${cmd.replace(/</g, '&lt;')}`);
+      print(`> ${cmd}`);
       const result = classifyDialCommand(cmd);
       print(responses[result]);
       if (result === 'CONNECT') {
@@ -467,8 +481,8 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       } else {
         if (result !== 'OK_NOOP') audio.play('error');
         fails++;
-        if (fails === 2) print(`<em>${SCRIPT.p4.hints.a2}</em>`);
-        if (fails === 4) print(`<em>${SCRIPT.p4.hints.a1}</em>`);
+        if (fails === 2) print(SCRIPT.p4.hints.a2, true);
+        if (fails === 4) print(SCRIPT.p4.hints.a1, true);
       }
     });
     body.querySelector('#term-close')?.addEventListener('click', closeDialog);
@@ -516,6 +530,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       closeBtn.textContent = SCRIPT.ui.close;
       host.appendChild(closeBtn);
       const handle = mountDefrag(mount, {
+        initialBoard: defragBoard,
+        onBoardChange: (board) => {
+          defragBoard = board;
+        },
         onRowComplete: (completed) => audio.defragStep(completed - 1),
         onSolved: () => {
           if (store.solvePuzzle('P2')) {
@@ -550,6 +568,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     },
     manual: () => {
       if (!openDialog('manual')) return;
+      modemManualRead = true;
       addContext(SCRIPT.contextBuffer.entries.hayes3);
       addContext(SCRIPT.contextBuffer.entries.dl7);
       showWindow(overlay, {
@@ -591,9 +610,6 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
 
   // ---- Boot ----
   audio.preloadFile('/audio/startup.mp3');
-  audio.preloadFile('/audio/dialup.mp3');
-  audio.preloadFile('/audio/music.mp3');
-  audio.preloadFile('/audio/rickroll.mp3');
   runBoot(overlay, {
     onComply: () => {
       if (store.startGame()) {
@@ -606,9 +622,11 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     },
   });
 
-  const clock = new THREE.Clock();
+  const timer = new THREE.Timer();
+  timer.connect(document);
   renderer.setAnimationLoop(() => {
-    const dt = Math.min(clock.getDelta(), 0.05);
+    timer.update();
+    const dt = Math.min(timer.getDelta(), 0.05);
     const state = store.get();
     const locked = Boolean(document.pointerLockElement);
     const canMove = state.mode === 'EXPLORE' && locked;
@@ -675,6 +693,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       if (parsed.numberZones.some((z) => z.gx === cell.gx && z.gz === cell.gz)) {
         if (store.solvePuzzle('P3')) {
           audio.play('chime');
+          audio.preloadFile('/audio/dialup.mp3');
           addContext(SCRIPT.contextBuffer.entries.phoneNumber);
           theseusBeat();
         }

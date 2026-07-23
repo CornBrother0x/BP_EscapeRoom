@@ -1,7 +1,7 @@
 /**
- * All sound is synthesized in WebAudio — square-wave UI bleeps in the spirit
- * of the era, an ambient machine hum, and a composed 56k modem handshake for
- * the finale. No audio files shipped. M toggles mute (master gain).
+ * WebAudio owns mixing, synthesized effects, and fallbacks. Optional music and
+ * era-specific clips are fetched lazily and routed through the same muteable
+ * master gain.
  */
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -202,13 +202,15 @@ export class GameAudio {
   /** Start fetching a file early so playback is instant when asked for. */
   preloadFile(url: string): void {
     if (!this.filePromises.has(url)) {
-      this.filePromises.set(
-        url,
-        fetch(url).then((r) => {
-          if (!r.ok) throw new Error(`audio fetch failed: ${url}`);
-          return r.arrayBuffer();
-        }),
-      );
+      const request = fetch(url).then((r) => {
+        if (!r.ok) throw new Error(`audio fetch failed: ${url}`);
+        return r.arrayBuffer();
+      });
+      this.filePromises.set(url, request);
+      // Playback handles failures when it awaits this promise. Attaching a
+      // handler now also prevents an early preload failure from surfacing as an
+      // unhandled rejection before playback begins.
+      void request.catch(() => {});
     }
   }
 

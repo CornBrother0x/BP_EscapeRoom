@@ -44,7 +44,11 @@ function makeRetroPC(caseMat: THREE.Material, darkMat: THREE.Material, label: st
 function makeFloppyDisk(labelText: string): THREE.Group {
   const g = new THREE.Group();
   const bodyMat = new THREE.MeshStandardMaterial({ color: 0x24387f, roughness: 0.55 });
-  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc2c6cf, roughness: 0.4, metalness: 0.5 });
+  const metalMat = new THREE.MeshStandardMaterial({
+    color: 0xc2c6cf,
+    roughness: 0.4,
+    metalness: 0.5,
+  });
   const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
   const body = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.74, 0.08), bodyMat);
   body.position.y = 1.0;
@@ -75,7 +79,11 @@ function makeFloppyDisk(labelText: string): THREE.Group {
 function makeClipboard(labelText: string): THREE.Group {
   const g = new THREE.Group();
   const boardMat = new THREE.MeshStandardMaterial({ color: 0x6e4a29, roughness: 0.85 });
-  const clipMat = new THREE.MeshStandardMaterial({ color: 0xb8bcc4, roughness: 0.4, metalness: 0.5 });
+  const clipMat = new THREE.MeshStandardMaterial({
+    color: 0xb8bcc4,
+    roughness: 0.4,
+    metalness: 0.5,
+  });
   const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
   const lean = -0.18;
   const board = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.66, 0.03), boardMat);
@@ -109,7 +117,11 @@ function makeClipboard(labelText: string): THREE.Group {
 /** A shiny CD-ROM on a stand — the disk-like decoy (a dead end). */
 function makeCD(labelText: string): THREE.Group {
   const g = new THREE.Group();
-  const discMat = new THREE.MeshStandardMaterial({ color: 0xccd0d8, roughness: 0.18, metalness: 0.75 });
+  const discMat = new THREE.MeshStandardMaterial({
+    color: 0xccd0d8,
+    roughness: 0.18,
+    metalness: 0.75,
+  });
   const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
   const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.03, 40), discMat);
   disc.rotation.x = Math.PI / 2; // flat faces point ±z
@@ -327,11 +339,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         }),
       }),
     );
-    poster.position.set(
-      (adminDoor.cell.gx - 0.5) * CELL,
-      1.7,
-      adminDoor.cell.gz * CELL - 0.02,
-    );
+    poster.position.set((adminDoor.cell.gx - 0.5) * CELL, 1.7, adminDoor.cell.gz * CELL - 0.02);
     poster.rotation.y = Math.PI;
     group.add(poster);
   }
@@ -374,6 +382,9 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     alphaTest: 0.5,
     side: THREE.DoubleSide,
   });
+  const openglRoomMat = new THREE.MeshBasicMaterial({
+    map: loadChunkyTexture('/sprites/opengl-room.png', 1, 1),
+  });
   const decoyMeshes: THREE.Object3D[] = [];
   const rickrollMeshes: THREE.Object3D[] = [];
   const signMeshes: THREE.Object3D[] = [];
@@ -413,6 +424,11 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
       obj.position.set(x - nx * (CELL / 2 - 0.05), 1.7, z - nz * (CELL / 2 - 0.05));
       obj.lookAt(x + nx, 1.7, z + nz);
       signMeshes.push(obj);
+    } else if (deco.id === 'opengl-room') {
+      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
+      obj = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.7), openglRoomMat);
+      obj.position.set(x - nx * (CELL / 2 - 0.05), 2.1, z - nz * (CELL / 2 - 0.05));
+      obj.lookAt(x + nx, 2.1, z + nz);
     } else {
       // OpenGL logo: flat decal on the nearest wall.
       const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
@@ -439,19 +455,6 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     start.position.set(sp.x, 1.3, sp.z + 1.2);
     start.rotation.y = Math.PI;
     group.add(start);
-  }
-
-  // The screensaver's "OpenGL room" as a window on sector C's east wall.
-  {
-    const oglZ = cellCenter({ gx: 0, gz: 13 }).z;
-    const wallX = (parsed.width - 1) * CELL - 0.06;
-    const ogl = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.7, 1.7),
-      new THREE.MeshBasicMaterial({ map: loadChunkyTexture('/sprites/opengl-room.png', 1, 1) }),
-    );
-    ogl.position.set(wallX, 2.1, oglZ);
-    ogl.lookAt(wallX - 2, 2.1, oglZ);
-    group.add(ogl);
   }
 
   // Station props

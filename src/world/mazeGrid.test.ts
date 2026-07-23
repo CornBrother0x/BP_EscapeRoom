@@ -21,6 +21,10 @@ describe('parseMaze on the real layout', () => {
     expect(maze.numberZones.length).toBeGreaterThan(0);
   });
 
+  it('keeps the OpenGL room reference anchored to the maze data', () => {
+    expect(maze.decorations.filter((item) => item.id === 'opengl-room')).toHaveLength(1);
+  });
+
   it('has both openable doors at full wall height', () => {
     const ids = maze.doors.map((d) => d.id).sort();
     expect(ids).toEqual(['admin', 'glitch']);

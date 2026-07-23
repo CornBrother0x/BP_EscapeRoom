@@ -21,7 +21,7 @@
  *   G  glitch wall   3  polyhedron   9  number zone   ~  inverted corridor
  *   H  high doorway (flip only)   4  modem terminal   M  clipboard
  *   X  "dial 9 for an outside line" sign   P  return polyhedron
- *   R  rat   E  smiley   L  OpenGL logo
+ *   R  rat   E  smiley   L  OpenGL logo   O  OpenGL room window
  */
 export const MAZE_ROWS: readonly string[] = [
   '#######################',
@@ -46,7 +46,7 @@ export const MAZE_ROWS: readonly string[] = [
   '#...E.............E...#',
   '###########.###########',
   '###########.###########',
-  '####...............####',
+  '####............O..####',
   '####.#############.####',
   '####E#######.....L.####',
   '############.39~~..####',

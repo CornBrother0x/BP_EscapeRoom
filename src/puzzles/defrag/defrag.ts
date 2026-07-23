@@ -15,6 +15,13 @@ export interface DefragHandle {
   destroy(): void;
 }
 
+interface DefragOptions {
+  onSolved: () => void;
+  initialBoard?: DefragBoard;
+  onBoardChange?: (board: DefragBoard) => void;
+  onRowComplete?: (completed: number) => void;
+}
+
 /** How many rows are fully defragged (each weight file in order + CLIPPIT pair). */
 function countCompletedRows(board: DefragBoard): number {
   let n = 0;
@@ -29,11 +36,8 @@ function countCompletedRows(board: DefragBoard): number {
   return n;
 }
 
-export function mountDefrag(
-  container: HTMLElement,
-  opts: { onSolved: () => void; onRowComplete?: (completed: number) => void },
-): DefragHandle {
-  let board = createBoard();
+export function mountDefrag(container: HTMLElement, opts: DefragOptions): DefragHandle {
+  let board = opts.initialBoard?.slice() ?? createBoard();
   let selectedIndex: number | null = null;
   let solvedNotified = false;
   let completedRows = countCompletedRows(board);
@@ -89,6 +93,7 @@ export function mountDefrag(
     const restartButton = event.target.closest<HTMLButtonElement>('button[data-restart]');
     if (restartButton) {
       board = createBoard();
+      opts.onBoardChange?.(board);
       selectedIndex = null;
       completedRows = countCompletedRows(board);
       render();
@@ -115,6 +120,7 @@ export function mountDefrag(
     }
 
     board = swap(board, selectedIndex, index);
+    opts.onBoardChange?.(board);
     selectedIndex = null;
     const solved = isSolved(board);
     render();
