@@ -530,12 +530,14 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   // ---- Boot ----
   audio.preloadFile('/audio/startup.mp3');
   audio.preloadFile('/audio/dialup.mp3');
+  audio.preloadFile('/audio/music.mp3');
   runBoot(overlay, {
     onComply: () => {
       if (store.startGame()) {
         hideOverlay(overlay);
         void audio.playFile('/audio/startup.mp3');
         audio.startHum();
+        void audio.startMusicLoop('/audio/music.mp3');
         lockPointer();
       }
     },

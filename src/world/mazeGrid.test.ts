@@ -78,11 +78,14 @@ describe('parseMaze on the real layout', () => {
     expect(postP2.has(key('9'))).toBe(true);
   });
 
-  it('the modem room is sealed at floor level (only H leads in)', () => {
-    // Every cell adjacent to sector D's row must be wall or H — proven by
-    // construction here: the row above the modem row contains only '#' and 'H'.
-    const modemRowIndex = MAZE_ROWS.findIndex((r) => r.includes('4'));
-    const rowAbove = MAZE_ROWS[modemRowIndex - 1] ?? '';
-    expect([...rowAbove].every((ch) => ch === '#' || ch === 'H')).toBe(true);
+  it('the modem room is sealed — reachable only by flipping (via H)', () => {
+    // With H treated as a wall (i.e. the player never flips), the modem room
+    // (4 / manual / return polyhedron) must be unreachable from spawn. This
+    // proves the flip is the only way in, regardless of D's hallway shape.
+    const noFlip = reachableCells(MAZE_ROWS, ['H']);
+    for (const ch of ['4', 'M', 'P']) {
+      const c = findCell(MAZE_ROWS, ch);
+      expect(noFlip.has(`${c.gx},${c.gz}`), `"${ch}" reachable without flipping`).toBe(false);
+    }
   });
 });

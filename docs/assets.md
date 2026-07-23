@@ -15,3 +15,6 @@
 | `public/sprites/smiley.png` | Original 3D Maze smiley "exit" sprite | Same archive.org dump |
 | `public/sprites/opengl.png` | Original 3D Maze OpenGL logo (wall decal) | Same archive.org dump |
 | `public/boot-host.jpg` | Boot-screen photo — IBM PC with a lab technician (the host we are trapped inside) | Provided by Brett (desktop screenshot) |
+| `public/sprites/start.png` | Windows Start button (spawn marker) | Extracted `ssmaze.scr` assets, archive.org dump |
+| `public/sprites/opengl-room.png` | 3D Maze "OpenGL room" scene (wall window) | Same archive.org dump |
+| `public/audio/music.mp3` | Soft background music loop (3 min, trimmed) | YouTube (ang1txhF87A), non-commercial portfolio use |

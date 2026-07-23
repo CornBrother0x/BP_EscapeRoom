@@ -167,6 +167,13 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Win tweet simplified to **"hello world 😊"** (matches the real page)
 - [x] **Clippy favicon** for the site
 
+### Sprint 5.7 — Brett revisions (2026-07-23)
+- [x] Sector A reverted to open rooms (not the serpentine); password now at the end of a short L-hallway that starts by the rat + readme computer
+- [x] Sector D final hallway extended and made to wind/bend a few times (drop → unflip at P → note → phone-booth terminal at the far end). Sealed test reworked to H-blocking reachability so any D shape is allowed.
+- [x] Win95 **START** button planted at spawn ("right when you start")
+- [x] Extra screensaver reference: the **"OpenGL room"** scene as a window on a sector-C wall
+- [x] **Soft looping background music** during play (YouTube track, 3-min loop @ ~9% volume through master so M mutes it); **stops when the finale dial-up screech begins**
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

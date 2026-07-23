@@ -22,6 +22,7 @@ export class GameAudio {
   private humStarted = false;
   private readonly fileBuffers = new Map<string, AudioBuffer>();
   private readonly filePromises = new Map<string, Promise<ArrayBuffer>>();
+  private music: AudioBufferSourceNode | null = null;
 
   /** Lazily create the context — must first be called from a user gesture. */
   private ensure(): AudioContext | null {
@@ -123,6 +124,45 @@ export class GameAudio {
     chord.forEach((f, i) => this.tone(f, i * 0.1, 0.7, 'sine', 0.12));
     // ring out the triad
     for (const f of [523.25, 659.25, 783.99]) this.tone(f, 0.55, 1.4, 'sine', 0.06);
+  }
+
+  /** Very soft looping background music (through master, so M mutes it too). */
+  async startMusicLoop(url: string, gain = 0.09): Promise<void> {
+    const ctx = this.ensure();
+    if (!ctx || !this.master || this.music) return;
+    try {
+      let buf = this.fileBuffers.get(url);
+      if (!buf) {
+        this.preloadFile(url);
+        const raw = await this.filePromises.get(url);
+        if (!raw) return;
+        buf = await ctx.decodeAudioData(raw.slice(0));
+        this.fileBuffers.set(url, buf);
+      }
+      if (this.music) return;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      const g = ctx.createGain();
+      g.gain.value = gain;
+      src.connect(g).connect(this.master);
+      src.start();
+      this.music = src;
+    } catch {
+      /* music is non-essential */
+    }
+  }
+
+  /** Stop the background music (e.g. when the finale dial-up begins). */
+  stopMusic(): void {
+    if (this.music) {
+      try {
+        this.music.stop();
+      } catch {
+        /* already stopped */
+      }
+      this.music = null;
+    }
   }
 
   /** Quiet machine-room hum, forever. */

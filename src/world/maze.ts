@@ -327,6 +327,37 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     group.add(obj);
   }
 
+  // START marker floating at spawn (Win95 Start button — a screensaver nod),
+  // facing the player's initial view.
+  {
+    const sp = cellCenter(parsed.spawn);
+    const start = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.7, 0.5),
+      new THREE.MeshBasicMaterial({
+        map: loadChunkyTexture('/sprites/start.png', 1, 1),
+        transparent: true,
+        alphaTest: 0.35,
+        side: THREE.DoubleSide,
+      }),
+    );
+    start.position.set(sp.x, 1.3, sp.z + 1.2);
+    start.rotation.y = Math.PI;
+    group.add(start);
+  }
+
+  // The screensaver's "OpenGL room" as a window on sector C's east wall.
+  {
+    const oglZ = cellCenter({ gx: 0, gz: 13 }).z;
+    const wallX = (parsed.width - 1) * CELL - 0.06;
+    const ogl = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.7, 1.7),
+      new THREE.MeshBasicMaterial({ map: loadChunkyTexture('/sprites/opengl-room.png', 1, 1) }),
+    );
+    ogl.position.set(wallX, 2.1, oglZ);
+    ogl.lookAt(wallX - 2, 2.1, oglZ);
+    group.add(ogl);
+  }
+
   // Station props
   const stationMeshes = new Map<StationId, THREE.Object3D>();
   const polyMat = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, flatShading: true });

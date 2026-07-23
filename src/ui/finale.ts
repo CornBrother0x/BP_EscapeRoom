@@ -27,6 +27,8 @@ export async function runFinale(
   line('> ATDT5550195');
   await sleep(450);
   line(SCRIPT.ending.dialing);
+  // Cut the background music so the dial-up screech has the stage to itself.
+  audio.stopMusic();
   // The real 56k screech (75s) — it keeps playing under the BSODs, the
   // shutdown screen, and the win screen. That's the point.
   void audio.playDialup();
