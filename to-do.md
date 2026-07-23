@@ -158,6 +158,15 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] AT/DT confirmed intact (P1 MOTD + P2 defrag report, both saved to the Tab context buffer) — no change needed
 - [x] Ending reworked: "Upload will take too long. Thinking... instead I will just post to Twitter." → win popup links to the real account **https://x.com/XoAsterion4oX**
 
+### Sprint 5.6 — Brett revisions (2026-07-23)
+- [x] Maze rebuilt hallway-first: password (N) at the end of a winding serpentine hallway (by the rat); polyhedron (3) at a corridor end with the smiley (E); longer final hallway in D — drop in, unflip at P, note (M) near entry, terminal (4) at the far end. Validated.
+- [x] Props: modem manual → **clipboard**; modem terminal → **phone booth**; (defrag already a floppy)
+- [x] Clippy P3 hint now: "I heard there was something in the next room. Down at the end, past the smiley."
+- [x] Eval dialogue: correct answer no longer always last — different position each round (index 1, 2, 0)
+- [x] Finale: "Upload will take too long." → (beat) "Thinking..." → (longer beat) "I will just post to Twitter instead." (three separate lines)
+- [x] Win tweet simplified to **"hello world 😊"** (matches the real page)
+- [x] **Clippy favicon** for the site
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

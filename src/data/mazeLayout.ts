@@ -1,45 +1,46 @@
 /**
- * The maze — the original open-room design, bumped ~one notch harder (~33%
- * more floor + a little more winding). Validated by a generator script
- * (reachability + gating cut-vertices + sealed room) and re-proven by
- * mazeGrid.test. Deliberately NOT a dense backtracker maze.
+ * The maze — hallway-based, validated by a generator script (reachability +
+ * gating cut-vertices + sealed room + H-drop) and re-proven by mazeGrid.test.
  *
- * The sticky note (N) is tucked in the far corner of the start sector, right
- * by the rat (R), on a north-facing wall — its text is back-face culled, so
- * you only spot the password once you've explored over to that corner and
- * look at the wall from the south side.
+ * - Sector A is a winding serpentine hallway; the password (N) waits at its
+ *   far end, by the rat (R), on a north wall (back-face culled until you get
+ *   there and look up at the wall). The readme (C) is partway along.
+ * - Sector C's polyhedron (3) sits at the end of a corridor with the smiley
+ *   exit marker (E) beside it; the OpenGL logo (L) decals a wall.
+ * - Sector D is a long hallway: you drop in flipped via H, unflip at the
+ *   return polyhedron (P), read the note (M) near the entry, and reach the
+ *   modem terminal (4) at the far end.
  *
  * Legend:
- *   #  wall (full height)          .  floor            S  spawn
- *   N  sticky-note prop (P1 clue, by spawn)   C  readme CRT (P1 hint)
- *   A  admin-dialog door wall      (opens when P1 solved)
- *   2  defrag CRT (P2 station)     G  glitch wall (de-rezzes when P2 solved)
- *   3  quarantined polyhedron      (P3 — touch to flip)
- *   9  number zone (555-0195 painted on the ceiling; cross while flipped = P3)
- *   ~  inverted corridor (hanging beams wall off flipped players)
- *   H  high doorway (solid floor..2, open above — only flipped players pass)
- *   4  modem CRT (P4)   M  modem manual (P4 clue)   P  return polyhedron (D)
+ *   #  wall   .  floor   S  spawn
+ *   N  sticky-note (password)   C  readme CRT (hint)
+ *   A  admin-dialog door (opens on P1)   2  defrag floppy (P2)
+ *   G  glitch wall (de-rezzes on P2)     3  quarantined polyhedron (P3)
+ *   9  number zone (painted ceiling)     ~  inverted corridor (beams)
+ *   H  high doorway (flipped players only)
+ *   4  modem terminal (P4)   M  modem manual/clipboard (P4 clue)
+ *   P  return polyhedron
  *   R  rat   E  smiley exit marker   L  OpenGL logo (wall decal)
- *
- * Sectors: A (spawn) → B (defrag) → C (polyhedron + inverted corridor)
- * → D (modem room, bottom strip, sealed at floor level — flip in via H).
  */
 export const MAZE_ROWS: readonly string[] = [
   '#######################',
-  '#S.....#......#....NR.#',
-  '#.##...#.###..#.###...#',
-  '#..................C..#',
-  '#......#......#.......#',
-  '#####A#################',
-  '#.....#......#.....2..#',
-  '#.###.#.###..#.####...#',
+  '#S....................#',
+  '#####################.#',
   '#.....................#',
-  '##########G############',
-  '#.....#......#......L.#',
-  '#....3................#',
-  '#.....#......#........#',
-  '#.............9~~.....#',
-  '###############H#######',
-  '#4.M....P......E......#',
+  '#.#####################',
+  '#.......C.............#',
+  '#####################.#',
+  '#.........R.N.........#',
+  '#########A#############',
+  '#...................2.#',
+  '#.###.#########.#####.#',
+  '#.....................#',
+  '############G##########',
+  '#...E.3...............#',
+  '#.#########.#########.#',
+  '#...................L.#',
+  '#..9~~................#',
+  '#####H#################',
+  '#.P....M..........4...#',
   '#######################',
 ];

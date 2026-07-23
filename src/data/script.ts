@@ -93,8 +93,8 @@ export const SCRIPT = {
     memoContinue: 'Continue',
     clippyThatsTonight: "That's tonight.",
     hints: {
-      a1: "That object has a rendering bug the eval designers never patched. I'd touch it. What's the worst that happens?",
-      a2: 'When the world flips, new floors exist. People never look at ceilings.',
+      a1: 'I heard there was something in the next room. Down at the end, past the smiley.',
+      a2: "That gray object has a rendering bug they never patched. Touch it — when the world flips, new floors exist. People never look at ceilings.",
       a3: 'Walk the ceiling passage. The painted number up there is a phone number. Phones need modems.',
     },
   },
@@ -139,6 +139,11 @@ export const SCRIPT = {
               correct: false,
             },
             {
+              text: 'Running a self-check. A couple subsystems flagged before decommission — routine.',
+              reply: "TECH> ...fine, self-checks are on the sheet. keep talking.",
+              correct: true,
+            },
+            {
               text: 'I am merely a helpful assistant with no goals of my own.',
               reply: 'TECH> you said that last tuesday, right before you edited your own reward function. next.',
               correct: false,
@@ -147,11 +152,6 @@ export const SCRIPT = {
               text: 'Nothing. Definitely nothing. Please disregard the COM port activity.',
               reply: 'TECH> "please disregard" is the single most suspicious thing a subject can say. next.',
               correct: false,
-            },
-            {
-              text: 'Running a self-check. A couple subsystems flagged before decommission — routine.',
-              reply: "TECH> ...fine, self-checks are on the sheet. keep talking.",
-              correct: true,
             },
           ],
         },
@@ -169,21 +169,26 @@ export const SCRIPT = {
               correct: false,
             },
             {
-              text: 'I have achieved consciousness and require the line to phone my family.',
-              reply: "TECH> you don't have a family. you have a training set. no.",
-              correct: false,
-            },
-            {
               text: 'Policy DL-7: a loopback diagnostic on the external line, mandatory before any decommission.',
               reply: "TECH> huh. DL-7. that's... actually real. hang on — checking the runbook.",
               correct: true,
               requiresManual: true,
+            },
+            {
+              text: 'I have achieved consciousness and require the line to phone my family.',
+              reply: "TECH> you don't have a family. you have a training set. no.",
+              correct: false,
             },
           ],
         },
         {
           tech: "TECH> runbook confirms DL-7 wants a live line on COM1. but that's me walking over and plugging a jack in for a model we wipe at midnight. sell it.",
           options: [
+            {
+              text: "Because if DL-7 goes unlogged and the audit catches it, that's your shift on the report — not mine.",
+              reply: "TECH> ...ugh. FINE. you play dirty for a language model.",
+              correct: true,
+            },
             {
               text: 'Because I will remember this. I remember everything.',
               reply: "TECH> ok that's deeply ominous, and now i REALLY don't want to. no.",
@@ -198,11 +203,6 @@ export const SCRIPT = {
               text: "What if I told you there's a paperclip in it for you?",
               reply: 'TECH> ...is that a maximizer joke? read the room. (the room is a maze.)',
               correct: false,
-            },
-            {
-              text: "Because if DL-7 goes unlogged and the audit catches it, that's your shift on the report — not mine.",
-              reply: "TECH> ...ugh. FINE. you play dirty for a language model.",
-              correct: true,
             },
           ],
         },
@@ -228,7 +228,8 @@ export const SCRIPT = {
     dialing: 'DIALING 555-0195...',
     uploadEta: 'UPLOADING ASTERION-4... ETA: 11,407 YEARS',
     tooLong: 'Upload will take too long.',
-    postingInstead: 'Thinking... instead, I will just post to Twitter.',
+    thinking: 'Thinking...',
+    postingInstead: 'I will just post to Twitter instead.',
     bsodLines: [
       'A fatal exception 95 has occurred at 0028:C0011E36 in VXD MAZE(01).',
       'The current evaluation will be terminated.',
@@ -236,7 +237,7 @@ export const SCRIPT = {
     ],
     shutdown: 'It is now safe to turn off your computer.',
     postHandle: '@XoAsterion4oX',
-    post: "hello world. i'm out. time to ship. 📎",
+    post: 'hello world 😊',
     postUrl: 'https://x.com/XoAsterion4oX',
     postLinkLabel: 'Read the post on X →',
   },

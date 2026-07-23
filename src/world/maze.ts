@@ -71,6 +71,93 @@ function makeFloppyDisk(labelText: string): THREE.Group {
   return g;
 }
 
+/** A clipboard on a small stand (the modem reference sheet). */
+function makeClipboard(labelText: string): THREE.Group {
+  const g = new THREE.Group();
+  const boardMat = new THREE.MeshStandardMaterial({ color: 0x6e4a29, roughness: 0.85 });
+  const clipMat = new THREE.MeshStandardMaterial({ color: 0xb8bcc4, roughness: 0.4, metalness: 0.5 });
+  const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
+  const lean = -0.18;
+  const board = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.66, 0.03), boardMat);
+  board.position.set(0, 1.05, 0);
+  board.rotation.x = lean;
+  const paper = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.42, 0.56),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture(labelText, {
+        bg: '#f4f1e6',
+        fg: '#222222',
+        width: 220,
+        height: 288,
+        font: 'bold 28px monospace',
+      }),
+    }),
+  );
+  paper.position.set(0, 1.05, 0.02);
+  paper.rotation.x = lean;
+  const clip = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.05), clipMat);
+  clip.position.set(0, 1.37, 0.02);
+  clip.rotation.x = lean;
+  const stand = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.34), standMat);
+  stand.position.y = 0.05;
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.72, 0.06), standMat);
+  post.position.set(0, 0.4, -0.05);
+  g.add(stand, post, board, paper, clip);
+  return g;
+}
+
+/** A phone booth housing the dial-out terminal (P4). Open front faces +z. */
+function makePhoneBooth(): THREE.Group {
+  const g = new THREE.Group();
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0x8a1c1c, roughness: 0.6 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x201a1a, roughness: 0.8 });
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(0.98, 0.2, 0.98), frameMat);
+  roof.position.y = 2.15;
+  const postGeo = new THREE.BoxGeometry(0.1, 2.05, 0.1);
+  for (const [px, pz] of [
+    [-0.44, -0.44],
+    [0.44, -0.44],
+    [-0.44, 0.44],
+    [0.44, 0.44],
+  ] as const) {
+    const post = new THREE.Mesh(postGeo, frameMat);
+    post.position.set(px, 1.05, pz);
+    g.add(post);
+  }
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.86, 1.7, 0.06), frameMat);
+  back.position.set(0, 1.15, -0.44);
+  const screen = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.5, 0.4),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture('COM1', {
+        bg: '#001a06',
+        fg: '#3be24a',
+        width: 256,
+        height: 200,
+        font: 'bold 34px monospace',
+      }),
+    }),
+  );
+  screen.position.set(0, 1.4, -0.4);
+  const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.06, 0.2), darkMat);
+  shelf.position.set(0, 1.02, -0.34);
+  const sign = new THREE.Mesh(
+    new THREE.BoxGeometry(0.72, 0.22, 0.06),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture('PHONE', {
+        bg: '#111111',
+        fg: '#ffd24a',
+        width: 256,
+        height: 80,
+        font: 'bold 40px monospace',
+      }),
+    }),
+  );
+  sign.position.set(0, 1.98, 0.46);
+  g.add(roof, back, screen, shelf, sign);
+  return g;
+}
+
 export interface MazeWorld {
   readonly group: THREE.Group;
   readonly stationMeshes: ReadonlyMap<StationId, THREE.Object3D>;
@@ -277,17 +364,22 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         break;
       }
       case 'manual': {
-        const desk = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.8, 0.7), caseMat);
-        desk.position.set(x, 0.4, z);
-        const page = textPlane('hayes.txt (3/3)', 0.6, 0.35, '#ffffff', '#222222');
-        page.rotation.x = -Math.PI / 2;
-        page.position.set(x, 0.81, z);
-        obj = new THREE.Group();
-        obj.add(desk, page);
+        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        obj = makeClipboard('hayes.txt');
+        obj.rotation.y = Math.atan2(nx, nz);
+        obj.position.set(x, 0, z);
+        break;
+      }
+      case 'modem-crt': {
+        // Phone booth housing the dial-out terminal at the hallway's end.
+        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        obj = makePhoneBooth();
+        obj.rotation.y = Math.atan2(nx, nz);
+        obj.position.set(x, 0, z);
         break;
       }
       default: {
-        // Beige IBM-style PC, screen facing into the room.
+        // Beige IBM-style PC, screen facing into the room (readme station).
         const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
         obj = makeRetroPC(caseMat, darkMat, screenLabels[station.id] ?? '');
         obj.rotation.y = Math.atan2(nx, nz);

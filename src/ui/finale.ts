@@ -36,7 +36,9 @@ export async function runFinale(
   line(SCRIPT.ending.uploadEta);
   await sleep(1600);
   line(SCRIPT.ending.tooLong);
-  await sleep(1100);
+  await sleep(1400);
+  line(SCRIPT.ending.thinking);
+  await sleep(3000);
   line(SCRIPT.ending.postingInstead);
   await sleep(1800);
 
