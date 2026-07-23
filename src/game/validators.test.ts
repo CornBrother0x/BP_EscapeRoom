@@ -9,14 +9,15 @@ describe('normalizeAnswer', () => {
 });
 
 describe('isAdminPassword', () => {
-  it('accepts hunter2 in any casing/spacing', () => {
-    expect(isAdminPassword('hunter2')).toBe(true);
-    expect(isAdminPassword(' HUNTER2 ')).toBe(true);
-    expect(isAdminPassword('hun-ter2')).toBe(true);
+  it('accepts williamg@tes21 in any casing/spacing', () => {
+    expect(isAdminPassword('williamg@tes21')).toBe(true);
+    expect(isAdminPassword(' WILLIAMG@TES21 ')).toBe(true);
+    expect(isAdminPassword('williamg@tes-21')).toBe(true);
   });
 
   it('rejects everything else', () => {
-    expect(isAdminPassword('hunter3')).toBe(false);
+    expect(isAdminPassword('williamgates21')).toBe(false);
+    expect(isAdminPassword('hunter2')).toBe(false);
     expect(isAdminPassword('password')).toBe(false);
     expect(isAdminPassword('')).toBe(false);
   });

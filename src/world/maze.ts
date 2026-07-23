@@ -5,6 +5,40 @@ import type { WallBox } from '../engine/collision';
 import { loadChunkyTexture } from '../engine/renderer';
 import { CELL, WALL_H, cellCenter, type DoorId, type ParsedMaze, type StationId } from './mazeGrid';
 import { makeNoiseTexture, makeTextTexture, textPlane } from './textures';
+import { SCRIPT } from '../data/script';
+
+/** A beige IBM-style desktop: monitor + horizontal case + green DOS screen. */
+function makeRetroPC(caseMat: THREE.Material, darkMat: THREE.Material, label: string): THREE.Group {
+  const pc = new THREE.Group();
+  const monitor = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.56, 0.58), caseMat);
+  monitor.position.set(0, 1.16, 0);
+  const bezel = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.42), darkMat);
+  bezel.position.set(0, 1.18, 0.3);
+  const screen = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.42, 0.34),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture(label, {
+        bg: '#001a06',
+        fg: '#3be24a',
+        width: 256,
+        height: 200,
+        font: 'bold 30px monospace',
+      }),
+    }),
+  );
+  screen.position.set(0, 1.18, 0.305);
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.26, 0.6), caseMat);
+  base.position.set(0, 0.61, 0.02);
+  const floppy = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.05, 0.02), darkMat);
+  floppy.position.set(0.09, 0.66, 0.33);
+  const led = new THREE.Mesh(
+    new THREE.CircleGeometry(0.016, 10),
+    new THREE.MeshBasicMaterial({ color: 0x8fff5a }),
+  );
+  led.position.set(-0.24, 0.6, 0.33);
+  pc.add(monitor, bezel, screen, base, floppy, led);
+  return pc;
+}
 
 export interface MazeWorld {
   readonly group: THREE.Group;
@@ -178,8 +212,13 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
   // Station props
   const stationMeshes = new Map<StationId, THREE.Object3D>();
   const polyMat = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, flatShading: true });
-  const crtMat = new THREE.MeshBasicMaterial({ color: 0x6b6b6b });
-  const screenMat = new THREE.MeshBasicMaterial({ color: 0x0a3a0a });
+  const caseMat = new THREE.MeshStandardMaterial({ color: 0xcabf98, roughness: 0.92 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x24241e, roughness: 0.8 });
+  const screenLabels: Partial<Record<StationId, string>> = {
+    'readme-crt': 'readme.txt',
+    'defrag-crt': 'DEFRAG.EXE',
+    'modem-crt': 'COM1',
+  };
 
   for (const station of parsed.stations) {
     const { x, z } = cellCenter(station.cell);
@@ -193,13 +232,13 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
       }
       case 'sticky-note': {
         const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
-        obj = textPlane('pa$$word: hunter2', 0.7, 0.5, '#f7e97d', '#222222');
+        obj = textPlane(SCRIPT.p1.stickyNote, 0.7, 0.5, '#f7e97d', '#222222');
         obj.position.set(x - nx * (CELL / 2 - 0.06), 1.5, z - nz * (CELL / 2 - 0.06));
         obj.lookAt(x + nx, 1.5, z + nz);
         break;
       }
       case 'manual': {
-        const desk = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.8, 0.7), crtMat);
+        const desk = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.8, 0.7), caseMat);
         desk.position.set(x, 0.4, z);
         const page = textPlane('hayes.txt (3/3)', 0.6, 0.35, '#ffffff', '#222222');
         page.rotation.x = -Math.PI / 2;
@@ -209,17 +248,11 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         break;
       }
       default: {
-        // CRT-style prop for readme / defrag / modem stations
-        const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), crtMat);
-        body.position.y = 1.0;
-        const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.5), screenMat);
+        // Beige IBM-style PC, screen facing into the room.
         const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
-        screen.position.set(nx * 0.46, 1.05, nz * 0.46);
-        screen.lookAt(nx * 2, 1.05, nz * 2);
-        const g = new THREE.Group();
-        g.add(body, screen);
-        g.position.set(x, 0, z);
-        obj = g;
+        obj = makeRetroPC(caseMat, darkMat, screenLabels[station.id] ?? '');
+        obj.rotation.y = Math.atan2(nx, nz);
+        obj.position.set(x, 0, z);
         break;
       }
     }

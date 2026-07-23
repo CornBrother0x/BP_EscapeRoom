@@ -147,6 +147,11 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Boot host illustration (Goosebumps-style CRT) + clean full Clippy sprite
 - [x] Defrag **progressive chord jingle**: each completed row adds the next note of a C-major chord (root→3rd→5th→octave); full solve rings the resolved triad
 
+### Sprint 5.4 — Brett revisions (2026-07-23)
+- [x] Boot CRT image swapped from the hand-drawn SVG to Brett's real IBM-PC-with-lab-tech photo (optimized to a 122KB jpg)
+- [x] Fixed the "unfinished grey cubes": the readme/defrag/modem props are now beige IBM-style PCs (monitor + desktop case + green DOS screen + floppy slot + power LED), lit like the polyhedra
+- [x] Password changed to `williamg@tes21` (Bill Gates gag) — sticky note, context buffer, validator + tests updated
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

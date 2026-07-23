@@ -74,7 +74,7 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
   crt.className = 'crt-text';
   const figure = document.createElement('figure');
   figure.className = 'crt-figure';
-  figure.innerHTML = `<img src="/boot-host.svg" alt="host unit" /><figcaption>${SCRIPT.boot.hostCaption}</figcaption>`;
+  figure.innerHTML = `<img src="/boot-host.jpg" alt="host unit" /><figcaption>${SCRIPT.boot.hostCaption}</figcaption>`;
   content.append(crt, figure);
   const scan = document.createElement('div');
   scan.className = 'crt-scanlines';

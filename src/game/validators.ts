@@ -8,7 +8,7 @@ export function normalizeAnswer(input: string): string {
 }
 
 export function isAdminPassword(input: string): boolean {
-  return normalizeAnswer(input) === 'HUNTER2';
+  return normalizeAnswer(input) === normalizeAnswer('williamg@tes21');
 }
 
 /** Era-true Hayes modem responses that teach the syntax through failure. */

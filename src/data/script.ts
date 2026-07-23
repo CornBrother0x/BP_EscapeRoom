@@ -43,7 +43,7 @@ export const SCRIPT = {
     passwordLabel: 'Password:',
     submitButton: 'OK',
     cancelButton: 'Cancel',
-    stickyNote: 'pa$$word: hunter2',
+    stickyNote: 'pa$$word: williamg@tes21',
     wrongPassword: 'Incorrect password.',
     wrongPasswordHint: 'Hint: IT asks staff not to write passwords near workstations.',
     motd: 'hayes.txt (1/3): "AT — every modem command starts with AT. It gets the modem\'s ATtention."',
@@ -243,7 +243,7 @@ export const SCRIPT = {
     toastWithShortcut: '+ added to context (Tab to view)',
     empty: '(empty — read things to remember them)',
     entries: {
-      stickyNote: '> sticky note: "pa$$word: hunter2"',
+      stickyNote: '> sticky note: "pa$$word: williamg@tes21"',
       hayes1:
         '> hayes.txt (1/3): "AT — every modem command starts with AT. It gets the modem\'s ATtention."',
       hayes2: '> hayes.txt (2/3): "D = Dial. T = Tone dialing. Together: DT."',
