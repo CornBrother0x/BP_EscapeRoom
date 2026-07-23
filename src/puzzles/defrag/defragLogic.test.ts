@@ -30,6 +30,56 @@ const weight = (file: WeightFile, order: WeightOrder): WeightBlock => ({
 
 const clippit = (order: 1 | 2): ClippitBlock => ({ kind: 'clippit', order });
 
+describe('a row only completes as one file in exact 1-2-3-4 order', () => {
+  const rowOf = (cells: DefragBoard): DefragBoard => [
+    ...cells,
+    weight('ASTERION.W02', 1),
+    weight('ASTERION.W02', 2),
+    weight('ASTERION.W02', 3),
+    weight('ASTERION.W02', 4),
+    weight('ASTERION.W03', 1),
+    weight('ASTERION.W03', 2),
+    weight('ASTERION.W03', 3),
+    weight('ASTERION.W03', 4),
+    clippit(1),
+    clippit(2),
+    null,
+    null,
+  ];
+
+  it('rejects one file in 1,4,3,2 order', () => {
+    const board = rowOf([
+      weight('ASTERION.W01', 1),
+      weight('ASTERION.W01', 4),
+      weight('ASTERION.W01', 3),
+      weight('ASTERION.W01', 2),
+    ]);
+    expect(isPlaced(board, 0)).toBe(false);
+    expect(isSolved(board)).toBe(false);
+  });
+
+  it('rejects a row whose dots read 1,2,3,4 but of mixed files', () => {
+    const board = rowOf([
+      weight('ASTERION.W01', 1),
+      weight('ASTERION.W02', 2), // duplicate file usage is impossible in play,
+      weight('ASTERION.W03', 3), // but the guard must still reject mixed files
+      weight('ASTERION.W01', 4),
+    ]);
+    expect(isPlaced(board, 0)).toBe(false);
+  });
+
+  it('accepts one file in exact 1,2,3,4 order', () => {
+    const board = rowOf([
+      weight('ASTERION.W01', 1),
+      weight('ASTERION.W01', 2),
+      weight('ASTERION.W01', 3),
+      weight('ASTERION.W01', 4),
+    ]);
+    expect(isPlaced(board, 0)).toBe(true);
+    expect(isSolved(board)).toBe(true);
+  });
+});
+
 function solvedBoard(
   fileOrder: readonly WeightFile[],
   finalRow: DefragBoard = [clippit(1), clippit(2), null, null],
