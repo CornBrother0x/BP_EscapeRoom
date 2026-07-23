@@ -106,6 +106,41 @@ function makeClipboard(labelText: string): THREE.Group {
   return g;
 }
 
+/** A shiny CD-ROM on a stand — the disk-like decoy (a dead end). */
+function makeCD(labelText: string): THREE.Group {
+  const g = new THREE.Group();
+  const discMat = new THREE.MeshStandardMaterial({ color: 0xccd0d8, roughness: 0.18, metalness: 0.75 });
+  const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.03, 40), discMat);
+  disc.rotation.x = Math.PI / 2; // flat faces point ±z
+  disc.position.y = 1.0;
+  const label = new THREE.Mesh(
+    new THREE.CircleGeometry(0.33, 40),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture(labelText, {
+        bg: '#d6b6e6',
+        fg: '#3a1a5a',
+        width: 256,
+        height: 256,
+        font: 'bold 24px monospace',
+      }),
+    }),
+  );
+  label.position.set(0, 1.0, 0.017);
+  const hole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.07, 0.07, 0.05, 20),
+    new THREE.MeshBasicMaterial({ color: 0x1a1a16 }),
+  );
+  hole.rotation.x = Math.PI / 2;
+  hole.position.set(0, 1.0, 0.02);
+  const stand = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.1, 0.28), standMat);
+  stand.position.y = 0.05;
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.6, 0.06), standMat);
+  post.position.set(0, 0.35, -0.05);
+  g.add(stand, post, disc, label, hole);
+  return g;
+}
+
 /** A phone booth housing the dial-out terminal (P4). Open front faces +z. */
 function makePhoneBooth(): THREE.Group {
   const g = new THREE.Group();
@@ -162,6 +197,8 @@ export interface MazeWorld {
   readonly group: THREE.Group;
   readonly stationMeshes: ReadonlyMap<StationId, THREE.Object3D>;
   readonly doorMeshes: ReadonlyMap<DoorId, THREE.Object3D>;
+  /** Clickable CD-ROM decoys (dead ends). */
+  readonly decoyMeshes: readonly THREE.Object3D[];
   /** Static walls + every still-closed door. */
   activeWalls(): readonly WallBox[];
   openDoor(id: DoorId): void;
@@ -308,6 +345,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
   const ratMat = spriteMat('/sprites/rat.png');
   const smileyMat = spriteMat('/sprites/smiley.png');
   const openglMat = spriteMat('/sprites/opengl.png');
+  const decoyMeshes: THREE.Object3D[] = [];
   for (const deco of parsed.decorations) {
     const { x, z } = cellCenter(deco.cell);
     let obj: THREE.Object3D;
@@ -317,6 +355,12 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     } else if (deco.id === 'smiley') {
       obj = crossedBillboard(smileyMat, 0.9, 0.9, 1.4);
       obj.position.set(x, 0, z);
+    } else if (deco.id === 'cd') {
+      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
+      obj = makeCD("ENCARTA '95");
+      obj.rotation.y = Math.atan2(nx, nz);
+      obj.position.set(x, 0, z);
+      decoyMeshes.push(obj);
     } else {
       // OpenGL logo: flat decal on the nearest wall.
       const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
@@ -426,6 +470,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     group,
     stationMeshes,
     doorMeshes,
+    decoyMeshes,
     activeWalls() {
       return [...parsed.walls, ...closedDoors.values()];
     },

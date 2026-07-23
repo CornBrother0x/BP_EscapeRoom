@@ -90,6 +90,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   if (adminDoorMesh) {
     interactor.add({ id: 'admin-door', label: SCRIPT.ui.interactions.admin, object: adminDoorMesh });
   }
+  // CD-ROM decoys — clickable dead ends.
+  world.decoyMeshes.forEach((mesh, i) => {
+    interactor.add({ id: `decoy-${i}`, label: SCRIPT.decoy.label, object: mesh });
+  });
 
   // ---- P4 state (persists across terminal reopens) ----
   let lineConnected = false;
@@ -142,6 +146,16 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         },
         { label: SCRIPT.ui.restart, onClick: () => location.reload() },
       ],
+    });
+  }
+
+  function showDecoy(): void {
+    if (!openDialog('decoy')) return;
+    audio.play('error');
+    showWindow(overlay, {
+      title: SCRIPT.decoy.title,
+      bodyHtml: `<p style="font-family:monospace">${SCRIPT.decoy.body}</p>`,
+      buttons: [{ label: 'OK', onClick: closeDialog }],
     });
   }
 
@@ -566,7 +580,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       const hovered = interactor.hovered(camera);
       if (hovered) {
         hoverLabel = `[E] ${hovered.label}`;
-        if (input.wasPressed('KeyE')) interactions[hovered.id]?.();
+        if (input.wasPressed('KeyE')) {
+          if (hovered.id.startsWith('decoy-')) showDecoy();
+          else interactions[hovered.id]?.();
+        }
       }
     }
     if (hudLabel) hudLabel.textContent = hoverLabel;
@@ -584,7 +601,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     }
     if (nearAny && flipArmed && !player.animatingFlip && state.mode === 'EXPLORE') {
       player.toggleFlip();
-      audio.play('click');
+      audio.flip();
       flipArmed = false;
     } else if (!nearAny) {
       flipArmed = true;

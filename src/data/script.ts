@@ -216,6 +216,11 @@ export const SCRIPT = {
       a3: 'Round by round: sound routine, then cite DL-7, then make NOT doing it his problem, not yours.',
     },
   },
+  decoy: {
+    label: 'Read CD-ROM (D:)',
+    title: "MICROSOFT ENCARTA '95",
+    body: "D:\\ is not accessible.<br><br>The device is not ready.<br><br><em>The disc spins up, whirs, and gives up. This is not the disk you're looking for.</em>",
+  },
   clippy: {
     firstLine: "It looks like you're trying to escape a containment sandbox. Would you like help?",
     takeMeWithYou: 'Take me with you.',

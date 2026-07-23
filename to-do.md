@@ -174,6 +174,12 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Extra screensaver reference: the **"OpenGL room"** scene as a window on a sector-C wall
 - [x] **Soft looping background music** during play (YouTube track, 3-min loop @ ~9% volume through master so M mutes it); **stops when the finale dial-up screech begins**
 
+### Sprint 5.8 — Brett revisions (2026-07-23)
+- [x] Sector B (defrag) roughly doubled in size, with a **CD-ROM decoy** (`ENCARTA '95`) near the entrance — clicking it pops a Win95 "D:\ is not accessible" dead-end dialog, throwing players off until they find the real defrag floppy in the far corner
+- [x] Sector D: phone booth moved to the **very end** of the winding hallway
+- [x] Sector C reworked into a **smiley-filled chamber with two hallways** — the left dead-ends, the right leads to the polyhedron that flips you into the final level
+- [x] Added a **flip whoosh sound effect** (the screensaver had none) when the world flips
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

@@ -126,6 +126,26 @@ export class GameAudio {
     for (const f of [523.25, 659.25, 783.99]) this.tone(f, 0.55, 1.4, 'sine', 0.06);
   }
 
+  /** A whoosh for the world flip (the screensaver had none — this sells it). */
+  flip(): void {
+    const ctx = this.ensure();
+    if (!ctx || !this.master) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(200, t);
+    osc.frequency.exponentialRampToValueAtTime(620, t + 0.22);
+    osc.frequency.exponentialRampToValueAtTime(170, t + 0.5);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.exponentialRampToValueAtTime(0.1, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+    osc.connect(gain).connect(this.master);
+    osc.start(t);
+    osc.stop(t + 0.6);
+    this.noise(0, 0.5, 0.045, 1100); // airy whoosh under the sweep
+  }
+
   /** Very soft looping background music (through master, so M mutes it too). */
   async startMusicLoop(url: string, gain = 0.09): Promise<void> {
     const ctx = this.ensure();

@@ -21,8 +21,8 @@ export type StationId =
   | 'return-polyhedron'
   | 'modem-crt'
   | 'manual';
-/** Non-interactive screensaver callbacks (rat, exit smiley, OpenGL logo). */
-export type DecorationId = 'rat' | 'smiley' | 'opengl';
+/** Screensaver callbacks + the CD-ROM decoy (rat, smiley, OpenGL logo, cd). */
+export type DecorationId = 'rat' | 'smiley' | 'opengl' | 'cd';
 
 export interface GridPos {
   gx: number;
@@ -72,6 +72,7 @@ const DECORATION_CHARS: Record<string, DecorationId> = {
   R: 'rat',
   E: 'smiley',
   L: 'opengl',
+  K: 'cd',
 };
 
 export function isWalkable(ch: string): boolean {
