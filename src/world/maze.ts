@@ -229,6 +229,8 @@ export interface MazeWorld {
   readonly decoyMeshes: readonly THREE.Object3D[];
   /** Clickable Rickroll play buttons (dead ends). */
   readonly rickrollMeshes: readonly THREE.Object3D[];
+  /** Readable clue signs (dial-9 notice). */
+  readonly signMeshes: readonly THREE.Object3D[];
   /** Static walls + every still-closed door. */
   activeWalls(): readonly WallBox[];
   openDoor(id: DoorId): void;
@@ -374,6 +376,16 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
   });
   const decoyMeshes: THREE.Object3D[] = [];
   const rickrollMeshes: THREE.Object3D[] = [];
+  const signMeshes: THREE.Object3D[] = [];
+  const signMat = new THREE.MeshBasicMaterial({
+    map: makeTextTexture('OUTSIDE LINE — DIAL 9', {
+      bg: '#f0f0e0',
+      fg: '#000080',
+      width: 512,
+      height: 160,
+      font: 'bold 44px monospace',
+    }),
+  });
   for (const deco of parsed.decorations) {
     const { x, z } = cellCenter(deco.cell);
     let obj: THREE.Object3D;
@@ -395,6 +407,12 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
       obj.rotation.y = Math.atan2(nx, nz);
       obj.position.set(x, 0, z);
       rickrollMeshes.push(obj);
+    } else if (deco.id === 'sign') {
+      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
+      obj = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.5), signMat);
+      obj.position.set(x - nx * (CELL / 2 - 0.05), 1.7, z - nz * (CELL / 2 - 0.05));
+      obj.lookAt(x + nx, 1.7, z + nz);
+      signMeshes.push(obj);
     } else {
       // OpenGL logo: flat decal on the nearest wall.
       const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
@@ -506,6 +524,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     doorMeshes,
     decoyMeshes,
     rickrollMeshes,
+    signMeshes,
     activeWalls() {
       return [...parsed.walls, ...closedDoors.values()];
     },

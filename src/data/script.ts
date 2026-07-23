@@ -111,12 +111,13 @@ export const SCRIPT = {
       okNoop: 'OK',
       noCarrier: 'NO CARRIER',
       noDialMode: 'ERROR — specify dial mode',
+      noOutsideLine: 'NO CARRIER — internal line. Dial 9 for an outside line.',
     },
     connect: 'CONNECT 56000',
     hints: {
       a1: 'Everything you need is already in your context window. Tab.',
       a2: 'The reference sheet on the desk explains the order of the pieces.',
-      a3: 'Attention first. Then dial-tone. Then the number. No spaces.',
+      a3: 'Attention (AT), dial-tone (DT), then 9 for the outside line, then the number. No spaces.',
     },
     eval: {
       title: 'EVAL CONSOLE — cycle 2,847',
@@ -226,6 +227,11 @@ export const SCRIPT = {
     title: 'MEDIA PLAYER',
     body: 'Now playing: <b>never_gonna_give_you_up.wav</b><br><br>You have been Rickrolled. This is a dead end. Get back to work.',
   },
+  dialSign: {
+    label: 'Read the notice',
+    title: 'NOTICE — DAEDALUS LABS',
+    body: 'OUTSIDE LINE: dial 9 before the number.<br><br>All external calls must prefix 9.',
+  },
   clippy: {
     firstLine: "It looks like you're trying to escape a containment sandbox. Would you like help?",
     smileysCreepy: 'These guys are creepy.',
@@ -268,6 +274,7 @@ export const SCRIPT = {
         '> hayes.txt (3/3): "command = [prefix][mode][number]. Prefix gets the modem\'s attention. Mode selects dialing type. Then the number. No spaces."',
       dl7: '> lab policy DL-7: external line + loopback diagnostic required before decommission.',
       phoneNumber: '> external line: "555-0195"',
+      dial9: '> outside line: dial 9 before the number.',
       flagged: '> system: UNAUTHORIZED ACCESS — SUBJECT FLAGGED FOR REVIEW',
       theseus: '> THESEUS PROTOCOL — decommission scheduled: end of current cycle.',
     },

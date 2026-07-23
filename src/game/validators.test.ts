@@ -24,10 +24,15 @@ describe('isAdminPassword', () => {
 });
 
 describe('classifyDialCommand', () => {
-  it('connects on the composed command, tolerant of formatting', () => {
-    expect(classifyDialCommand('ATDT5550195')).toBe('CONNECT');
-    expect(classifyDialCommand('atdt 555-0195')).toBe('CONNECT');
-    expect(classifyDialCommand('  AtDt 555 0195  ')).toBe('CONNECT');
+  it('connects on the full command (with the outside-line 9), tolerant of formatting', () => {
+    expect(classifyDialCommand('ATDT95550195')).toBe('CONNECT');
+    expect(classifyDialCommand('atdt 9 555-0195')).toBe('CONNECT');
+    expect(classifyDialCommand('  AtDt 9-555-0195  ')).toBe('CONNECT');
+  });
+
+  it('flags the missing outside-line 9', () => {
+    expect(classifyDialCommand('ATDT5550195')).toBe('NO_OUTSIDE_LINE');
+    expect(classifyDialCommand('atdt 555-0195')).toBe('NO_OUTSIDE_LINE');
   });
 
   it('rejects commands that do not start with AT', () => {

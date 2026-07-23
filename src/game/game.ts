@@ -98,6 +98,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   world.rickrollMeshes.forEach((mesh, i) => {
     interactor.add({ id: `rickroll-${i}`, label: SCRIPT.rickroll.label, object: mesh });
   });
+  // Dial-9 clue signs.
+  world.signMeshes.forEach((mesh, i) => {
+    interactor.add({ id: `sign-${i}`, label: SCRIPT.dialSign.label, object: mesh });
+  });
 
   // ---- P4 state (persists across terminal reopens) ----
   let lineConnected = false;
@@ -173,6 +177,16 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       title: SCRIPT.rickroll.title,
       bodyHtml: `<p style="font-family:monospace">${SCRIPT.rickroll.body}</p>`,
       buttons: [{ label: 'OK', onClick: closeDialog }],
+    });
+  }
+
+  function showDialSign(): void {
+    if (!openDialog('sign')) return;
+    addContext(SCRIPT.contextBuffer.entries.dial9);
+    showWindow(overlay, {
+      title: SCRIPT.dialSign.title,
+      bodyHtml: `<p style="font-family:monospace">${SCRIPT.dialSign.body}</p>`,
+      buttons: [{ label: SCRIPT.ui.close, onClick: closeDialog }],
     });
   }
 
@@ -424,6 +438,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       CONNECT: SCRIPT.p4.connect,
       ERROR_NO_AT: SCRIPT.p4.errors.noAt,
       OK_NOOP: SCRIPT.p4.errors.okNoop,
+      NO_OUTSIDE_LINE: SCRIPT.p4.errors.noOutsideLine,
       NO_CARRIER: SCRIPT.p4.errors.noCarrier,
       ERROR_NO_DIAL_MODE: SCRIPT.p4.errors.noDialMode,
     } as const;
@@ -606,6 +621,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         if (input.wasPressed('KeyE')) {
           if (hovered.id.startsWith('decoy-')) showDecoy();
           else if (hovered.id.startsWith('rickroll-')) showRickroll();
+          else if (hovered.id.startsWith('sign-')) showDialSign();
           else interactions[hovered.id]?.();
         }
       }

@@ -194,6 +194,12 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] **Phone booth can't be used while flipped** — you must unflip at P first (toast tells you to flip back)
 - [x] Rewrote Clippy's modem line in **direct language, no em-dashes** ("The modem works. The phone line is not plugged in...")
 
+### Sprint 5.11 — Brett revisions (2026-07-23)
+- [x] Rickroll trimmed to the **first 10 seconds**
+- [x] Sector B: the right hallway now **forks** — one branch is the Rickroll, the other holds the real defrag floppy (moved well away from the door to the next zone)
+- [x] **New final-puzzle clue**: a wall sign in D — "OUTSIDE LINE: DIAL 9" — reads into your context; the dial command is now **`ATDT95550195`** (dialing `ATDT5550195` gets "NO CARRIER — internal line. Dial 9 for an outside line.")
+- [x] **Fixed sign text cropping** at the source: `makeTextTexture` now auto-shrinks the font to fit the canvas, so the password, admin door, poster, and all decals render in full
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

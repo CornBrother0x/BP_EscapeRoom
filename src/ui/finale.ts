@@ -24,7 +24,7 @@ export async function runFinale(
     term.textContent += `${text}\n`;
   };
 
-  line('> ATDT5550195');
+  line('> ATDT95550195');
   await sleep(450);
   line(SCRIPT.ending.dialing);
   // Cut the background music so the dial-up screech has the stage to itself.

@@ -13,9 +13,19 @@ export function makeTextTexture(
     ctx.fillStyle = opts.bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = opts.fg;
-    ctx.font = opts.font ?? 'bold 72px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
+    // Auto-fit: shrink the font until the whole string fits the canvas width,
+    // so long labels (passwords, sign text) never get cropped.
+    const baseFont = opts.font ?? 'bold 72px monospace';
+    let size = Number(baseFont.match(/(\d+)px/)?.[1] ?? 72);
+    const maxWidth = canvas.width * 0.9;
+    const setSize = (px: number) => (ctx.font = baseFont.replace(/\d+px/, `${px}px`));
+    setSize(size);
+    while (ctx.measureText(text).width > maxWidth && size > 8) {
+      size -= 2;
+      setSize(size);
+    }
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
   }
   const tex = new THREE.CanvasTexture(canvas);

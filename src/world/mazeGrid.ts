@@ -21,8 +21,8 @@ export type StationId =
   | 'return-polyhedron'
   | 'modem-crt'
   | 'manual';
-/** Screensaver callbacks + dead-end props (rat, smiley, OpenGL logo, cd, rickroll). */
-export type DecorationId = 'rat' | 'smiley' | 'opengl' | 'cd' | 'rickroll';
+/** Screensaver callbacks, dead-end props, and the dial-9 clue sign. */
+export type DecorationId = 'rat' | 'smiley' | 'opengl' | 'cd' | 'rickroll' | 'sign';
 
 export interface GridPos {
   gx: number;
@@ -74,6 +74,7 @@ const DECORATION_CHARS: Record<string, DecorationId> = {
   L: 'opengl',
   K: 'cd',
   Y: 'rickroll',
+  X: 'sign',
 };
 
 export function isWalkable(ch: string): boolean {
