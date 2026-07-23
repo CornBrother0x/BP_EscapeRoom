@@ -180,6 +180,14 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Sector C reworked into a **smiley-filled chamber with two hallways** — the left dead-ends, the right leads to the polyhedron that flips you into the final level
 - [x] Added a **flip whoosh sound effect** (the screensaver had none) when the world flips
 
+### Sprint 5.9 — Brett revisions (2026-07-23)
+- [x] Sector C: the polyhedron is no longer right by the entrance — a single hallway leads down from the smiley chamber and **splits**; the left branch dead-ends, the right runs to the flip object
+- [x] Sector D: **return polyhedron (P) pushed to the far bottom-left corner** (19 cells from the drop) — you drop in flipped, travel all the way down, unflip at P, then come back across to the booth at the far end
+- [x] Rat + smiley are now **flat camera-facing sprites** (2D-in-3D) instead of the weird crossed 4-way planes
+- [x] Clippy ambient lines: **"These guys are creepy."** on entering the smiley chamber; **"Do you think you can psy-op the technician into letting us out?"** on entering the final hallway
+- [x] Finale: response is now **"Please take me with you."** with the button **"Of course, Clippy."** (says his name back)
+- [x] Verified defrag row-completion logic is correct (1,4,3,2 does not complete) — added regression tests
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

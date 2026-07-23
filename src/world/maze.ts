@@ -323,38 +323,35 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
   dirLight.position.set(10, 20, 5);
   group.add(dirLight);
 
-  // Screensaver callbacks: rat + smiley as crossed-plane billboards, the
-  // OpenGL logo as a wall decal. Transparent PNGs via alphaTest.
-  const spriteMat = (url: string) =>
-    new THREE.MeshBasicMaterial({
-      map: loadChunkyTexture(url, 1, 1),
-      transparent: true,
-      alphaTest: 0.5,
-      side: THREE.DoubleSide,
-    });
-  const crossedBillboard = (mat: THREE.Material, w: number, h: number, y: number): THREE.Group => {
-    const g = new THREE.Group();
-    for (const rot of [0, Math.PI / 2]) {
-      const plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
-      plane.rotation.y = rot;
-      g.add(plane);
-    }
-    g.position.y = y;
-    return g;
+  // Screensaver callbacks: rat + smiley as flat camera-facing sprites (2D in
+  // 3D, Doom-style), the OpenGL logo as a wall decal. Transparent via alphaTest.
+  const billboard = (url: string, w: number, h: number): THREE.Sprite => {
+    const sprite = new THREE.Sprite(
+      new THREE.SpriteMaterial({
+        map: loadChunkyTexture(url, 1, 1),
+        transparent: true,
+        alphaTest: 0.5,
+      }),
+    );
+    sprite.scale.set(w, h, 1);
+    return sprite;
   };
-  const ratMat = spriteMat('/sprites/rat.png');
-  const smileyMat = spriteMat('/sprites/smiley.png');
-  const openglMat = spriteMat('/sprites/opengl.png');
+  const openglMat = new THREE.MeshBasicMaterial({
+    map: loadChunkyTexture('/sprites/opengl.png', 1, 1),
+    transparent: true,
+    alphaTest: 0.5,
+    side: THREE.DoubleSide,
+  });
   const decoyMeshes: THREE.Object3D[] = [];
   for (const deco of parsed.decorations) {
     const { x, z } = cellCenter(deco.cell);
     let obj: THREE.Object3D;
     if (deco.id === 'rat') {
-      obj = crossedBillboard(ratMat, 1.1, 0.53, 0.28);
-      obj.position.set(x, 0, z);
+      obj = billboard('/sprites/rat.png', 1.1, 0.53);
+      obj.position.set(x, 0.3, z);
     } else if (deco.id === 'smiley') {
-      obj = crossedBillboard(smileyMat, 0.9, 0.9, 1.4);
-      obj.position.set(x, 0, z);
+      obj = billboard('/sprites/smiley.png', 0.95, 0.95);
+      obj.position.set(x, 1.4, z);
     } else if (deco.id === 'cd') {
       const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
       obj = makeCD("ENCARTA '95");

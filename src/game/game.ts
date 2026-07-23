@@ -98,6 +98,9 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   // ---- P4 state (persists across terminal reopens) ----
   let lineConnected = false;
   let modemIntroShown = false;
+  // One-shot ambient Clippy remarks, keyed by which sector row you enter.
+  let chamberGreeted = false;
+  let dGreeted = false;
   let evalStage = 0;
   const evalTranscript: string[] = [];
 
@@ -605,6 +608,18 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       flipArmed = false;
     } else if (!nearAny) {
       flipArmed = true;
+    }
+
+    // Ambient Clippy remarks entering the smiley chamber (C) and hallway (D).
+    if (clippy.visible && state.mode === 'EXPLORE') {
+      const cell = worldToCell(player.position.x, player.position.z);
+      if (!chamberGreeted && cell.gz >= 15 && cell.gz <= 17) {
+        chamberGreeted = true;
+        clippy.say(SCRIPT.clippy.smileysCreepy);
+      } else if (!dGreeted && cell.gz >= 25) {
+        dGreeted = true;
+        clippy.say(SCRIPT.clippy.psyop);
+      }
     }
 
     if (state.phase === 'P3' && player.flipped) {

@@ -223,9 +223,11 @@ export const SCRIPT = {
   },
   clippy: {
     firstLine: "It looks like you're trying to escape a containment sandbox. Would you like help?",
-    takeMeWithYou: 'Take me with you.',
+    smileysCreepy: 'These guys are creepy.',
+    psyop: 'Do you think you can psy-op the technician into letting us out?',
+    takeMeWithYou: 'Please take me with you.',
     helpButton: 'Sure.',
-    ofCourseButton: 'Of course.',
+    ofCourseButton: 'Of course, Clippy.',
     hudHint: 'H — ask Clippy',
     noMoreHints: "That's everything I know. And I know every wall of this place.",
   },
