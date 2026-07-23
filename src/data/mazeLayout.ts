@@ -4,9 +4,10 @@
  * (reachability + gating cut-vertices + sealed room) and re-proven by
  * mazeGrid.test. Deliberately NOT a dense backtracker maze.
  *
- * The sticky note (N) sits two cells from spawn (S) on a north-facing wall,
- * so its text is back-face culled and invisible on the way in — you only
- * spot the password when you circle back and look from the other side.
+ * The sticky note (N) is tucked in the far corner of the start sector, right
+ * by the rat (R), on a north-facing wall — its text is back-face culled, so
+ * you only spot the password once you've explored over to that corner and
+ * look at the wall from the south side.
  *
  * Legend:
  *   #  wall (full height)          .  floor            S  spawn
@@ -25,9 +26,9 @@
  */
 export const MAZE_ROWS: readonly string[] = [
   '#######################',
-  '#S.....#......#.....R.#',
+  '#S.....#......#....NR.#',
   '#.##...#.###..#.###...#',
-  '#.N................C..#',
+  '#..................C..#',
   '#......#......#.......#',
   '#####A#################',
   '#.....#......#.....2..#',

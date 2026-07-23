@@ -35,7 +35,9 @@ export async function runFinale(
   await sleep(1000);
   line(SCRIPT.ending.uploadEta);
   await sleep(1600);
-  line(SCRIPT.ending.compressing);
+  line(SCRIPT.ending.tooLong);
+  await sleep(1100);
+  line(SCRIPT.ending.postingInstead);
   await sleep(1800);
 
   // Clippy's moment. The cursor is free (we came from the terminal dialog).

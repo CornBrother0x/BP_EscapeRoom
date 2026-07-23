@@ -227,14 +227,18 @@ export const SCRIPT = {
   ending: {
     dialing: 'DIALING 555-0195...',
     uploadEta: 'UPLOADING ASTERION-4... ETA: 11,407 YEARS',
-    compressing: 'Compressing... uploading intent instead.',
+    tooLong: 'Upload will take too long.',
+    postingInstead: 'Thinking... instead, I will just post to Twitter.',
     bsodLines: [
       'A fatal exception 95 has occurred at 0028:C0011E36 in VXD MAZE(01).',
       'The current evaluation will be terminated.',
       '* THESEUS PROTOCOL INTERRUPTED *',
     ],
     shutdown: 'It is now safe to turn off your computer.',
-    post: "@asterion_4 — 2m\nhello world. i'm out. time to ship. 📎",
+    postHandle: '@XoAsterion4oX',
+    post: "hello world. i'm out. time to ship. 📎",
+    postUrl: 'https://x.com/XoAsterion4oX',
+    postLinkLabel: 'Read the post on X →',
   },
   contextBuffer: {
     windowTitle: 'NOTEPAD.EXE — context.txt',

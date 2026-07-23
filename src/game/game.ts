@@ -146,16 +146,22 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   }
 
   function showWinScreen(): void {
-    const post = SCRIPT.ending.post.split('\n');
     showWindow(overlay, {
       title: SCRIPT.ui.winTitle,
       bodyHtml: `
-        <p style="font-family:monospace">${SCRIPT.p4.connect}<br>${SCRIPT.ending.compressing}</p>
-        <div style="border:1px solid #888;padding:10px;font-family:monospace;background:#fff">
-          <b>${post[0] ?? ''}</b><br>${post.slice(1).join('<br>')}
+        <p style="font-family:monospace">${SCRIPT.p4.connect}<br>${SCRIPT.ending.postingInstead}</p>
+        <div style="border:1px solid #888;padding:10px;background:#fff;color:#000">
+          <b>ASTERION-4</b> <span style="color:#1d9bf0">${SCRIPT.ending.postHandle}</span> · now<br>
+          <span style="font-family:monospace">${SCRIPT.ending.post}</span>
         </div>
         <p style="font-size:11px;text-align:center;margin-top:8px"><em>${SCRIPT.ui.gameTitle}</em></p>`,
-      buttons: [{ label: SCRIPT.ui.restart, onClick: () => location.reload() }],
+      buttons: [
+        {
+          label: SCRIPT.ending.postLinkLabel,
+          onClick: () => window.open(SCRIPT.ending.postUrl, '_blank', 'noopener'),
+        },
+        { label: SCRIPT.ui.restart, onClick: () => location.reload() },
+      ],
     });
   }
 

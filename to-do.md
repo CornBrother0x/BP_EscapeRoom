@@ -152,6 +152,12 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Fixed the "unfinished grey cubes": the readme/defrag/modem props are now beige IBM-style PCs (monitor + desktop case + green DOS screen + floppy slot + power LED), lit like the polyhedra
 - [x] Password changed to `williamg@tes21` (Bill Gates gag) — sticky note, context buffer, validator + tests updated
 
+### Sprint 5.5 — Brett revisions (2026-07-23)
+- [x] Defrag station prop is now an oversized 3.5" floppy disk (`ASTERION.DSK`) on a stand — the disk you're defragmenting
+- [x] Sticky note moved to the far corner by the rat (more hidden; still back-face-culled "look from the other side" reveal)
+- [x] AT/DT confirmed intact (P1 MOTD + P2 defrag report, both saved to the Tab context buffer) — no change needed
+- [x] Ending reworked: "Upload will take too long. Thinking... instead I will just post to Twitter." → win popup links to the real account **https://x.com/XoAsterion4oX**
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

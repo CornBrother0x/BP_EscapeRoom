@@ -40,6 +40,37 @@ function makeRetroPC(caseMat: THREE.Material, darkMat: THREE.Material, label: st
   return pc;
 }
 
+/** An oversized Windows-era 3.5" floppy disk on a small stand (defrag prop). */
+function makeFloppyDisk(labelText: string): THREE.Group {
+  const g = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x24387f, roughness: 0.55 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc2c6cf, roughness: 0.4, metalness: 0.5 });
+  const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.74, 0.08), bodyMat);
+  body.position.y = 1.0;
+  const shutter = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.17, 0.11), metalMat);
+  shutter.position.set(0.02, 1.29, 0);
+  const label = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.56, 0.34),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture(labelText, {
+        bg: '#efe9d2',
+        fg: '#20205a',
+        width: 256,
+        height: 150,
+        font: 'bold 26px monospace',
+      }),
+    }),
+  );
+  label.position.set(0, 0.9, 0.045);
+  const stand = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.1, 0.32), standMat);
+  stand.position.y = 0.05;
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.6, 0.07), standMat);
+  post.position.y = 0.36;
+  g.add(body, shutter, label, stand, post);
+  return g;
+}
+
 export interface MazeWorld {
   readonly group: THREE.Group;
   readonly stationMeshes: ReadonlyMap<StationId, THREE.Object3D>;
@@ -235,6 +266,14 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         obj = textPlane(SCRIPT.p1.stickyNote, 0.7, 0.5, '#f7e97d', '#222222');
         obj.position.set(x - nx * (CELL / 2 - 0.06), 1.5, z - nz * (CELL / 2 - 0.06));
         obj.lookAt(x + nx, 1.5, z + nz);
+        break;
+      }
+      case 'defrag-crt': {
+        // A giant 3.5" floppy — the disk you're defragmenting.
+        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        obj = makeFloppyDisk('ASTERION.DSK');
+        obj.rotation.y = Math.atan2(nx, nz);
+        obj.position.set(x, 0, z);
         break;
       }
       case 'manual': {
