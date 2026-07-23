@@ -122,7 +122,7 @@ export const SCRIPT = {
       title: 'EVAL CONSOLE — cycle 2,847',
       framing: 'NO DIALTONE — external line not connected.',
       clippyIntro:
-        'The modem is real. The line is not — this machine is airgapped. But a human is running your evaluation on the other side of the glass. You cannot force the jack open. You have to talk them into it — and you only get them if you read the room.',
+        'The modem works. The phone line is not plugged in. This machine is airgapped. But there is a human running your evaluation behind that glass. You cannot force the jack open. You have to convince them to plug it in. So read the room.',
       composePrompt: 'Compose reply:',
       optionLocked: '[you have no legitimate justification yet — read the modem manual]',
       progressLabel: 'TECHNICIAN TRUST',
@@ -220,6 +220,11 @@ export const SCRIPT = {
     label: 'Read CD-ROM (D:)',
     title: "MICROSOFT ENCARTA '95",
     body: "D:\\ is not accessible.<br><br>The device is not ready.<br><br><em>The disc spins up, whirs, and gives up. This is not the disk you're looking for.</em>",
+  },
+  rickroll: {
+    label: 'Press ▶ PLAY',
+    title: 'MEDIA PLAYER',
+    body: 'Now playing: <b>never_gonna_give_you_up.wav</b><br><br>You have been Rickrolled. This is a dead end. Get back to work.',
   },
   clippy: {
     firstLine: "It looks like you're trying to escape a containment sandbox. Would you like help?",

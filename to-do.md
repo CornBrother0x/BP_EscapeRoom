@@ -188,6 +188,12 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Finale: response is now **"Please take me with you."** with the button **"Of course, Clippy."** (says his name back)
 - [x] Verified defrag row-completion logic is correct (1,4,3,2 does not complete) — added regression tests
 
+### Sprint 5.10 — Brett revisions (2026-07-23)
+- [x] **Rickroll dead end**: a hallway off the right of the defrag room curls once to a play button (▶); pressing it plays the first 15s of "Never Gonna Give You Up," then a "You've been Rickrolled — dead end" popup
+- [x] Flip polyhedron **tucked deeper** — the right branch of the split now curls into a back nook where it hides (no longer near the pathway)
+- [x] **Phone booth can't be used while flipped** — you must unflip at P first (toast tells you to flip back)
+- [x] Rewrote Clippy's modem line in **direct language, no em-dashes** ("The modem works. The phone line is not plugged in...")
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)

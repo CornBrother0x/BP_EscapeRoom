@@ -141,6 +141,34 @@ function makeCD(labelText: string): THREE.Group {
   return g;
 }
 
+/** A media "play" button on a stand — the Rickroll dead end. */
+function makePlayButton(): THREE.Group {
+  const g = new THREE.Group();
+  const panelMat = new THREE.MeshStandardMaterial({ color: 0x181820, roughness: 0.5 });
+  const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.62, 0.12), panelMat);
+  panel.position.y = 1.05;
+  const icon = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.5, 0.5),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture('▶', {
+        bg: '#0a0a0a',
+        fg: '#3be24a',
+        width: 128,
+        height: 128,
+        font: 'bold 90px sans-serif',
+      }),
+    }),
+  );
+  icon.position.set(0, 1.05, 0.065);
+  const stand = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.28), standMat);
+  stand.position.y = 0.05;
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.62, 0.06), standMat);
+  post.position.set(0, 0.36, -0.05);
+  g.add(stand, post, panel, icon);
+  return g;
+}
+
 /** A phone booth housing the dial-out terminal (P4). Open front faces +z. */
 function makePhoneBooth(): THREE.Group {
   const g = new THREE.Group();
@@ -199,6 +227,8 @@ export interface MazeWorld {
   readonly doorMeshes: ReadonlyMap<DoorId, THREE.Object3D>;
   /** Clickable CD-ROM decoys (dead ends). */
   readonly decoyMeshes: readonly THREE.Object3D[];
+  /** Clickable Rickroll play buttons (dead ends). */
+  readonly rickrollMeshes: readonly THREE.Object3D[];
   /** Static walls + every still-closed door. */
   activeWalls(): readonly WallBox[];
   openDoor(id: DoorId): void;
@@ -343,6 +373,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     side: THREE.DoubleSide,
   });
   const decoyMeshes: THREE.Object3D[] = [];
+  const rickrollMeshes: THREE.Object3D[] = [];
   for (const deco of parsed.decorations) {
     const { x, z } = cellCenter(deco.cell);
     let obj: THREE.Object3D;
@@ -358,6 +389,12 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
       obj.rotation.y = Math.atan2(nx, nz);
       obj.position.set(x, 0, z);
       decoyMeshes.push(obj);
+    } else if (deco.id === 'rickroll') {
+      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
+      obj = makePlayButton();
+      obj.rotation.y = Math.atan2(nx, nz);
+      obj.position.set(x, 0, z);
+      rickrollMeshes.push(obj);
     } else {
       // OpenGL logo: flat decal on the nearest wall.
       const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
@@ -468,6 +505,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     stationMeshes,
     doorMeshes,
     decoyMeshes,
+    rickrollMeshes,
     activeWalls() {
       return [...parsed.walls, ...closedDoors.values()];
     },

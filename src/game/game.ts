@@ -94,6 +94,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   world.decoyMeshes.forEach((mesh, i) => {
     interactor.add({ id: `decoy-${i}`, label: SCRIPT.decoy.label, object: mesh });
   });
+  // Rickroll play buttons — clickable dead ends.
+  world.rickrollMeshes.forEach((mesh, i) => {
+    interactor.add({ id: `rickroll-${i}`, label: SCRIPT.rickroll.label, object: mesh });
+  });
 
   // ---- P4 state (persists across terminal reopens) ----
   let lineConnected = false;
@@ -158,6 +162,16 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     showWindow(overlay, {
       title: SCRIPT.decoy.title,
       bodyHtml: `<p style="font-family:monospace">${SCRIPT.decoy.body}</p>`,
+      buttons: [{ label: 'OK', onClick: closeDialog }],
+    });
+  }
+
+  function showRickroll(): void {
+    if (!openDialog('rickroll')) return;
+    void audio.playFile('/audio/rickroll.mp3');
+    showWindow(overlay, {
+      title: SCRIPT.rickroll.title,
+      bodyHtml: `<p style="font-family:monospace">${SCRIPT.rickroll.body}</p>`,
       buttons: [{ label: 'OK', onClick: closeDialog }],
     });
   }
@@ -297,7 +311,12 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
 
   // ---- P4: two-phase — convince the technician, then dial out ----
   function openTerminal(): void {
-    if (store.get().phase !== 'P4' || !openDialog('terminal')) return;
+    if (store.get().phase !== 'P4') return;
+    if (player.flipped) {
+      toast('You cannot work the terminal upside down. Flip back first.');
+      return;
+    }
+    if (!openDialog('terminal')) return;
     if (lineConnected) renderDialTerminal();
     else renderEvalConsole();
   }
@@ -548,6 +567,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   audio.preloadFile('/audio/startup.mp3');
   audio.preloadFile('/audio/dialup.mp3');
   audio.preloadFile('/audio/music.mp3');
+  audio.preloadFile('/audio/rickroll.mp3');
   runBoot(overlay, {
     onComply: () => {
       if (store.startGame()) {
@@ -585,6 +605,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         hoverLabel = `[E] ${hovered.label}`;
         if (input.wasPressed('KeyE')) {
           if (hovered.id.startsWith('decoy-')) showDecoy();
+          else if (hovered.id.startsWith('rickroll-')) showRickroll();
           else interactions[hovered.id]?.();
         }
       }
@@ -613,10 +634,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     // Ambient Clippy remarks entering the smiley chamber (C) and hallway (D).
     if (clippy.visible && state.mode === 'EXPLORE') {
       const cell = worldToCell(player.position.x, player.position.z);
-      if (!chamberGreeted && cell.gz >= 15 && cell.gz <= 17) {
+      if (!chamberGreeted && cell.gz >= 17 && cell.gz <= 19) {
         chamberGreeted = true;
         clippy.say(SCRIPT.clippy.smileysCreepy);
-      } else if (!dGreeted && cell.gz >= 25) {
+      } else if (!dGreeted && cell.gz >= 27) {
         dGreeted = true;
         clippy.say(SCRIPT.clippy.psyop);
       }
