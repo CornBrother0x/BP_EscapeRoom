@@ -106,6 +106,25 @@ export class GameAudio {
     }
   }
 
+  /**
+   * Defrag progress: each completed row adds the next note of a C-major
+   * chord (root → third → fifth → octave), so the puzzle "builds" a chord.
+   */
+  defragStep(step: number): void {
+    const chord = [523.25, 659.25, 783.99, 1046.5];
+    const f = chord[Math.min(step, chord.length - 1)];
+    this.tone(f, 0, 0.55, 'sine', 0.14);
+    this.tone(f * 2, 0.02, 0.4, 'triangle', 0.04); // shimmer
+  }
+
+  /** The full resolve when the whole disk is defragged. */
+  defragComplete(): void {
+    const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+    chord.forEach((f, i) => this.tone(f, i * 0.1, 0.7, 'sine', 0.12));
+    // ring out the triad
+    for (const f of [523.25, 659.25, 783.99]) this.tone(f, 0.55, 1.4, 'sine', 0.06);
+  }
+
   /** Quiet machine-room hum, forever. */
   startHum(): void {
     const ctx = this.ensure();

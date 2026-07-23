@@ -448,9 +448,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
       closeBtn.textContent = SCRIPT.ui.close;
       host.appendChild(closeBtn);
       const handle = mountDefrag(mount, {
+        onRowComplete: (completed) => audio.defragStep(completed - 1),
         onSolved: () => {
           if (store.solvePuzzle('P2')) {
-            audio.play('chime');
+            audio.defragComplete();
             world.openDoor('glitch');
             audio.play('derez');
             addContext(SCRIPT.contextBuffer.entries.hayes2);

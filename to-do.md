@@ -141,6 +141,12 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] **Bigger, more complex maze** (27×22, ~284 walkable cells, ~2× old): recursive-backtracker corridors + dead ends per sector so it can't be breezed through; polyhedron hidden deep in sector C. Validated by generator script (reachability + gating + sealed-room), frozen into mazeLayout.ts
 - [x] Original screensaver callbacks: the **rat** (ambient billboard), the **smiley exit** marker, the **OpenGL logo** wall decal
 
+### Sprint 5.3 — Brett revisions (2026-07-23)
+- [x] Maze dialed back to the original open-room style, bumped **one notch** (~33% more floor + light winding), not the 2-3× over-complication of 5.2; validated (reachability + gating + sealed room)
+- [x] Restored the loved P1 mechanic: sticky note sits 2 cells from spawn on a north-facing wall — back-face culled, so the password is invisible on the way in and only found when you circle back and look from the other side
+- [x] Boot host illustration (Goosebumps-style CRT) + clean full Clippy sprite
+- [x] Defrag **progressive chord jingle**: each completed row adds the next note of a C-major chord (root→3rd→5th→octave); full solve rings the resolved triad
+
 ## Sprint 6 — Polish
 
 - [ ] Aesthetic pass using the REAL extracted textures/sprites from docs/references/ (Visual DNA spec as the guide: no fog/shadows, `#C0C0C0` chrome)
