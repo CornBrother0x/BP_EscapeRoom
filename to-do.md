@@ -218,9 +218,9 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] README rewritten for reviewers: pitch, live link, controls, local setup, architecture + Brett's decisions (simple TS, no framework), tech stack, testing/CI, REQUIRED AI-usage section (delegated/kept/helped/fell short), asset provenance, next steps. Maps onto the challenge spec.
 - [x] `docs/assets.md` provenance check — every shipped public/ asset has a row (added favicon)
 - [x] Audited tracked files: `docs/prompt.md` is NOT tracked and NOT in git history; no secrets/.env
-- [x] Code review dispatched (findings + testing/security assessment)
-- [ ] Flip GitHub repo public
-- [ ] Production deploy verified; cold-test live link
-- [ ] Submit repo + live link together
+- [x] Code review done (verdict: production code, not slop). Fixed: eval→dial mode desync (real bug), hardened pointer lock, dropped unused export. Left for Brett/Codex judgment: game.ts God-function refactor, dead script fields, string duplication (documented).
+- [x] **Flipped GitHub repo public** — https://github.com/CornBrother0x/BP_EscapeRoom
+- [ ] Production deploy verified; cold-test live link (verifying)
+- [ ] Submit repo + live link together (Brett's final step after Codex review)
 
 **Exit**: a stranger with only the repo URL and live link can play, win, build locally, and understand how it's made.
