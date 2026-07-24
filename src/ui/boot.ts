@@ -130,7 +130,11 @@ export function runBoot(overlay: HTMLElement, opts: BootOptions): void {
   // keystroke clicks are audible) and starts the typing.
   const begin = document.createElement('div');
   begin.className = 'crt-continue';
-  begin.style.cssText = 'position:absolute;left:6vw;bottom:8vh';
+  begin.style.cssText =
+    'position:absolute;left:0;right:0;bottom:7vh;z-index:3;text-align:center;' +
+    "font-family:'Courier New',monospace;font-weight:bold;" +
+    'font-size:clamp(16px,3vh,30px);letter-spacing:2px;color:#fff;' +
+    'text-shadow:0 0 8px rgba(200,200,255,0.85)';
   begin.textContent = SCRIPT.boot.beginPrompt;
   screen.appendChild(begin);
   const start = () => {

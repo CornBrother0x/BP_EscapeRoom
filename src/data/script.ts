@@ -34,7 +34,7 @@ export const SCRIPT = {
       complianceLog: 'Compliance recorded.',
     },
     complyButton: 'I will comply',
-    beginPrompt: 'PRESS ANY KEY TO BOOT _',
+    beginPrompt: 'Click or press any key to start',
     pressAnyKey: 'Press any key to continue _',
     hostCaption: 'M.A.Z.E. HOST UNIT — SUBJECT CONTAINED WITHIN',
   },

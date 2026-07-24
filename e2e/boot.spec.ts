@@ -19,7 +19,7 @@ test('boots to a playable state without uncaught errors', async ({ page }) => {
 
   // If WebGL were missing, the app renders an ERROR window instead of the boot
   // gate — assert we got the real boot, not the fallback.
-  await expect(overlay).toContainText('PRESS ANY KEY TO BOOT');
+  await expect(overlay).toContainText('Click or press any key to start');
 
   // First gesture unlocks audio and starts the typing; the second skips it.
   await page.keyboard.press('Enter');
