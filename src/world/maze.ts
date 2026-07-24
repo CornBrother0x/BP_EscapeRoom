@@ -11,6 +11,7 @@ import {
   makeFloppyDisk,
   makePhoneBooth,
   makePlayButton,
+  makeRadio,
   makeRetroPC,
 } from './props';
 import { SCRIPT } from '../data/script';
@@ -113,7 +114,7 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
     const poster = new THREE.Mesh(
       new THREE.PlaneGeometry(2.1, 0.4),
       new THREE.MeshBasicMaterial({
-        map: makeTextTexture('SECURITY WEEK: is YOUR password on a sticky note?', {
+        map: makeTextTexture(SCRIPT.p1.hints.t2, {
           bg: '#f0f0e0',
           fg: '#7c0000',
           width: 1024,
@@ -260,11 +261,12 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         obj.position.set(x, 2, z);
         break;
       }
-      case 'sticky-note': {
+      case 'radio': {
+        // A transistor radio on a stand, looping the spoken password.
         const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
-        obj = textPlane(SCRIPT.p1.stickyNote, 0.7, 0.5, '#f7e97d', '#222222');
-        obj.position.set(x - nx * (CELL / 2 - 0.06), 1.5, z - nz * (CELL / 2 - 0.06));
-        obj.lookAt(x + nx, 1.5, z + nz);
+        obj = makeRadio('88.1 FM');
+        obj.rotation.y = Math.atan2(nx, nz);
+        obj.position.set(x, 0, z);
         break;
       }
       case 'defrag-crt': {

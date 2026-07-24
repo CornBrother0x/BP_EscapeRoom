@@ -6,7 +6,7 @@
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export type SoundKind = 'click' | 'error' | 'chime' | 'derez';
+export type SoundKind = 'click' | 'error' | 'chime' | 'derez' | 'type';
 
 const DTMF: Record<string, [number, number]> = {
   '0': [941, 1336],
@@ -23,6 +23,7 @@ export class GameAudio {
   private readonly fileBuffers = new Map<string, AudioBuffer>();
   private readonly filePromises = new Map<string, Promise<ArrayBuffer>>();
   private music: AudioBufferSourceNode | null = null;
+  private voice: AudioBufferSourceNode | null = null;
 
   /** Lazily create the context — must first be called from a user gesture. */
   private ensure(): AudioContext | null {
@@ -104,7 +105,17 @@ export class GameAudio {
         this.noise(0, 0.6, 0.09, 900);
         this.tone(400, 0, 0.5, 'sawtooth', 0.05);
         break;
+      case 'type':
+        // A short, dry keystroke click for the CRT boot text.
+        this.tone(1500, 0, 0.012, 'square', 0.03);
+        this.noise(0, 0.012, 0.02, 3000);
+        break;
     }
+  }
+
+  /** Resume the audio context from a user gesture (unlocks all later sound). */
+  unlock(): void {
+    this.ensure();
   }
 
   /**
@@ -151,14 +162,8 @@ export class GameAudio {
     const ctx = this.ensure();
     if (!ctx || !this.master || this.music) return;
     try {
-      let buf = this.fileBuffers.get(url);
-      if (!buf) {
-        this.preloadFile(url);
-        const raw = await this.filePromises.get(url);
-        if (!raw) return;
-        buf = await ctx.decodeAudioData(raw.slice(0));
-        this.fileBuffers.set(url, buf);
-      }
+      const buf = await this.getBuffer(url);
+      if (!buf) return;
       if (this.music) return;
       const src = ctx.createBufferSource();
       src.buffer = buf;
@@ -214,19 +219,28 @@ export class GameAudio {
     }
   }
 
+  /** Fetch + decode a file once, caching the decoded buffer. */
+  private async getBuffer(url: string): Promise<AudioBuffer | null> {
+    const ctx = this.ensure();
+    if (!ctx) return null;
+    let buffer = this.fileBuffers.get(url);
+    if (!buffer) {
+      this.preloadFile(url);
+      const raw = await this.filePromises.get(url);
+      if (!raw) return null;
+      buffer = await ctx.decodeAudioData(raw.slice(0));
+      this.fileBuffers.set(url, buffer);
+    }
+    return buffer;
+  }
+
   /** Play an audio file through the master gain (mute applies). */
   async playFile(url: string): Promise<boolean> {
     const ctx = this.ensure();
     if (!ctx || !this.master) return false;
     try {
-      let buffer = this.fileBuffers.get(url);
-      if (!buffer) {
-        this.preloadFile(url);
-        const raw = await this.filePromises.get(url);
-        if (!raw) return false;
-        buffer = await ctx.decodeAudioData(raw.slice(0));
-        this.fileBuffers.set(url, buffer);
-      }
+      const buffer = await this.getBuffer(url);
+      if (!buffer || !this.master) return false;
       const src = ctx.createBufferSource();
       src.buffer = buffer;
       src.connect(this.master);
@@ -234,6 +248,66 @@ export class GameAudio {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Play a spoken clip (the radio voicemail), stopping any prior instance so
+   * [Listen again] restarts cleanly instead of overlapping itself.
+   */
+  async playVoice(url: string): Promise<void> {
+    const ctx = this.ensure();
+    if (!ctx || !this.master) return;
+    try {
+      const buffer = await this.getBuffer(url);
+      if (!buffer || !this.master) return;
+      this.stopVoice();
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(this.master);
+      src.onended = () => {
+        if (this.voice === src) this.voice = null;
+      };
+      src.start();
+      this.voice = src;
+    } catch {
+      /* the voice clip is non-essential */
+    }
+  }
+
+  /** Stop the spoken clip if one is playing (dialog close / replay). */
+  stopVoice(): void {
+    if (this.voice) {
+      try {
+        this.voice.stop();
+      } catch {
+        /* already stopped */
+      }
+      this.voice = null;
+    }
+  }
+
+  /**
+   * A soft, pitch- and pan-varied "hey" for the smiley faces. Proximity plays
+   * one per face, so walking the hall of faces builds an uneasy chorus.
+   */
+  async playHey(url: string, pitch: number, pan: number): Promise<void> {
+    const ctx = this.ensure();
+    if (!ctx || !this.master) return;
+    try {
+      const buffer = await this.getBuffer(url);
+      if (!buffer || !this.master) return;
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.playbackRate.value = pitch;
+      const panner = ctx.createStereoPanner();
+      panner.pan.value = Math.max(-1, Math.min(1, pan));
+      const g = ctx.createGain();
+      g.gain.value = 0.5;
+      src.connect(panner).connect(g).connect(this.master);
+      src.start();
+    } catch {
+      /* ambient sound is non-essential */
     }
   }
 

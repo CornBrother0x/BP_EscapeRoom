@@ -81,17 +81,38 @@ export function showWinScreen(ctx: GameContext): void {
 export function openContextBuffer(ctx: GameContext): void {
   if (!ctx.openDialog('context')) return;
   const log = ctx.store.get().contextLog;
+  const voicemail = SCRIPT.contextBuffer.entries.voicemail;
   const lines = log.length
-    ? log.map((l) => l.replace(/</g, '&lt;')).join('<br>')
+    ? log
+        .map((l) => {
+          const safe = l.replace(/</g, '&lt;');
+          // The radio message is playable, not readable — a replay button
+          // instead of ever spelling the password into working memory.
+          return l === voicemail
+            ? `${safe} <button data-replay style="font-size:11px;padding:0 6px">▶</button>`
+            : safe;
+        })
+        .join('<br>')
     : `<em>${SCRIPT.contextBuffer.empty}</em>`;
   showWindow(ctx.overlay, {
     title: SCRIPT.contextBuffer.windowTitle,
     bodyHtml: `
       <p style="font-size:11px;color:#444">${SCRIPT.contextBuffer.subtitle}</p>
       <p style="font-family:monospace;font-size:12px;max-height:260px;overflow-y:auto">${lines}</p>`,
-    buttons: [{ label: SCRIPT.ui.close, onClick: ctx.closeDialog }],
+    buttons: [
+      {
+        label: SCRIPT.ui.close,
+        onClick: () => {
+          ctx.audio.stopVoice();
+          ctx.closeDialog();
+        },
+      },
+    ],
     width: 500,
   });
+  ctx.overlay
+    .querySelector('[data-replay]')
+    ?.addEventListener('click', () => void ctx.audio.playVoice('/audio/voicemail.mp3'));
 }
 
 // ---- Story beats ----

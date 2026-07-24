@@ -13,9 +13,9 @@ describe('parseMaze on the real layout', () => {
         'manual',
         'modem-crt',
         'polyhedron',
+        'radio',
         'readme-crt',
         'return-polyhedron',
-        'sticky-note',
       ].sort(),
     );
     expect(maze.numberZones.length).toBeGreaterThan(0);

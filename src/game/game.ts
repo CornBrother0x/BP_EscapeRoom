@@ -53,7 +53,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   // ---- Interactables ----
   const interactor = new Interactor();
   const stationLabels: readonly (readonly [StationId, string])[] = [
-    ['sticky-note', SCRIPT.ui.interactions.stickyNote],
+    ['radio', SCRIPT.ui.interactions.radio],
     ['readme-crt', SCRIPT.ui.interactions.readme],
     ['defrag-crt', SCRIPT.ui.interactions.defrag],
     ['modem-crt', SCRIPT.ui.interactions.modem],
@@ -146,10 +146,24 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   let flipArmed = true;
   let chamberGreeted = false;
   let dGreeted = false;
+  // Ambient-Clippy trigger rows, derived from the maze so they survive layout
+  // edits: the smiley chamber (C) starts just past the glitch door; the sealed
+  // hallway (D) starts just past the high door (H).
+  const glitchRow = parsed.doors.find((d) => d.id === 'glitch')?.cell.gz ?? 0;
+  const sealedRow = parsed.rows.findIndex((r) => r.includes('H'));
+  // Smiley faces: world positions for the proximity "hey" chorus (P-none, pure
+  // atmosphere). `last` is the elapsed-time stamp of this face's last whisper.
+  const smileySpots = parsed.decorations
+    .filter((d) => d.id === 'smiley')
+    .map((d) => ({ ...cellCenter(d.cell), last: -99 }));
 
   // ---- Boot ----
   audio.preloadFile('/audio/startup.mp3');
+  audio.preloadFile('/audio/voicemail.mp3'); // the P1 radio message
+  audio.preloadFile('/audio/hey.mp3'); // the smiley chorus
   runBoot(overlay, {
+    onStart: () => audio.unlock(),
+    onType: () => audio.play('type'),
     onComply: () => {
       if (store.startGame()) {
         hideOverlay(overlay);
@@ -215,12 +229,28 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     // Ambient Clippy remarks entering the smiley chamber (C) and hallway (D).
     if (clippy.visible && state.mode === 'EXPLORE') {
       const cell = worldToCell(player.position.x, player.position.z);
-      if (!chamberGreeted && cell.gz >= 17 && cell.gz <= 19) {
-        chamberGreeted = true;
-        clippy.say(SCRIPT.clippy.smileysCreepy);
-      } else if (!dGreeted && cell.gz >= 27) {
+      if (!dGreeted && sealedRow > 0 && cell.gz > sealedRow) {
         dGreeted = true;
         clippy.say(SCRIPT.clippy.psyop);
+      } else if (!chamberGreeted && cell.gz > glitchRow) {
+        chamberGreeted = true;
+        clippy.say(SCRIPT.clippy.smileysCreepy);
+      }
+    }
+
+    // Hall of faces: each smiley whispers a soft "hey" as you pass. A per-face
+    // cooldown turns the chamber into an uneasy overlapping chorus, not a
+    // machine-gun. Pitch is stable per face (each one has its own "voice");
+    // pan follows the face's offset so the chorus spreads across the stereo field.
+    if (state.mode === 'EXPLORE') {
+      const now = timer.getElapsed();
+      for (const spot of smileySpots) {
+        const d = Math.hypot(spot.x - player.position.x, spot.z - player.position.z);
+        if (d < 3.2 && now - spot.last > 4.5) {
+          spot.last = now;
+          const wobble = (((((spot.x * 7 + spot.z * 13) % 10) + 10) % 10) / 20);
+          void audio.playHey('/audio/hey.mp3', 0.82 + wobble, (spot.x - player.position.x) / 4);
+        }
       }
     }
 

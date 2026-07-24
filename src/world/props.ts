@@ -70,6 +70,56 @@ export function makeFloppyDisk(labelText: string): THREE.Group {
   return g;
 }
 
+/** A little transistor radio on a stand — plays the spoken password (P1). */
+export function makeRadio(labelText: string): THREE.Group {
+  const g = new THREE.Group();
+  const caseMat = new THREE.MeshStandardMaterial({ color: 0x8a2f22, roughness: 0.75 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x1c1c18, roughness: 0.8 });
+  const metalMat = new THREE.MeshStandardMaterial({
+    color: 0xc2c6cf,
+    roughness: 0.4,
+    metalness: 0.5,
+  });
+  const standMat = new THREE.MeshStandardMaterial({ color: 0x3a3a34, roughness: 0.85 });
+  const bodyM = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.44, 0.24), caseMat);
+  bodyM.position.y = 1.02;
+  // Speaker grille (a dark textured face)
+  const grille = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.28, 0.32),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture('▦▦▦', { bg: '#141410', fg: '#33ff33', width: 128, height: 128, font: 'bold 60px monospace' }),
+    }),
+  );
+  grille.position.set(-0.18, 1.02, 0.121);
+  // Tuning dial / label with the station text
+  const dial = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.3, 0.18),
+    new THREE.MeshBasicMaterial({
+      map: makeTextTexture(labelText, { bg: '#efe6c8', fg: '#20205a', width: 200, height: 120, font: 'bold 30px monospace' }),
+    }),
+  );
+  dial.position.set(0.16, 1.09, 0.121);
+  const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.04, 16), darkMat);
+  knob.rotation.x = Math.PI / 2;
+  knob.position.set(0.16, 0.92, 0.13);
+  // Telescopic antenna
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.6, 8), metalMat);
+  antenna.position.set(0.3, 1.5, -0.08);
+  antenna.rotation.z = -0.35;
+  // Blinking "new message" LED
+  const led = new THREE.Mesh(
+    new THREE.CircleGeometry(0.02, 12),
+    new THREE.MeshBasicMaterial({ color: 0xff4a3a }),
+  );
+  led.position.set(-0.32, 1.2, 0.121);
+  const stand = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.1, 0.3), standMat);
+  stand.position.y = 0.05;
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.72, 0.07), standMat);
+  post.position.set(0, 0.4, -0.05);
+  g.add(stand, post, bodyM, grille, dial, knob, antenna, led);
+  return g;
+}
+
 /** A clipboard on a small stand (the modem reference sheet). */
 export function makeClipboard(labelText: string): THREE.Group {
   const g = new THREE.Group();

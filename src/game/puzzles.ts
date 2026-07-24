@@ -232,14 +232,28 @@ export function createPuzzles(ctx: GameContext, player: Player): Puzzles {
 
   // ---- Station dispatch ----
   const interactions: Record<string, () => void> = {
-    'sticky-note': () => {
-      if (!ctx.openDialog('note')) return;
-      ctx.addContext(SCRIPT.contextBuffer.entries.stickyNote);
+    radio: () => {
+      if (!ctx.openDialog('radio')) return;
+      ctx.addContext(SCRIPT.contextBuffer.entries.voicemail);
+      void audio.playVoice('/audio/voicemail.mp3');
       showWindow(overlay, {
-        title: 'Sticky note',
-        bodyHtml: `<p style="font-family:monospace;background:#f7e97d;color:#222;padding:12px">${SCRIPT.p1.stickyNote}</p>`,
-        buttons: [{ label: SCRIPT.ui.close, onClick: ctx.closeDialog }],
+        title: SCRIPT.p1.radio.title,
+        bodyHtml: `<p>${SCRIPT.p1.radio.flavor}</p>
+          <section style="text-align:center"><button id="radio-play">${SCRIPT.p1.radio.replayButton}</button></section>
+          <p style="font-size:11px;color:#444;text-align:center">${SCRIPT.contextBuffer.entries.voicemail.replace('> ', '')} — saved to your context (Tab).</p>`,
+        buttons: [
+          {
+            label: SCRIPT.ui.close,
+            onClick: () => {
+              audio.stopVoice();
+              ctx.closeDialog();
+            },
+          },
+        ],
       });
+      overlay
+        .querySelector('#radio-play')
+        ?.addEventListener('click', () => void audio.playVoice('/audio/voicemail.mp3'));
     },
     'readme-crt': () => {
       if (!ctx.openDialog('readme')) return;

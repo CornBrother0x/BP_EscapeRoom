@@ -238,3 +238,42 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [ ] Submit repo + live link together (Brett's final step after Codex review)
 
 **Exit**: a stranger with only the repo URL and live link can play, win, build locally, and understand how it's made.
+
+## Sprint 8 — Post-ship hardening: modularization, feel tweaks & a formal test harness (2026-07-23)
+
+> After the public flip, a hardening pass: split the two files the Sprint 7
+> review flagged, merge the parallel Codex lane, and stand up real tests wired
+> into CI so the key assumptions are proven mechanically, not just by playtest.
+
+- [x] **Broke up the two large files** (Sprint 7 review's "God-function" note): `game.ts` 706→242 lines and `maze.ts` 540→322, split into focused modules — `game/context.ts` (shared `GameContext`/`GameSession`), `game/hud.ts`, `game/screens.ts` (modal screens + story beats), `game/puzzles.ts` (P1/P4 + dispatch), `game/evalConsole.ts` (pure P4 persuasion reducer), `world/props.ts` (pure 3D prop builders). Each unit has one purpose and a named interface
+- [x] **Merged the Codex lane**: OpenGL-room (`O`) wall window in sector C, `vercel.json` security headers, README tightened for reviewers, `THREE.Timer` render clock
+- [x] **Formal test suite — proves the key assumptions (53 tests, Vitest + jsdom)**:
+  - `progression.test` — full BOOT→P1→P2→P3→P4→ESCAPED→WIN with the REAL answers (`williamg@tes21`, a solved defrag board, `ATDT95550195`), AND near-misses that must NOT win (old password, dialing without the `9`, a wrong persuasion pick)
+  - `state.test` — guarded transitions: skipping and double-solves rejected, clean restart
+  - `mazeGrid.test` — full reachability, sequential gating (P1→defrag, P2→polyhedron), modem room sealed behind the flip-only high door
+  - `collision.test` — the flip band: upright blocked by the door filler / passes over beams; flipped inverts it
+  - `evalConsole.test` — the 3-round persuasion state machine + DL-7 manual gate
+  - `defragLogic.test` + `defrag.dom.test` (jsdom) — row-completion rule + real click-to-solve
+- [x] **Playwright E2E smoke test** (`e2e/boot.spec.ts`): boots the shipped production bundle in real headless Chromium (SwiftShader WebGL), clicks through the boot gate to a playable EXPLORE state, asserts zero uncaught errors — the one thing the unit suite can't prove
+- [x] **CI/CD**: dedicated `e2e` job added to `.github/workflows/check.yml`; Vitest scoped to `src/**/*.test.ts` so it never runs the Playwright spec
+- [x] **Boot typewriter sounds**: per-character keystroke clicks as the blue-CRT lines type out, behind a "PRESS ANY KEY TO BOOT" gate whose first gesture unlocks the audio context (browsers block audio before a gesture)
+- [x] **Defrag buried deeper**: sector B rebuilt as a 5-turn serpentine — CD-ROM + Rickroll decoys near the door, the real defrag floppy at the far corner
+- [x] **Flip object relocated**: the polyhedron moved to its own long hallway, 13 cells from the `9~~` inverted corridor (was right next to it) — you flip there and travel back to cross it
+- [x] **Robust ambient Clippy triggers**: the smiley-chamber and final-hallway remarks now derive their trigger rows from the parsed maze (glitch-door row, high-door row) instead of hardcoded rows, so they survive layout edits
+
+**Exit**: `npm run check` (typecheck + lint + 53 tests + build) and the Playwright E2E both green locally and in CI. → **done; Brett's playthrough is the human sign-off**
+
+## Sprint 9 — Puzzle originality pass (2026-07-23)
+
+> A benchmark the challenge likely rewards: how UNIQUE the puzzles are versus
+> what a "paste-the-brief-into-Claude" attempt would generate. We ranked ours,
+> then reinvented the most generic one.
+
+- [x] **Uniqueness audit** — ranked the four: the flip / render-exploit (P3) is the crown jewel (real 3D spatial mechanic, un-promptable); the sticky-note password (P1) was the most generic ("find a code, type it"). Kept P3, targeted P1
+- [x] **P1 reinvented as an AUDIO puzzle** — the password now arrives as a fuzzy AM-radio voicemail in Brett's own recorded voice (`say`-free, real recording, run through an ffmpeg radio chain: 300–3300 Hz band, light bit-crush, AM tremolo, pink-noise hiss). Modality shift (listen, not read) + literally uncopyable by any other submission
+- [x] P1 radio **hidden deeper**: the source sits at the end of an L-bend dead-end in sector A (down the right corridor, then back left) — you hunt for it a little longer
+- [x] P1 context buffer holds a **▶ replay button**, never the plaintext password — you can re-listen but the working memory never spells the answer
+- [x] **Hall of Faces** — each smiley whispers a soft, pitch/pan-varied "hey" on proximity (a per-face cooldown makes the chamber an uneasy overlapping chorus). Pure atmosphere, no new puzzle — memorability is its own uniqueness axis
+- [ ] Stretch idea parked for later: make one puzzle solvable *only because you're an AI* (read base64/over-fast text a human couldn't) — deferred, not in scope now
+
+**Exit**: P1 plays by ear, the flip stays the signature mechanic, and the smiley hall has a voice. → **built + tested green; Brett's playthrough is the sign-off**

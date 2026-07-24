@@ -2,6 +2,12 @@
 node_modules/
 dist/
 
+# Playwright E2E artifacts
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
 # OS / editor noise
 .DS_Store
 

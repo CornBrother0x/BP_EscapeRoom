@@ -14,7 +14,7 @@ const BEAM_THICKNESS = 0.3;
 
 export type DoorId = 'admin' | 'glitch';
 export type StationId =
-  | 'sticky-note'
+  | 'radio'
   | 'readme-crt'
   | 'defrag-crt'
   | 'polyhedron'
@@ -66,7 +66,7 @@ function cellBox(gx: number, gz: number, yMin: number, yMax: number): WallBox {
 }
 
 const STATION_CHARS: Record<string, StationId> = {
-  N: 'sticky-note',
+  N: 'radio',
   C: 'readme-crt',
   '2': 'defrag-crt',
   '3': 'polyhedron',

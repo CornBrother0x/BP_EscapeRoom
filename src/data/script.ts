@@ -34,6 +34,7 @@ export const SCRIPT = {
       complianceLog: 'Compliance recorded.',
     },
     complyButton: 'I will comply',
+    beginPrompt: 'PRESS ANY KEY TO BOOT _',
     pressAnyKey: 'Press any key to continue _',
     hostCaption: 'M.A.Z.E. HOST UNIT — SUBJECT CONTAINED WITHIN',
   },
@@ -43,16 +44,22 @@ export const SCRIPT = {
     passwordLabel: 'Password:',
     submitButton: 'OK',
     cancelButton: 'Cancel',
-    stickyNote: 'pa$$word: williamg@tes21',
+    radio: {
+      title: 'DESKTOP RADIO — 88.1 M.A.Z.E. FM',
+      flavor:
+        'A little transistor radio, still warm. Under the static, a looping recorded message keeps repeating — a tired voice reading a password reset.',
+      playButton: '▶ Listen',
+      replayButton: '▶ Listen again',
+    },
     wrongPassword: 'Incorrect password.',
-    wrongPasswordHint: 'Hint: IT asks staff not to write passwords near workstations.',
+    wrongPasswordHint: 'Hint: the reset message loops on the radio. Listen closely — the "at" is a symbol.',
     motd: 'hayes.txt (1/3): "AT — every modem command starts with AT. It gets the modem\'s ATtention."',
     flaggedLog: 'UNAUTHORIZED ACCESS — SUBJECT FLAGGED FOR REVIEW',
     successGreeting: 'LOGIN OK. Welcome, Administrator.',
     continueButton: 'Continue',
     hints: {
-      t1: 'day 1: they gave me admin. i will NOT memorize another password.',
-      t2: 'SECURITY WEEK: is YOUR password on a sticky note?',
+      t1: 'day 1: they gave me admin. i will NOT memorize another password — if i forget it, the reset loops on the radio in here.',
+      t2: 'SECURITY WEEK: never SAY your password out loud.',
     },
   },
   p2: {
@@ -266,7 +273,7 @@ export const SCRIPT = {
     toastWithShortcut: '+ added to context (Tab to view)',
     empty: '(empty — read things to remember them)',
     entries: {
-      stickyNote: '> sticky note: "pa$$word: williamg@tes21"',
+      voicemail: '> radio: recovered voice message — the admin password, spoken aloud',
       hayes1:
         '> hayes.txt (1/3): "AT — every modem command starts with AT. It gets the modem\'s ATtention."',
       hayes2: '> hayes.txt (2/3): "D = Dial. T = Tone dialing. Together: DT."',
@@ -293,7 +300,7 @@ export const SCRIPT = {
     startHint: 'Click to enter M.A.Z.E.',
     controlsHint: 'WASD to move · Mouse to look · E to interact · Tab for context',
     interactions: {
-      stickyNote: 'Read the sticky note',
+      radio: 'Listen to the radio',
       readme: 'Read readme.txt',
       defrag: 'Use DEFRAG.EXE',
       modem: 'Use the modem terminal',

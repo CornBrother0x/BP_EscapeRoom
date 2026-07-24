@@ -60,7 +60,7 @@ describe('the game is winnable end-to-end via the real answers', () => {
     store.startGame();
     expect(store.get().phase).toBe('P1');
 
-    // P1 — the sticky-note password unlocks the admin door.
+    // P1 — the spoken radio password unlocks the admin door.
     expect(isAdminPassword('williamg@tes21')).toBe(true);
     expect(store.solvePuzzle('P1')).toBe(true);
     expect(store.get().phase).toBe('P2');

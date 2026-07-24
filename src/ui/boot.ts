@@ -56,7 +56,15 @@ const CRT_STYLE = `
 }
 `;
 
-export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): void {
+export interface BootOptions {
+  onComply: () => void;
+  /** Fired on the first key/click, before typing — unlock the audio context here. */
+  onStart?: () => void;
+  /** Fired per typed character, for the keystroke click. */
+  onType?: () => void;
+}
+
+export function runBoot(overlay: HTMLElement, opts: BootOptions): void {
   if (!document.getElementById('crt-style')) {
     const style = document.createElement('style');
     style.id = 'crt-style';
@@ -85,10 +93,11 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
   const skip = () => {
     skipped = true;
   };
-  overlay.addEventListener('click', skip);
-  window.addEventListener('keydown', skip);
 
   const typeLines = async () => {
+    overlay.addEventListener('click', skip);
+    window.addEventListener('keydown', skip);
+    let tickPhase = 0;
     for (const line of SCRIPT.boot.crtLines) {
       if (skipped) {
         crt.textContent = SCRIPT.boot.crtLines.join('\n');
@@ -101,36 +110,38 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
       }
       for (const ch of line) {
         crt.textContent += ch;
-        if (!skipped) await sleep(9);
+        // Keystroke click on every other visible character (a dense clatter is
+        // noise; every 2nd char at ~13ms reads as a typewriter).
+        if (!skipped && ch !== ' ' && tickPhase++ % 2 === 0) opts.onType?.();
+        if (!skipped) await sleep(13);
       }
       crt.textContent += '\n';
       if (!skipped) await sleep(150);
     }
-    // The REMINDER line ends mid-sentence; hold the beat, then wait for a key.
+    // The REMINDER line ends mid-sentence; hold the beat, clear, then the dialog.
     await sleep(skipped ? 200 : 700);
     overlay.removeEventListener('click', skip);
     window.removeEventListener('keydown', skip);
-    showContinuePrompt();
+    content.remove(); // clear boot text + host image so the dialog sits clean
+    showSystemPrompt();
   };
 
-  // A blinking "press any key" gate so the dialog never lands over the CRT text.
-  const showContinuePrompt = () => {
-    const cont = document.createElement('div');
-    cont.className = 'crt-continue';
-    cont.textContent = SCRIPT.boot.pressAnyKey;
-    crt.appendChild(cont);
-    const proceed = () => {
-      window.removeEventListener('keydown', proceed);
-      overlay.removeEventListener('click', proceed);
-      content.remove(); // clear boot text + host image so the dialog sits clean
-      showSystemPrompt();
-    };
-    // Defer binding one tick so the key/click that finished typing doesn't pass through.
-    setTimeout(() => {
-      window.addEventListener('keydown', proceed);
-      overlay.addEventListener('click', proceed);
-    }, 60);
+  // A "press any key to boot" gate: the first gesture unlocks audio (so the
+  // keystroke clicks are audible) and starts the typing.
+  const begin = document.createElement('div');
+  begin.className = 'crt-continue';
+  begin.style.cssText = 'position:absolute;left:6vw;bottom:8vh';
+  begin.textContent = SCRIPT.boot.beginPrompt;
+  screen.appendChild(begin);
+  const start = () => {
+    window.removeEventListener('keydown', start);
+    overlay.removeEventListener('click', start);
+    begin.remove();
+    opts.onStart?.();
+    void typeLines();
   };
+  window.addEventListener('keydown', start);
+  overlay.addEventListener('click', start);
 
   const showSystemPrompt = () => {
     const win = document.createElement('div');
@@ -159,6 +170,4 @@ export function runBoot(overlay: HTMLElement, opts: { onComply: () => void }): v
       opts.onComply();
     });
   };
-
-  void typeLines();
 }
