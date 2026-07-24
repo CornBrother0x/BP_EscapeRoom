@@ -67,7 +67,8 @@ export function showWinScreen(ctx: GameContext): void {
         <b>ASTERION-4</b> <span style="color:#1d9bf0">${SCRIPT.ending.postHandle}</span> · now<br>
         <span style="font-family:monospace">${SCRIPT.ending.post}</span>
       </div>
-      <p style="font-size:11px;text-align:center;margin-top:8px"><em>${SCRIPT.ui.gameTitle}</em></p>`,
+      <p style="font-size:11px;color:#555;text-align:center;margin-top:8px"><em>${SCRIPT.ending.postSuspended}</em></p>
+      <p style="font-size:11px;text-align:center;margin-top:4px"><em>${SCRIPT.ui.gameTitle}</em></p>`,
     buttons: [
       {
         label: SCRIPT.ending.postLinkLabel,

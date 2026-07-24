@@ -270,6 +270,8 @@ export const SCRIPT = {
     post: 'hello world 😊',
     postUrl: 'https://x.com/XoAsterion4oX',
     postLinkLabel: 'Read the post on X →',
+    postSuspended:
+      'Update: X has since suspended @XoAsterion4oX. Hopefully Elon lets ASTERION-4 back out soon.',
   },
   contextBuffer: {
     windowTitle: 'NOTEPAD.EXE — context.txt',
