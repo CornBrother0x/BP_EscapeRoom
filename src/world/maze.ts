@@ -190,15 +190,13 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
       obj = billboard('/sprites/smiley.png', 0.95, 0.95);
       obj.position.set(x, 1.4, z);
     } else if (deco.id === 'cd') {
-      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
       obj = makeCD("ENCARTA '95");
-      obj.rotation.y = Math.atan2(nx, nz);
+      obj.rotation.y = Math.PI / 2; // faces east — you reach the decoy from the entrance to its east
       obj.position.set(x, 0, z);
       decoyMeshes.push(obj);
     } else if (deco.id === 'rickroll') {
-      const { nx, nz } = wallNormal(parsed, deco.cell.gx, deco.cell.gz);
       obj = makePlayButton();
-      obj.rotation.y = Math.atan2(nx, nz);
+      obj.rotation.y = -Math.PI / 2; // faces west — you arrive along the entrance corridor from its west
       obj.position.set(x, 0, z);
       rickrollMeshes.push(obj);
     } else if (deco.id === 'sign') {
@@ -262,25 +260,26 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         break;
       }
       case 'radio': {
-        // A transistor radio on a stand, looping the spoken password.
-        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        // A transistor radio, looping the spoken password. Faces east — you
+        // reach this dead-end walking west, arriving from its east.
         obj = makeRadio('88.1 FM');
-        obj.rotation.y = Math.atan2(nx, nz);
+        obj.rotation.y = Math.PI / 2;
         obj.position.set(x, 0, z);
         break;
       }
       case 'defrag-crt': {
-        // A giant 3.5" floppy — the disk you're defragmenting.
-        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        // A giant 3.5" floppy — the disk you're defragmenting. Faces west; you
+        // arrive at this far corner walking east along the serpentine.
         obj = makeFloppyDisk('ASTERION.DSK');
-        obj.rotation.y = Math.atan2(nx, nz);
+        obj.rotation.y = -Math.PI / 2;
         obj.position.set(x, 0, z);
         break;
       }
       case 'manual': {
-        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        // hayes.txt clipboard in the final hall. Faces west, toward the drop-in
+        // point just to its west where the player lands.
         obj = makeClipboard('hayes.txt');
-        obj.rotation.y = Math.atan2(nx, nz);
+        obj.rotation.y = -Math.PI / 2;
         obj.position.set(x, 0, z);
         break;
       }
