@@ -19,3 +19,10 @@ blob-report/
 # Confidential challenge brief (Crossmint confidentiality — NOT an asset/IP
 # matter). Must never enter git history.
 docs/prompt.md
+
+# Copyrighted aesthetic-research reference images (studied, not shipped).
+# The written analysis in docs/references/aesthetic-notes.md stays tracked.
+docs/references/*.png
+docs/references/*.jpg
+docs/references/*.jpeg
+docs/references/*.gif
