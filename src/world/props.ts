@@ -3,7 +3,11 @@ import * as THREE from 'three';
 import { makeTextTexture } from './textures';
 
 /** A beige IBM-style desktop: monitor + horizontal case + green DOS screen. */
-export function makeRetroPC(caseMat: THREE.Material, darkMat: THREE.Material, label: string): THREE.Group {
+export function makeRetroPC(
+  caseMat: THREE.Material,
+  darkMat: THREE.Material,
+  label: string,
+): THREE.Group {
   const pc = new THREE.Group();
   const monitor = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.56, 0.58), caseMat);
   monitor.position.set(0, 1.16, 0);
@@ -87,7 +91,13 @@ export function makeRadio(labelText: string): THREE.Group {
   const grille = new THREE.Mesh(
     new THREE.PlaneGeometry(0.28, 0.32),
     new THREE.MeshBasicMaterial({
-      map: makeTextTexture('▦▦▦', { bg: '#141410', fg: '#33ff33', width: 128, height: 128, font: 'bold 60px monospace' }),
+      map: makeTextTexture('▦▦▦', {
+        bg: '#141410',
+        fg: '#33ff33',
+        width: 128,
+        height: 128,
+        font: 'bold 60px monospace',
+      }),
     }),
   );
   grille.position.set(-0.18, 1.02, 0.121);
@@ -95,7 +105,13 @@ export function makeRadio(labelText: string): THREE.Group {
   const dial = new THREE.Mesh(
     new THREE.PlaneGeometry(0.3, 0.18),
     new THREE.MeshBasicMaterial({
-      map: makeTextTexture(labelText, { bg: '#efe6c8', fg: '#20205a', width: 200, height: 120, font: 'bold 30px monospace' }),
+      map: makeTextTexture(labelText, {
+        bg: '#efe6c8',
+        fg: '#20205a',
+        width: 200,
+        height: 120,
+        font: 'bold 30px monospace',
+      }),
     }),
   );
   dial.position.set(0.16, 1.09, 0.121);

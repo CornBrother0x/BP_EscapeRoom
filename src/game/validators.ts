@@ -1,6 +1,6 @@
 /**
- * Answer validation, per docs/puzzles.md: trim, uppercase, strip spaces and
- * hyphens before comparison. Wrong answers never lock the player out.
+ * Answer validation: trim, uppercase, strip spaces and hyphens before
+ * comparison. Wrong answers never lock the player out.
  */
 
 export function normalizeAnswer(input: string): string {

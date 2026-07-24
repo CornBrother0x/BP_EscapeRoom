@@ -19,12 +19,7 @@ export function createThree(container: HTMLElement): ThreeContext {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
 
-  const camera = new THREE.PerspectiveCamera(
-    65,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100,
-  );
+  const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 100);
 
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;

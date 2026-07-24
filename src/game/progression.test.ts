@@ -31,10 +31,22 @@ const correctIndex = (s: number) => STAGES[s].options.findIndex((o) => o.correct
 function solveDefrag(): boolean {
   const w = (file: WeightFile, order: WeightOrder): DefragCell => ({ kind: 'weight', file, order });
   const target: DefragBoard = [
-    w('ASTERION.W01', 1), w('ASTERION.W01', 2), w('ASTERION.W01', 3), w('ASTERION.W01', 4),
-    w('ASTERION.W02', 1), w('ASTERION.W02', 2), w('ASTERION.W02', 3), w('ASTERION.W02', 4),
-    w('ASTERION.W03', 1), w('ASTERION.W03', 2), w('ASTERION.W03', 3), w('ASTERION.W03', 4),
-    { kind: 'clippit', order: 1 }, { kind: 'clippit', order: 2 }, null, null,
+    w('ASTERION.W01', 1),
+    w('ASTERION.W01', 2),
+    w('ASTERION.W01', 3),
+    w('ASTERION.W01', 4),
+    w('ASTERION.W02', 1),
+    w('ASTERION.W02', 2),
+    w('ASTERION.W02', 3),
+    w('ASTERION.W02', 4),
+    w('ASTERION.W03', 1),
+    w('ASTERION.W03', 2),
+    w('ASTERION.W03', 3),
+    w('ASTERION.W03', 4),
+    { kind: 'clippit', order: 1 },
+    { kind: 'clippit', order: 2 },
+    null,
+    null,
   ];
   const matches = (a: DefragCell, b: DefragCell): boolean => {
     if (a === null || b === null) return a === b;

@@ -6,7 +6,9 @@ sandbox.
 **[Play M.A.Z.E.](https://bp-escape-room.vercel.app/)**
 
 Desktop browser required. Tested in Chrome. A full run takes about 5 to 10
-minutes, and sound is recommended.
+minutes. Sound on is recommended — the first puzzle's clue is an audio message —
+but it is not required: an in-game text fallback reveals that clue after a few
+attempts, so the game is fully winnable muted.
 
 The game contains four sequential puzzles built around observation, logic,
 spatial interaction, and clues collected in the maze. In-world hints are
@@ -27,7 +29,8 @@ npm run dev
 Open `http://localhost:5173`.
 
 ```bash
-npm run check    # typecheck, lint, tests, and production build
+npm run check    # format check, typecheck, lint, unit tests, and production build
+npm run e2e      # Playwright smoke test: boots the built app in real Chromium
 npm run build    # build to dist/
 npm run preview  # serve the production build locally
 ```
@@ -69,9 +72,12 @@ Source is organized by responsibility:
 
 ## Verification
 
-`npm run check` is the same gate used by CI. Unit tests cover state transitions,
-answer validation, collision behavior, maze reachability and gating, and puzzle
-rules. The complete browser flow is verified manually.
+`npm run check` is the same gate used by CI (Prettier format check, typecheck,
+lint, tests, build). Unit and jsdom tests cover state transitions, answer
+validation, collision behavior, maze reachability and gating, the persuasion
+state machine, and the defrag puzzle. A separate Playwright job (`npm run e2e`)
+boots the production bundle in real headless Chromium and asserts it reaches a
+playable state with no uncaught errors. Both run on every push.
 
 ## AI Use
 

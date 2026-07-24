@@ -65,7 +65,11 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
   }
   const adminDoorMesh = world.doorMeshes.get('admin');
   if (adminDoorMesh) {
-    interactor.add({ id: 'admin-door', label: SCRIPT.ui.interactions.admin, object: adminDoorMesh });
+    interactor.add({
+      id: 'admin-door',
+      label: SCRIPT.ui.interactions.admin,
+      object: adminDoorMesh,
+    });
   }
   world.decoyMeshes.forEach((mesh, i) =>
     interactor.add({ id: `decoy-${i}`, label: SCRIPT.decoy.label, object: mesh }),
@@ -215,7 +219,10 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
     for (const poly of polyhedra) {
       poly.rotation.x += dt * 0.7;
       poly.rotation.y += dt * 1.1;
-      const d = Math.hypot(poly.position.x - player.position.x, poly.position.z - player.position.z);
+      const d = Math.hypot(
+        poly.position.x - player.position.x,
+        poly.position.z - player.position.z,
+      );
       if (d < 1.4) nearAny = true;
     }
     if (nearAny && flipArmed && !player.animatingFlip && state.mode === 'EXPLORE') {
@@ -248,7 +255,7 @@ export function startGame(app: HTMLElement, overlay: HTMLElement): void {
         const d = Math.hypot(spot.x - player.position.x, spot.z - player.position.z);
         if (d < 3.2 && now - spot.last > 4.5) {
           spot.last = now;
-          const wobble = (((((spot.x * 7 + spot.z * 13) % 10) + 10) % 10) / 20);
+          const wobble = ((((spot.x * 7 + spot.z * 13) % 10) + 10) % 10) / 20;
           void audio.playHey('/audio/hey.mp3', 0.82 + wobble, (spot.x - player.position.x) / 4);
         }
       }

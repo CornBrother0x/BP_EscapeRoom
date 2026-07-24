@@ -34,13 +34,7 @@ export function makeTextTexture(
   return tex;
 }
 
-export function textPlane(
-  text: string,
-  w: number,
-  h: number,
-  bg: string,
-  fg: string,
-): THREE.Mesh {
+export function textPlane(text: string, w: number, h: number, bg: string, fg: string): THREE.Mesh {
   return new THREE.Mesh(
     new THREE.PlaneGeometry(w, h),
     new THREE.MeshBasicMaterial({ map: makeTextTexture(text, { bg, fg }) }),

@@ -70,10 +70,14 @@ export function createPuzzles(ctx: GameContext, player: Player): Puzzles {
       } else {
         fails++;
         audio.play('error');
+        // Escalating in-world hints — the last tier spells the password out so
+        // the audio puzzle never blocks a player who can't hear the radio.
         status.innerHTML =
-          fails >= 2
-            ? `${SCRIPT.p1.wrongPassword}<br><em>${SCRIPT.p1.wrongPasswordHint}</em>`
-            : SCRIPT.p1.wrongPassword;
+          fails >= 4
+            ? `${SCRIPT.p1.wrongPassword}<br><em>${SCRIPT.p1.wrongPasswordReveal}</em>`
+            : fails >= 2
+              ? `${SCRIPT.p1.wrongPassword}<br><em>${SCRIPT.p1.wrongPasswordHint}</em>`
+              : SCRIPT.p1.wrongPassword;
         pwInput.value = '';
         pwInput.focus();
       }

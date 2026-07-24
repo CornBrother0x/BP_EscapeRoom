@@ -2,8 +2,8 @@
  * Central typed state store — the single authority on game progression and
  * input mode. All transitions are explicit methods with guards; illegal
  * transitions are rejected (return false) rather than throwing, so a stray
- * event can never corrupt progression. See docs/puzzles.md for the mode
- * transition table.
+ * event can never corrupt progression. This store is the single source of
+ * truth for the mode transition table.
  */
 
 export type Phase = 'BOOT' | 'P1' | 'P2' | 'P3' | 'P4' | 'ESCAPED' | 'WIN';

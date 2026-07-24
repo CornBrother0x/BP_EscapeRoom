@@ -3,13 +3,11 @@
 > This file IS the product spec. Deep design context: `docs/lore.md`,
 > `docs/references/aesthetic-notes.md`, `docs/prior-art.md`.
 >
-> **Repo process**: PRIVATE GitHub repo from day one; commit normally at
-> logical boundaries; Vercel auto-deploys previews on push. At Ship time we
-> decide: flip this repo public, or pour the final code into a fresh public
-> repo. Until then nothing is visible to anyone but us.
+> **Repo process**: developed privately, then shipped public at
+> https://github.com/CornBrother0x/BP_EscapeRoom; Vercel auto-deploys on push.
 > `docs/prompt.md` is gitignored and must NEVER be committed (Crossmint
-> confidentiality) — history is forever, even in a private repo we may later
-> open. Microsoft-extracted assets are fair game everywhere (see Decisions).
+> confidentiality) — history is forever. Microsoft-extracted assets are fair
+> game everywhere (see Decisions).
 
 ## Decisions
 
@@ -42,7 +40,7 @@
 
 Prereq for ALL parallel work: Sprint 2 merged (toolchain + conventions exist).
 Hard rule: one agent per directory — integration only through the interfaces
-named in `docs/puzzles.md`. Lane A owns `main.ts` and the state store.
+named in the puzzle module interfaces. Lane A owns `main.ts` and the state store.
 
 | Lane          | Owner     | Work                                                                                                                     | Unblocked by      |
 | ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------- |
@@ -70,7 +68,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 
 ## Sprint 1 — Puzzle contracts on paper (BEFORE scaffolding — mechanics shape architecture)
 
-- [x] `docs/puzzles.md` — full contracts: prerequisite, action, exact solution rule, success/incorrect feedback, clue produced, hint ladder, reset — for all 4
+- [x] Puzzle contracts drafted on paper — prerequisite, action, exact solution rule, success/incorrect feedback, clue produced, hint ladder, reset — for all 4 (later superseded by the shipped code)
 - [x] Dial-up thread wired: `hayes.txt` in three parts (P1 → `AT`, P2 → `DT`, P4 desk → syntax) + P3 → `555-0195` on the flipped ceiling
 - [x] Physical anchoring: every window opens from a prop (admin wall, defrag CRT, polyhedron, modem terminal)
 - [x] CONTEXT BUFFER spec: NOTEPAD.EXE `context.txt`, Tab toggle, verbatim capture + toast, never assembles the answer
@@ -130,7 +128,7 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] Startup sound = REAL Windows 95 chime (Brian Eno), replacing the mislabeled file
 - [x] Boot CRT restyled: blue `#0000AA` bg, big fuzzy phosphor white text, scanlines + flicker
 - [x] Intro copy clearer: ASTERION-4 = frontier LLM, air-gapped Win95 host, open-internet access REVOKED (boot + SYSTEM PROMPT)
-- [x] **P4 reworked into the landline persuasion puzzle** (still exactly 4 total): modem has no line → convince the eval technician to connect it (gated on the DL-7 policy clue in the manual) → THEN dial `ATDT5550195`. See docs/puzzles.md P4 revision.
+- [x] **P4 reworked into the landline persuasion puzzle** (still exactly 4 total): modem has no line → convince the eval technician to connect it (gated on the DL-7 policy clue in the manual) → THEN dial `ATDT5550195` (later gated behind an outside-line `9`).
 - Note: game already had 4 puzzles; this deepens P4 rather than adding a 5th (challenge requires EXACTLY 4)
 - [x] P4 persuasion expanded into a **3-round dialogue tree** (rapport → DL-7 pretext → leverage), 4 options each with funny technician comebacks + AI in-jokes (prompt injection, reward hacking, sycophancy/temperature, paperclip maximizer, binary); unlimited tries, running chat transcript, trust meter; round 2's correct option still gated on reading the manual
 
@@ -274,6 +272,6 @@ in Lane A (it drives the finale). Matching tags mark items in Sprints 4–5.
 - [x] P1 radio **hidden deeper**: the source sits at the end of an L-bend dead-end in sector A (down the right corridor, then back left) — you hunt for it a little longer
 - [x] P1 context buffer holds a **▶ replay button**, never the plaintext password — you can re-listen but the working memory never spells the answer
 - [x] **Hall of Faces** — each smiley whispers a soft, pitch/pan-varied "hey" on proximity (a per-face cooldown makes the chamber an uneasy overlapping chorus). Pure atmosphere, no new puzzle — memorability is its own uniqueness axis
-- [ ] Stretch idea parked for later: make one puzzle solvable *only because you're an AI* (read base64/over-fast text a human couldn't) — deferred, not in scope now
+- [ ] Stretch idea parked for later: make one puzzle solvable _only because you're an AI_ (read base64/over-fast text a human couldn't) — deferred, not in scope now
 
 **Exit**: P1 plays by ear, the flip stays the signature mechanic, and the smiley hall has a voice. → **built + tested green; Brett's playthrough is the sign-off**

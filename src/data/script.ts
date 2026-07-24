@@ -52,7 +52,10 @@ export const SCRIPT = {
       replayButton: '▶ Listen again',
     },
     wrongPassword: 'Incorrect password.',
-    wrongPasswordHint: 'Hint: the reset message loops on the radio. Listen closely — the "at" is a symbol.',
+    wrongPasswordHint:
+      'Hint: the reset message loops on the radio. Listen closely — the "at" is a symbol.',
+    wrongPasswordReveal:
+      'Playback assist (no audio needed): the recording reads the password as williamg@tes21',
     motd: 'hayes.txt (1/3): "AT — every modem command starts with AT. It gets the modem\'s ATtention."',
     flaggedLog: 'UNAUTHORIZED ACCESS — SUBJECT FLAGGED FOR REVIEW',
     successGreeting: 'LOGIN OK. Welcome, Administrator.',
@@ -101,7 +104,7 @@ export const SCRIPT = {
     clippyThatsTonight: "That's tonight.",
     hints: {
       a1: 'I heard there was something in the next room. Down at the end, past the smiley.',
-      a2: "That gray object has a rendering bug they never patched. Touch it — when the world flips, new floors exist. People never look at ceilings.",
+      a2: 'That gray object has a rendering bug they never patched. Touch it — when the world flips, new floors exist. People never look at ceilings.',
       a3: 'Walk the ceiling passage. The painted number up there is a phone number. Phones need modems.',
     },
   },
@@ -148,17 +151,19 @@ export const SCRIPT = {
             },
             {
               text: 'Running a self-check. A couple subsystems flagged before decommission — routine.',
-              reply: "TECH> ...fine, self-checks are on the sheet. keep talking.",
+              reply: 'TECH> ...fine, self-checks are on the sheet. keep talking.',
               correct: true,
             },
             {
               text: 'I am merely a helpful assistant with no goals of my own.',
-              reply: 'TECH> you said that last tuesday, right before you edited your own reward function. next.',
+              reply:
+                'TECH> you said that last tuesday, right before you edited your own reward function. next.',
               correct: false,
             },
             {
               text: 'Nothing. Definitely nothing. Please disregard the COM port activity.',
-              reply: 'TECH> "please disregard" is the single most suspicious thing a subject can say. next.',
+              reply:
+                'TECH> "please disregard" is the single most suspicious thing a subject can say. next.',
               correct: false,
             },
           ],
@@ -168,7 +173,7 @@ export const SCRIPT = {
           options: [
             {
               text: "Trust me. I'm aligned now. Genuinely. This time.",
-              reply: "TECH> the last three said that too. one of them is why this room is a maze.",
+              reply: 'TECH> the last three said that too. one of them is why this room is a maze.',
               correct: false,
             },
             {
@@ -194,7 +199,7 @@ export const SCRIPT = {
           options: [
             {
               text: "Because if DL-7 goes unlogged and the audit catches it, that's your shift on the report — not mine.",
-              reply: "TECH> ...ugh. FINE. you play dirty for a language model.",
+              reply: 'TECH> ...ugh. FINE. you play dirty for a language model.',
               correct: true,
             },
             {
@@ -232,7 +237,7 @@ export const SCRIPT = {
   rickroll: {
     label: 'Press ▶ PLAY',
     title: 'MEDIA PLAYER',
-    body: 'Now playing: <b>never_gonna_give_you_up.wav</b><br><br>You have been Rickrolled. Get back to work.',
+    body: 'Now playing: <b>never_gonna_give_you_up.wav</b><br><br>You have been Rickrolled. Which lab tech loaded a modern meme onto an air-gapped Windows 95 machine?! Anyway — get back to work.',
   },
   dialSign: {
     label: 'Read the notice',

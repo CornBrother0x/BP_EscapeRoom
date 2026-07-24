@@ -13,9 +13,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "e2e": "playwright test",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "check": "npm run format:check && npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
     "98.css": "^0.1.21",

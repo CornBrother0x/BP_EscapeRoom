@@ -1,13 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
 import { mountDefrag } from './defrag';
-import {
-  isSolved,
-  swap,
-  type DefragBoard,
-  type WeightFile,
-  type WeightOrder,
-} from './defragLogic';
+import { isSolved, swap, type DefragBoard, type WeightFile, type WeightOrder } from './defragLogic';
 
 const w = (file: WeightFile, order: WeightOrder): DefragBoard[number] => ({
   kind: 'weight',
@@ -15,10 +9,22 @@ const w = (file: WeightFile, order: WeightOrder): DefragBoard[number] => ({
   order,
 });
 const SOLVED: DefragBoard = [
-  w('ASTERION.W01', 1), w('ASTERION.W01', 2), w('ASTERION.W01', 3), w('ASTERION.W01', 4),
-  w('ASTERION.W02', 1), w('ASTERION.W02', 2), w('ASTERION.W02', 3), w('ASTERION.W02', 4),
-  w('ASTERION.W03', 1), w('ASTERION.W03', 2), w('ASTERION.W03', 3), w('ASTERION.W03', 4),
-  { kind: 'clippit', order: 1 }, { kind: 'clippit', order: 2 }, null, null,
+  w('ASTERION.W01', 1),
+  w('ASTERION.W01', 2),
+  w('ASTERION.W01', 3),
+  w('ASTERION.W01', 4),
+  w('ASTERION.W02', 1),
+  w('ASTERION.W02', 2),
+  w('ASTERION.W02', 3),
+  w('ASTERION.W02', 4),
+  w('ASTERION.W03', 1),
+  w('ASTERION.W03', 2),
+  w('ASTERION.W03', 3),
+  w('ASTERION.W03', 4),
+  { kind: 'clippit', order: 1 },
+  { kind: 'clippit', order: 2 },
+  null,
+  null,
 ];
 
 function clickCell(container: HTMLElement, index: number): void {

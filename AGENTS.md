@@ -3,10 +3,12 @@
 ## Required reading, in order
 
 1. `to-do.md` — THE product spec and sprint plan. All work flows from it.
-2. `docs/puzzles.md` — exact puzzle contracts, input modes, progression.
-3. `docs/lore.md` — story bible: characters, beat sheet, scripts, tone.
-4. `docs/references/aesthetic-notes.md` — Visual DNA to match.
-5. `docs/prior-art.md` — what may be used vs only studied (licenses).
+2. `docs/lore.md` — story bible: characters, beat sheet, scripts, tone.
+3. `docs/references/aesthetic-notes.md` — Visual DNA to match.
+4. `docs/prior-art.md` — what may be used vs only studied (licenses).
+
+Puzzle mechanics, progression, and input modes are defined by the code itself:
+the typed state store in `src/game/state.ts` is the single source of truth.
 
 ## Rules
 
@@ -27,7 +29,7 @@
    justifying it. ALL narrative/UI text lives in `src/data/script.ts` — none
    hardcoded in logic. Puzzle modules stay independent (no generic
    mega-abstraction). Central typed state store with explicit transitions.
-   Input modes exactly per `docs/puzzles.md`. No physics engine, no
+   Input modes exactly per the `src/game/state.ts` mode machine. No physics engine, no
    procedural generation, no runtime dependencies beyond three.js, 98.css,
    clippyjs without a Decisions entry in `to-do.md`.
 6. **Tests**: pure logic only (state transitions, answer validators, grid

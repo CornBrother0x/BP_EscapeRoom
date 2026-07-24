@@ -1,7 +1,7 @@
 /**
  * Keyboard + pointer-lock mouse input. Accumulates mouse deltas between
  * frames; held keys are cleared on blur and pointer-lock loss so nothing
- * "sticks" across mode changes (see input modes in docs/puzzles.md).
+ * "sticks" across mode changes (see the input modes in game/state.ts).
  */
 export class Input {
   private keys = new Set<string>();
