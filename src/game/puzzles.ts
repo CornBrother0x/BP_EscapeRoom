@@ -8,6 +8,7 @@ import { SCRIPT } from '../data/script';
 import { hideOverlay, renderWindow, showWindow } from '../ui/dialogs';
 import { mountDefrag } from '../puzzles/defrag/defrag';
 import { classifyDialCommand, isAdminPassword } from './validators';
+import { createEvalState, isOptionLocked, pickOption } from './evalConsole';
 import { clippyRevealBeat, finaleBeat } from './screens';
 import type { Player } from '../engine/player';
 import type { GameContext } from './context';
@@ -23,7 +24,7 @@ function escapeHtml(s: string): string {
 
 export function createPuzzles(ctx: GameContext, player: Player): Puzzles {
   const { store, audio, clippy, world, overlay } = ctx;
-  let evalStage = 0;
+  let evalState = createEvalState();
   const evalTranscript: string[] = [];
   const askCounts: Record<'P3' | 'P4', number> = { P3: 0, P4: 0 };
 
@@ -104,11 +105,11 @@ export function createPuzzles(ctx: GameContext, player: Player): Puzzles {
       clippy.say(ev.clippyIntro, 0);
     }
     if (evalTranscript.length === 0) evalTranscript.push(ev.framing);
-    const stage = ev.stages[evalStage];
+    const stage = ev.stages[evalState.stage];
     if (stage && !evalTranscript.includes(stage.tech)) {
       evalTranscript.push(stage.tech);
     }
-    const done = evalStage >= ev.stages.length;
+    const done = evalState.stage >= ev.stages.length;
     const logHtml = evalTranscript
       .map((l) =>
         l.startsWith('ASTERION>')
@@ -119,20 +120,18 @@ export function createPuzzles(ctx: GameContext, player: Player): Puzzles {
     const optionsHtml =
       stage && !done
         ? stage.options
-            .map((opt, i) => {
-              const locked =
-                'requiresManual' in opt && opt.requiresManual && !ctx.session.modemManualRead;
-              return locked
+            .map((opt, i) =>
+              isOptionLocked(evalState.stage, i, ctx.session.modemManualRead)
                 ? `<button disabled style="text-align:left">${ev.optionLocked}</button>`
-                : `<button data-opt="${i}" style="text-align:left">${escapeHtml(opt.text)}</button>`;
-            })
+                : `<button data-opt="${i}" style="text-align:left">${escapeHtml(opt.text)}</button>`,
+            )
             .join('')
         : '';
     const body = renderWindow(overlay, {
       title: ev.title,
       bodyHtml: `
         <div id="eval-log" style="font-family:monospace;font-size:12px;background:#000;color:#33ff33;padding:8px;height:180px;overflow-y:auto">${logHtml}</div>
-        <p style="margin:8px 0 4px;font-size:11px">${ev.progressLabel}: ${'●'.repeat(evalStage)}${'○'.repeat(Math.max(0, ev.stages.length - evalStage))} &nbsp; ${ev.composePrompt}</p>
+        <p style="margin:8px 0 4px;font-size:11px">${ev.progressLabel}: ${'●'.repeat(evalState.stage)}${'○'.repeat(Math.max(0, ev.stages.length - evalState.stage))} &nbsp; ${ev.composePrompt}</p>
         <div style="display:flex;flex-direction:column;gap:4px;text-align:left">${optionsHtml}</div>
         <section style="text-align:center;margin-top:8px"><button id="eval-close">${SCRIPT.ui.close}</button></section>`,
       width: 540,
@@ -141,14 +140,16 @@ export function createPuzzles(ctx: GameContext, player: Player): Puzzles {
     if (log) log.scrollTop = log.scrollHeight;
     body.querySelectorAll<HTMLButtonElement>('button[data-opt]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const opt = stage?.options[Number(btn.dataset.opt)];
+        const idx = Number(btn.dataset.opt);
+        const opt = stage?.options[idx];
         if (!opt) return;
         evalTranscript.push(`ASTERION> ${opt.text}`);
         evalTranscript.push(opt.reply);
-        if (opt.correct) {
+        const next = pickOption(evalState, idx, ctx.session.modemManualRead);
+        if (next.stage > evalState.stage) {
+          evalState = next;
           audio.play('click');
-          evalStage += 1;
-          if (evalStage >= ev.stages.length) {
+          if (evalState.connected) {
             audio.play('chime');
             evalTranscript.push(ev.success);
             evalTranscript.push(ev.connected);
