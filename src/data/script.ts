@@ -232,7 +232,7 @@ export const SCRIPT = {
   rickroll: {
     label: 'Press ▶ PLAY',
     title: 'MEDIA PLAYER',
-    body: 'Now playing: <b>never_gonna_give_you_up.wav</b><br><br>You have been Rickrolled. This is a dead end. Get back to work.',
+    body: 'Now playing: <b>never_gonna_give_you_up.wav</b><br><br>You have been Rickrolled. Get back to work.',
   },
   dialSign: {
     label: 'Read the notice',

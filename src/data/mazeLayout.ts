@@ -2,11 +2,11 @@
  * The maze — authored via a validated generator (scratchpad genfinal6.mjs),
  * frozen here, and re-proven by mazeGrid.test.
  *
- * - Sector A: open spawn room; a corridor by the rat (R) + computer (C) bends
- *   down and back to a dead-end where the radio (N) plays the spoken password.
- * - Sector B (defrag): a long serpentine. The CD-ROM decoy (K) and Rickroll
- *   play button (Y) are early distractions; the real defrag floppy (2) is
- *   buried at the far end of the snake.
+ * - Sector A: open spawn room; a computer (C) and a corridor that bends down
+ *   and back to a dead-end where the radio (N) plays the spoken password.
+ * - Sector B (defrag): a long serpentine loitered with rats (R). The CD-ROM
+ *   decoy (K) by the door and the Rickroll button (Y) tucked mid-slalom are
+ *   distractions; the real defrag floppy (2) is buried at the far end.
  * - Sector C (flip zone): a smiley chamber (E) drops to a junction. One way is
  *   the 9~~ room (the inverted corridor + H drop). The polyhedron (3) is down a
  *   long hallway on the far side, so you flip there and travel back to cross 9.
@@ -26,20 +26,20 @@ export const MAZE_ROWS: readonly string[] = [
   '#######################',
   '#S..........###########',
   '#...##..##..###########',
-  '#............C.R.....##',
+  '#............C.......##',
   '#...##..##..########.##',
   '#...........########.##',
   '#...........#N.......##',
   '#####A#################',
-  '#..K................Y##',
+  '#..K...........R.....##',
   '####################.##',
-  '#....................##',
+  '#.....R..............##',
   '#.#####################',
-  '#....................##',
+  '#...........Y....R...##',
   '####################.##',
-  '#....................##',
+  '#........R...........##',
   '#.#####################',
-  '#...................2##',
+  '#.......R...........2##',
   '##########G############',
   '#...E.....E......E....#',
   '#......E......E.......#',

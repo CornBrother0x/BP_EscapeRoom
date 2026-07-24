@@ -284,15 +284,23 @@ export function buildMaze(parsed: ParsedMaze): MazeWorld {
         break;
       }
       case 'modem-crt': {
-        // Phone booth housing the dial-out terminal at the hallway's end.
-        const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
+        // Phone booth (dial-out terminal) at the hallway's far end. Faces west,
+        // toward the player arriving along the final hall from the west.
         obj = makePhoneBooth();
-        obj.rotation.y = Math.atan2(nx, nz);
+        obj.rotation.y = -Math.PI / 2;
+        obj.position.set(x, 0, z);
+        break;
+      }
+      case 'readme-crt': {
+        // Beige IBM PC (readme.txt). Faces west — you leave the spawn room east
+        // through its one doorway and reach the PC from its west side.
+        obj = makeRetroPC(caseMat, darkMat, screenLabels['readme-crt'] ?? '');
+        obj.rotation.y = -Math.PI / 2;
         obj.position.set(x, 0, z);
         break;
       }
       default: {
-        // Beige IBM-style PC, screen facing into the room (readme station).
+        // Beige IBM-style PC, screen facing away from the nearest wall.
         const { nx, nz } = wallNormal(parsed, station.cell.gx, station.cell.gz);
         obj = makeRetroPC(caseMat, darkMat, screenLabels[station.id] ?? '');
         obj.rotation.y = Math.atan2(nx, nz);
